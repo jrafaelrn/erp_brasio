@@ -28,17 +28,21 @@ def check(event, context):
     else:
         payload = event
 
+        response = None
+
     if payload == 'check_sales_day':
 
         try:
-            msg = check_day()
-            return msg
+            response = check_day()
         except Exception as e:
             print(e)
-            return 'Ocorreu um erro ao verificar o dia. Uma nova tentativa será feita em breve.'
+            response = 'Ocorreu um erro ao verificar o dia. Uma nova tentativa será feita em breve.'
     
     else:
-        return 'Invalid payload'
+        response = 'Invalid payload'
+
+    print(f'Sales Day: {response}')
+    return response
 
         
 
