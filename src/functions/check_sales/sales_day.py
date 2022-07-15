@@ -6,7 +6,7 @@ import io, os, sys
 from httplib2 import Credentials
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import datetime
+from datetime import datetime
 import base64
 import keys
 import pandas as pd
@@ -44,10 +44,9 @@ def check(event, context):
 
 def check_day():
     
-    today = datetime.datetime.now().strftime('%Y-%m-%d')
     GOAL = 600
 
-    total_sales_day = get_bank_resume_day(today)
+    total_sales_day = get_bank_resume_day()
 
     #Format to currency
     total_sales_day_currency = (f'R$ {total_sales_day:.2f}').replace('.', ',')
@@ -64,14 +63,18 @@ def check_day():
 
 
 
-def get_bank_resume_day(day):
+def get_bank_resume_day():
 
-    file_bank_today = f'{day}.xls'
-    file_bank_today = '2022-07-14.xls'
+    today = datetime.now().strftime('%Y-%m-%d')
+    today_ptbr = datetime.now().strftime('%d/%m/%Y')
+    file_bank_today = f'{today}.xls'
     
     file = get_file(file_bank_today)
     df = pd.read_excel(io.BytesIO(file))
 
+    sales_day = calculate('14/07/2022', df)
+
+    return sales_day
 
     
 
@@ -117,6 +120,25 @@ def get_file_id(bd, filne_name):
 
 
 
+def calculate(day, bd):
 
-if __name__ == '__main__':
-    print(check('check_sales_day', ''))
+    total = 0
+    
+    # Loop through rows
+    for row in bd.iterrows():
+
+        try:
+
+            data = datetime.strptime(row[1][0], '%d/%m/%Y')
+            description = row[1][1]
+            tipo = row[1][2]
+            valor = float(row[1][3])
+
+            if valor > 0 and description.find('40847221000114') == -1:
+                total += valor
+        
+        except Exception as e:
+            print(e)
+            continue
+
+    return total
