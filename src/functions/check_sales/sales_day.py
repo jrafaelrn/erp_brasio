@@ -1,8 +1,21 @@
+from __future__ import print_function
+
+import io, os, sys
+
+from httplib2 import Credentials
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import datetime
 import base64
-import os
-import secrets
+import keys
+
 from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient.errors import HttpError
+from google.oauth2.credentials import Credentials
+
+
+
 
 
 def check(event, context):
@@ -44,9 +57,27 @@ def check_day():
 def get_bank_resume_day(day):
 
     file_bank_today = f'{day}.xls'
-
+    file_id = '1KuPmvGq8yoYgbfW74OENMCB5H0n_2Jm9'
+    creds = Credentials.from_authorized_user_file(keys.GOOGLE_DRIVE_KEY)
     
-    with build('drive', 'v3', delevoperKey=${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}) as bd:
+    flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+    with build('drive', 'v3', credentials=keys.GOOGLE_DRIVE_KEY) as bd:
+        
+        try:
+            request = bd.files().get_media(fileId=file_id)
+            file = io.BytesIO()
+            downloader = MediaIoBaseDownload(file, request)
+            done = False
+            while done is False:
+                status, done = downloader.next_chunk()
+                print(F'Download {int(status.progress() * 100)}.')
+
+        except HttpError as error:
+            print(F'An error occurred: {error}')
+            file = None
+
+        return file.getvalue()
+
 
 
 
