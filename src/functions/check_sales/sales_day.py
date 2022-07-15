@@ -1,4 +1,5 @@
 from __future__ import print_function
+from dataclasses import field, fields
 
 import io, os, sys
 
@@ -8,13 +9,15 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import datetime
 import base64
 import keys
+import pandas as pd
 
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
-from google.oauth2.credentials import Credentials
+from oauth2client.service_account import ServiceAccountCredentials
 
 
+SCOPES = ['https://www.googleapis.com/auth/drive']
 
 
 
@@ -26,7 +29,14 @@ def check(event, context):
         payload = event
 
     if payload == 'check_sales_day':
-        return check_day()
+
+        try:
+            msg = check_day()
+            return msg
+        except Exception as e:
+            print(e)
+            return 'Ocorreu um erro ao verificar o dia. Uma nova tentativa será feita em breve.'
+    
     else:
         return 'Invalid payload'
 
@@ -34,7 +44,7 @@ def check(event, context):
 
 def check_day():
     
-    today = datetime.datetime.now().strftime('%d/%m/%Y')
+    today = datetime.datetime.now().strftime('%Y-%m-%d')
     GOAL = 600
 
     total_sales_day = get_bank_resume_day(today)
@@ -57,13 +67,24 @@ def check_day():
 def get_bank_resume_day(day):
 
     file_bank_today = f'{day}.xls'
-    file_id = '1KuPmvGq8yoYgbfW74OENMCB5H0n_2Jm9'
-    creds = Credentials.from_authorized_user_file(keys.GOOGLE_DRIVE_KEY)
+    file_bank_today = '2022-07-14.xls'
     
-    flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-    with build('drive', 'v3', credentials=keys.GOOGLE_DRIVE_KEY) as bd:
+    file = get_file(file_bank_today)
+    df = pd.read_excel(io.BytesIO(file))
+
+
+    
+
+
+def get_file(file_name):
+
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(keys.GOOGLE_DRIVE_KEY, SCOPES)
+
+    with build('drive', 'v3', credentials=creds) as bd:
         
         try:
+
+            file_id = get_file_id(bd, file_name)
             request = bd.files().get_media(fileId=file_id)
             file = io.BytesIO()
             downloader = MediaIoBaseDownload(file, request)
@@ -80,6 +101,22 @@ def get_bank_resume_day(day):
 
 
 
+def get_file_id(bd, filne_name):
+
+    response = bd.files().list(fields='nextPageToken, ' 'files(id, name)').execute()
+
+    for file in response.get('files', []):
+
+        #print(f'Found file: {file.get("name")}')
+        
+        if file.get('name') == filne_name:
+            return file.get('id')
+    
+    return None
+
+
+
+
 
 if __name__ == '__main__':
-    check('check_sales_day', '')
+    print(check('check_sales_day', ''))
