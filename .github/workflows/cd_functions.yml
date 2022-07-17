@@ -8,6 +8,8 @@ on:
 jobs:
 
   runs-on: ubuntu-latest
+  env:
+    GOOGLE_DRIVE_KEY : ${{ secrets.GOOGLE_DRIVE_KEY }}
 
   job_id:
     steps:
@@ -20,8 +22,6 @@ jobs:
 
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloud-functions@v0'
-      env:
-        GOOGLE_DRIVE_KEY : ${{ secrets.GOOGLE_DRIVE_KEY }}
       with:
         name: 'function-check-sales-day'
         runtime: 'python39'
