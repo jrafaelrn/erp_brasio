@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from datetime import datetime
 import base64
-import keys
+from keys import GOOGLE_DRIVE_KEY
 import pandas as pd
 
 from googleapiclient.discovery import build
@@ -85,7 +85,7 @@ def get_bank_resume_day():
 
 def get_file(file_name):
 
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(keys.GOOGLE_DRIVE_KEY, SCOPES)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(GOOGLE_DRIVE_KEY, SCOPES)
 
     with build('drive', 'v3', credentials=creds) as bd:
         
@@ -142,7 +142,7 @@ def calculate(day, bd):
                 total += valor
         
         except Exception as e:
-            print(e)
+            #print(e)
             continue
 
     return total
