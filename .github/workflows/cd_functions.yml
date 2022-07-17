@@ -4,8 +4,10 @@ on:
   push:
     branches: [master]
 
-    
+
 jobs:
+
+  runs-on: ubuntu-latest
 
   job_id:
     steps:
