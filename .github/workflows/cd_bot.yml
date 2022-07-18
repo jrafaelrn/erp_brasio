@@ -20,7 +20,7 @@ jobs:
     steps:
       
       # Git checkout
-      - name: checkout
+      - name: Checkout
         uses: 'actions/checkout@v3'
         
       # Authenticate with GCP
@@ -30,10 +30,7 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
       
-      # Configure Docker Config
-      - name: Configure Docker Config
-        run:  echo export DOCKER_CONFIG=. >> ~/.bashrc
-
+      # Linux
       - name: Linux Permissions
         run: sudo usermod -a -G docker ${USER}
 
