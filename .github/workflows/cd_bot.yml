@@ -29,10 +29,6 @@ jobs:
         with:
           credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      # Auth
-      - name: Auth with Service Account
-        run: gcloud auth activate-service-account ${{ secrets.GOOGLE_EMAIL_ACCOUNT }} --key-file ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
       
       # Configure Docker
       - name: Configure Docker
