@@ -36,7 +36,7 @@ jobs:
 
       # JSON to GCP Auth
       - name: Creating JSON
-        run: cat ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY}} > auth.json
+        run: echo ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY}} > auth.json
 
       # Auth
       - name: Auth with Service Account
