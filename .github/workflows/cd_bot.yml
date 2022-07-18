@@ -30,21 +30,24 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
       
+      # Configure Docker Config
+      - name: Configure Docker Config
+        run:  echo export DOCKER_CONFIG=. >> ~/.bashrc
 
-      # Configure Docker
-      - name: Configure Docker
+      - name: Linux Permissions
+        run: sudo usermod -a -G docker ${USER}
+
+      # Configure Docker GCP
+      - name: Configure Docker GCP
         run: gcloud auth configure-docker gcr.io
 
       # Build Image
       - name: Build Image
         run: docker build -t $IMAGE_NAME src/bot/
 
-      # Configure Docker
-      - name: Configure Docker
-        run:  echo export DOCKER_CONFIG=. >> ~/.bashrc
 
       # Configre GCP
-      - name: Configure
+      - name: Configure GCP Account
         run:  gcloud config set account ${{ secrets.GOOGLE_EMAIL_ACCOUNT }}
 
       #Push Image
