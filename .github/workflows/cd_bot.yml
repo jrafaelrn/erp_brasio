@@ -25,14 +25,16 @@ jobs:
         
       # Authenticate with GCP
       - name: AuthGCP
-        uses: 'google-github-actions/gcloud@v0'
+        uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
       
-      # Linux
-      - name: Linux Permissions
-        run: sudo usermod -a -G docker ${USER}
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v0'
+      
+       - name: 'Use gcloud CLI'
+        run: 'gcloud info'
 
       # Configure Docker GCP
       - name: Configure Docker GCP
