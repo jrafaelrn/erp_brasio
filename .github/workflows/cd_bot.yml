@@ -19,6 +19,11 @@ jobs:
     
     steps:
       
+      # Git checkout
+      - name: Checkout
+        uses: 'actions/checkout@v3'
+      
+      
       # Authenticate with GCP
       - id: 'auth'
         uses: 'google-github-actions/auth@v0'
@@ -32,9 +37,6 @@ jobs:
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
       
-      # Git checkout
-      - name: Checkout
-        uses: 'actions/checkout@v3'
       
 
       # Configure Docker GCP
