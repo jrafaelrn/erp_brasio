@@ -33,7 +33,7 @@ jobs:
 
       # Configure Docker
       - name: Configure Docker
-        run: gcloud auth configure-docker --quiet
+        run: gcloud auth configure-docker --impersonate-service-account ${{ secrets.GOOGLE_EMAIL_ACCOUNT }} --quiet
 
       # Build Image
       - name: Build Image
