@@ -26,7 +26,6 @@ jobs:
 
       # Authenticate with GCP  
       - id: 'auth'    
-      - name: 'Set up Auth'
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
