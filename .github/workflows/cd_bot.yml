@@ -46,11 +46,6 @@ jobs:
       - name: Build Image
         run: docker build -t $IMAGE_NAME src/bot/
 
-
-      # Configre GCP
-      - name: Configure GCP Account
-        run:  gcloud config set account ${{ secrets.GOOGLE_EMAIL_ACCOUNT }}
-
       #Push Image
       - name: Push Image
         run: docker push $IMAGE_NAME
