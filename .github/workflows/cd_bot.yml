@@ -30,9 +30,6 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
       
-      # Configre
-      - name: Configure
-        run:  gcloud config set account ${{ secrets.GOOGLE_EMAIL_ACCOUNT }}
 
       # Configure Docker
       - name: Configure Docker
@@ -41,6 +38,10 @@ jobs:
       # Build Image
       - name: Build Image
         run: docker build -t $IMAGE_NAME src/bot/
+
+      # Configre
+      - name: Configure
+        run:  gcloud config set account ${{ secrets.GOOGLE_EMAIL_ACCOUNT }}
 
       #Push Image
       - name: Push Image
