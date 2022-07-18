@@ -33,13 +33,17 @@ jobs:
 
       # Configure Docker
       - name: Configure Docker
-        run: gcloud auth configure-docker --impersonate-service-account ${{ secrets.GOOGLE_EMAIL_ACCOUNT }} --quiet
+        run: gcloud auth configure-docker gcr.io
 
       # Build Image
       - name: Build Image
-        run: docker build --config config.json -t $IMAGE_NAME src/bot/
+        run: docker build -t $IMAGE_NAME src/bot/
 
-      # Configre
+      # Configure Docker
+      - name: Configure Docker
+        run:  echo export DOCKER_CONFIG=. >> ~/.bashrc
+
+      # Configre GCP
       - name: Configure
         run:  gcloud config set account ${{ secrets.GOOGLE_EMAIL_ACCOUNT }}
 
