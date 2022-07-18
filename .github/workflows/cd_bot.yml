@@ -19,13 +19,8 @@ jobs:
     
     steps:
       
-      # Git checkout
-      - name: Checkout
-        uses: 'actions/checkout@v3'
-      
       # Authenticate with GCP
       - id: 'auth'
-      - name: AuthGCP
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
@@ -36,6 +31,11 @@ jobs:
       
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
+      
+      # Git checkout
+      - name: Checkout
+        uses: 'actions/checkout@v3'
+      
 
       # Configure Docker GCP
       - name: Configure Docker GCP
