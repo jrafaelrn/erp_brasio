@@ -1,4 +1,4 @@
-src/functions/keys.py
+src/credentials/*
 src/functions/__pycache__/
 src/bot/__pycache__/
 src/functions/check_sales/token.json
