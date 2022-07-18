@@ -12,7 +12,7 @@ jobs:
 
     name: 'Deploy to GCP'
     runs-on: ubuntu-latest
-    enviroment: prod
+    environment: prod
     env:
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot
