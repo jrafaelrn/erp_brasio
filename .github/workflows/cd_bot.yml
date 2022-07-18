@@ -43,13 +43,9 @@ jobs:
       - name: Configure
         run:  gcloud config set account ${{ secrets.GOOGLE_EMAIL_ACCOUNT }}
 
-      # View
-      - name: View
-        run: cat ~/.docker/config.json
-
       #Push Image
       - name: Push Image
-        run: docker push $IMAGE_NAME
+        run: docker push --config config.json $IMAGE_NAME
 
       # Deploy Image
       - name: Deploy Image
