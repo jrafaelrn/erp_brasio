@@ -25,10 +25,10 @@ jobs:
       
 
       # Authenticate with GCP
-      #- id: 'auth'
-       # uses: 'google-github-actions/auth@v0'
-        #with:
-         # credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
       
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v0'
