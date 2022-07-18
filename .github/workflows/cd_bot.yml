@@ -37,7 +37,7 @@ jobs:
 
       # Build Image
       - name: Build Image
-        run: docker build -t $IMAGE_NAME src/bot/
+        run: docker build --config config.json -t $IMAGE_NAME src/bot/
 
       # Configre
       - name: Configure
@@ -45,7 +45,7 @@ jobs:
 
       #Push Image
       - name: Push Image
-        run: docker push --config config.json $IMAGE_NAME
+        run: docker push $IMAGE_NAME
 
       # Deploy Image
       - name: Deploy Image
