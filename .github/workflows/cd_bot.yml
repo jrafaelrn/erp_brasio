@@ -36,7 +36,7 @@ jobs:
 
       # Configure Docker GCP
       - name: Configure Docker GCP
-        run: gcloud auth configure-docker gcr.io
+        run: gcloud auth configure-docker gcr.io -y
 
       # Build Image
       - name: Build Image
