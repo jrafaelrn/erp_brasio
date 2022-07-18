@@ -25,7 +25,7 @@ jobs:
         
       # Authenticate with GCP
       - name: AuthGCP
-        uses: 'google-github-actions/auth@v0'
+        uses: 'google-github-actions/gcloud@v0'
         with:
           credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
@@ -36,7 +36,7 @@ jobs:
 
       # Configure Docker GCP
       - name: Configure Docker GCP
-        run: gcloud auth configure-docker gcr.io --quiet
+        run: gcloud auth configure-docker gcr.io
 
       # Build Image
       - name: Build Image
