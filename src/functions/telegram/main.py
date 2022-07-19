@@ -1,6 +1,6 @@
 from __future__ import print_function
 from dataclasses import field, fields
-import os, sys, json, requests
+import os, sys, json, requests, base64
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(f'{__file__}'))))
 
@@ -106,3 +106,37 @@ class telegram(object):
         link_resp = f'{self.url_base}sendMessage?chat_id={chat_id}&text=Escolha uma opção:&reply_markup={data}'
         response = requests.get(link_resp, headers=headers, json=data)
         print(f'\t ==>> {response.text}')
+
+
+
+# Call from Cloud Functions
+
+def check(event, context):
+
+    if type(event) != str:
+        payload = base64.b64decode(event['data']).decode('utf-8')
+    else:
+        payload = event
+
+        response = None
+
+    msg_type = payload['message_type']
+    msg_content = payload['content']
+    msg_chat_id = payload['chat_id']
+
+    # Create Telegram
+    telegram_bot = telegram()
+
+    if msg_type == 'text':
+
+        try:
+            response = telegram_bot.sendMessage(msg_content, msg_chat_id)
+        except Exception as e:
+            print(e)
+            response = 'Ocorreu um erro ao enviar a mensagem.'
+    
+    else:
+        response = 'Invalid payload'
+
+    print(f'Response: {response}')
+    return response

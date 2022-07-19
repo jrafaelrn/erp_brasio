@@ -38,6 +38,7 @@ jobs:
       - id: 'deploy-telegram'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
+          source_dir: 'src/functions/telegram/'
+          entry_point: 'check'
           name: 'function-telegram'
           runtime: 'python39'
-          source_dir: 'src/functions/telegram/'
