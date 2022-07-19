@@ -45,4 +45,4 @@ jobs:
         with:
           name: 'function-telegram'
           runtime: 'python39'
-          source_dir: './src/functions/telegram/telegram.py'
+          source_dir: 'src/functions/telegram/'
