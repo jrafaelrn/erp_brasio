@@ -1,6 +1,9 @@
 from __future__ import print_function
 from dataclasses import field, fields
-import os, sys, json, requests, base64
+from flask import escape
+
+import os, sys, json, requests, base64, functions_framework
+
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(f'{__file__}'))))
 
@@ -111,18 +114,16 @@ class telegram(object):
 
 # Call from Cloud Functions
 
-def check(event, context):
+def check(request):
 
-    if type(event) != str:
-        payload = base64.b64decode(event['data']).decode('utf-8')
-    else:
-        payload = event
+    request_json = request.get_json(silent=True)
+    request_args = request.args
+    
+    response = None
 
-        response = None
-
-    msg_type = payload['message_type']
-    msg_content = payload['content']
-    msg_chat_id = payload['chat_id']
+    msg_type = request_json['message_type']
+    msg_content = request_json['content']
+    msg_chat_id = request_json['chat_id']
 
     # Create Telegram
     telegram_bot = telegram()
