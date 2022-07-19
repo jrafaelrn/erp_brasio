@@ -4,12 +4,18 @@ import os, sys, json, requests
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(f'{__file__}'))))
 
-from credentials import keys
+
+
+try:
+    from credentials import keys
+    TELEGRAM_API_KEY = keys.TELEGRAM_API_KEY 
+except ImportError:
+    print('No credentials.py file found.')
 
 
 class telegram(object):
 
-    url_base = f'https://api.telegram.org/bot{keys.TELEGRAM_API_KEY}/'
+    url_base = f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/'
     
 
     def get_messages_by_id(self, update_id):
