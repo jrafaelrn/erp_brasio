@@ -4,7 +4,7 @@ COPY . /app
 
 WORKDIR /app
 
-RUN mkdir credentials
+RUN ls -la
 RUN pip install requests
 
 COPY ./credentials/keys.py /app/credentials/keys.py
