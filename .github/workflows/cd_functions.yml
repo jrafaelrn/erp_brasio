@@ -36,7 +36,7 @@ jobs:
       - id: 'deploy-sales'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
-          source_dir: '/src/functions/check_sales/sales.py'
+          source_dir: 'src/functions/check_sales/sales.py'
           name: 'function-check-sales-day'
           runtime: 'python39'
       
