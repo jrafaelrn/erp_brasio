@@ -70,10 +70,11 @@ class telegram(object):
 
     def sendMessage(self, content, chat_id):
 
-        #print(f'Enviando mensagem Texto: {mensagem}')
+        print(f'Sending message: {content} - to chat: {chat_id}')
         link_resp = f'{self.url_base}sendMessage?chat_id={chat_id}&text={content}'
         resp = requests.get(link_resp)
         print(f'\tResponse ==>> {resp.content}')
+        return resp
 
 
     
@@ -144,5 +145,5 @@ def check(request):
     else:
         response = 'Invalid payload'
 
-    print(f'Response: {response}')
+    print(f'Response Final ==>> {response}')
     return response
