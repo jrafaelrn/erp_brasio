@@ -2,7 +2,7 @@ name: 'CD - GCP - Cloud Run'
 
 on:
   push:
-    branches: [ "master", "telegram_implementation" ]
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
