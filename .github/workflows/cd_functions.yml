@@ -27,12 +27,6 @@ jobs:
         with:
           credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
 
-      - name: 'PWD'
-        run: pwd
-
-      - name: 'ls'
-        run: ls
-
       - id: 'deploy-sales'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
