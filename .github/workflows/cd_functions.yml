@@ -9,7 +9,9 @@ on:
 
 jobs:
 
+  name: 'Deploy to GCP Cloud Functions'
   runs-on: ubuntu-latest
+  environment: prod
   env:
     GOOGLE_SERVICE_ACCOUNT_KEY : ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
 
