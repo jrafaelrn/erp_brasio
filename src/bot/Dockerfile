@@ -4,6 +4,9 @@ COPY . /app
 
 WORKDIR /app
 
+RUN mkdir credentials
 RUN pip install requests
+
+COPY ./credentials/keys.py /app/credentials/keys.py
 
 CMD ["python", "main.py"]
