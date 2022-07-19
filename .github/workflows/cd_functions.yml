@@ -44,6 +44,6 @@ jobs:
         with:
           source_dir: 'src/functions/telegram/'
           entry_point: 'check'
-          secret_environment_variables: 'TELEGRAM_API_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/TELEGRAM_API_KEY/versions/latest'
+          secret_environment_variables: 'TELEGRAM_API_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/TELEGRAM_API_KEY/versions/'
           name: 'function-telegram'
           runtime: 'python39'
