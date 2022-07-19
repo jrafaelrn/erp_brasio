@@ -37,8 +37,8 @@ def start_listener():
 
                 print('Connection closed.')
         
-        time.sleep(1)
-        print_keep_alive()
+        time.sleep(10)
+        print('Keep alive...')
 
 
 
@@ -68,10 +68,4 @@ def send_message(content, chat_id):
         print(f'Error sending message: {e}')
         return False
 
-
-
-def print_keep_alive():
-
-    # Check each 5 min
-    if time.time() % 60 == 0:
-        print('Keep alive...')
+        
