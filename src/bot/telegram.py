@@ -39,7 +39,16 @@ class telegram(object):
 
 
     def __init__(self):
+
         TELEGRAM_API_KEY = get_api_key()
+
+        if TELEGRAM_API_KEY is None:
+            print('No API key found.')
+            return
+        else:
+            print(f'API key found!')
+
+
         self.url_base = f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/'
 
 
