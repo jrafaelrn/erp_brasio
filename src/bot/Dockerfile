@@ -6,4 +6,6 @@ WORKDIR /app
 
 RUN pip install requests
 
+ENV PORT 47221
+
 CMD ["python", "main.py"]
