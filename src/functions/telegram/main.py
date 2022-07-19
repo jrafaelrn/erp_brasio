@@ -120,6 +120,9 @@ def check(request):
 
     request_json = request.get_json(silent=True)
     request_args = request.args
+
+    print(f'Request jSON: {request_json}')
+    print(f'Request ARGS: {request_args}')
     
     response = None
 
