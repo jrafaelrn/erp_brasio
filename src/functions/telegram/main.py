@@ -8,7 +8,7 @@ import os, sys, json, requests, base64, functions_framework
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(f'{__file__}'))))
 
 try:
-    from credentials.keys import TELEGRAM_API_KEY
+    #from credentials.keys import TELEGRAM_API_KEY
     from credentials import keys   
 except ImportError:
     print('No credentials.py file found.')
@@ -24,14 +24,14 @@ def get_api_key():
             api_key = keys.TELEGRAM_API_KEY 
             
         except Exception as e:
-            print(f'Error: {e}')
+            print(f'Error - Get KEY from file: {e}')
             api_key = None
             
         secret_google_manager = os.environ.get("TELEGRAM_API_KEY")
         api_key = json.loads(secret_google_manager)['TELEGRAM_API_KEY']
 
     except Exception as e:
-        print(f'Error: {e}')    
+        print(f'Error - Get KEY from environment: {e}')    
         api_key = None
 
     return api_key
@@ -42,6 +42,7 @@ def get_api_key():
 
 class telegram(object):
 
+    url_base = 'https://api.telegram.org/bot'
 
     def __init__(self):
 
@@ -54,7 +55,7 @@ class telegram(object):
             print(f'API key found!')
 
 
-        self.url_base = f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/'
+        self.url_base = f'{self.url_base}{TELEGRAM_API_KEY}/'
 
 
 
