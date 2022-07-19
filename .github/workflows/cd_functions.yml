@@ -3,8 +3,6 @@ name: 'CD - GCP - Cloud Functions'
 on:
   push:
     branches: [ "master", "telegram_implementation" ]
-  pull_request:
-    branches: [ "master" ]
 
 
 jobs:
