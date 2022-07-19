@@ -44,6 +44,6 @@ jobs:
         with:
           source_dir: 'src/functions/telegram/'
           entry_point: 'check'
-          secret_environment_variables: TELEGRAM_API_KEY=
+          secret_environment_variables: TELEGRAM_API_KEY=${{ secrets.TELEGRAM_API_KEY }}
           name: 'function-telegram'
           runtime: 'python39'
