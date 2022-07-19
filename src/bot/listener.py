@@ -2,7 +2,7 @@ from ast import ImportFrom
 import time, socket, telegram
 
 
-HOST = '127.0.0.1'
+HOST = '0.0.0.0'
 PORT = 47221
 
 
@@ -47,8 +47,8 @@ def handle_message(data):
     chat_id = data['chat_id']
 
 
-    if msg_type == 'text':
-        return send_message(content, chat_id)
+    #if msg_type == 'text':
+    return send_message(content, chat_id)
 
 
 
