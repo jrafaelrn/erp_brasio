@@ -10,30 +10,35 @@ def start_listener():
 
     print('Starting listener...')
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
+    while True:
 
-        soc.bind((HOST, PORT))
-        soc.listen()
-        conn, addr = soc.accept()
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
 
-        with conn:
+            soc.bind((HOST, PORT))
+            soc.listen()
+            conn, addr = soc.accept()
 
-            print(f'Connected by {addr}')
+            with conn:
 
-            while True:
-                data = conn.recv(1024)
-                if not data:
-                    break
-                data_decoded = data.decode('utf-8')
-                print(data_decoded)
-                time.sleep(1)
+                print(f'Connected by {addr}')
 
-                if handle_message(data_decoded):
-                    conn.sendall('OK')
-                else:
-                    conn.sendall('ERROR')
+                while True:
+                    data = conn.recv(1024)
+                    if not data:
+                        break
+                    data_decoded = data.decode('utf-8')
+                    print(data_decoded)
+                    time.sleep(1)
 
-            print('Connection closed.')
+                    if handle_message(data_decoded):
+                        conn.sendall('OK')
+                    else:
+                        conn.sendall('ERROR')
+
+                print('Connection closed.')
+        
+        time.sleep(1)
+        print_keep_alive()
 
 
 
@@ -63,3 +68,10 @@ def send_message(content, chat_id):
         print(f'Error sending message: {e}')
         return False
 
+
+
+def print_keep_alive():
+
+    # Check each 5 min
+    if time.time() % 300 == 0:
+        print('Keep alive...')
