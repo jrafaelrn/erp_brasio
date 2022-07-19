@@ -27,7 +27,7 @@ jobs:
         with:
           credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
 
-      - nmae: 'PWD'
+      - name: 'PWD'
         run: pwd
 
       - name: 'ls'
