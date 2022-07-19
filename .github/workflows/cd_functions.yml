@@ -9,23 +9,25 @@ on:
 
 jobs:
 
-  name: 'Deploy to GCP Cloud Functions'
-  runs-on: ubuntu-latest
-  environment: prod
-  env:
-    GOOGLE_SERVICE_ACCOUNT_KEY : ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+  deploy:
 
-  job_id:
-    steps:
-    - uses: 'actions/checkout@v3'
+    name: 'Deploy to GCP Cloud Functions'
+    runs-on: ubuntu-latest
+    environment: prod
+    env:
+      GOOGLE_SERVICE_ACCOUNT_KEY : ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
 
-    - id: 'auth'
-      uses: 'google-github-actions/auth@v0'
-      with:
-        credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
+    job_id:
+      steps:
+      - uses: 'actions/checkout@v3'
 
-    - id: 'deploy'
-      uses: 'google-github-actions/deploy-cloud-functions@v0'
-      with:
-        name: 'function-check-sales-day'
-        runtime: 'python39'
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
+
+      - id: 'deploy'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          name: 'function-check-sales-day'
+          runtime: 'python39'
