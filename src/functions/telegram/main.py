@@ -15,24 +15,26 @@ except ImportError:
 
 
 
-def get_api_key(self):
+def get_api_key():
+
+    api_key = None
     
     try:
-
-        secret_google_manager = os.environ.get("TELEGRAM_API_KEY")
-        api_key = json.loads(secret_google_manager)['TELEGRAM_API_KEY']
-        return api_key
-
         try:
             api_key = keys.TELEGRAM_API_KEY 
-            return api_key
+            
         except Exception as e:
             print(f'Error: {e}')
-            return None
+            api_key = None
             
+        secret_google_manager = os.environ.get("TELEGRAM_API_KEY")
+        api_key = json.loads(secret_google_manager)['TELEGRAM_API_KEY']
+
     except Exception as e:
         print(f'Error: {e}')    
-        return None
+        api_key = None
+
+    return api_key
 
 
 
