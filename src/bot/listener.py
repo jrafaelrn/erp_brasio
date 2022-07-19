@@ -73,5 +73,5 @@ def send_message(content, chat_id):
 def print_keep_alive():
 
     # Check each 5 min
-    if time.time() % 300 == 0:
+    if time.time() % 60 == 0:
         print('Keep alive...')
