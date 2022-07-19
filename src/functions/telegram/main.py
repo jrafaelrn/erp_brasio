@@ -146,4 +146,4 @@ def check(request):
         response = 'Invalid payload'
 
     print(f'Response Final ==>> {response}')
-    return response
+    return str(response.text)
