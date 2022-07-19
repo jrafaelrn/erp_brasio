@@ -27,8 +27,7 @@ def get_api_key():
             print(f'Error - Get KEY from file: {e}')
             api_key = None
             
-        secret_google_manager = os.environ.get("TELEGRAM_API_KEY")
-        api_key = json.loads(secret_google_manager)['TELEGRAM_API_KEY']
+        api_key = os.environ.get("TELEGRAM_API_KEY")
 
     except Exception as e:
         print(f'Error - Get KEY from environment: {e}')    
