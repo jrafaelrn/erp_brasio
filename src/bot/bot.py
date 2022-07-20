@@ -1,13 +1,14 @@
-import time, requests, json
+import time, requests, json, os
 
 
 def start_bot():
 
     print('Starting bot...')
+    update_id = None
 
     while True:
            
-            atualizacao = self.msg.get_messages_by_id(self.update_id)
+            atualizacao = get_messages_by_id(update_id)
             dados = atualizacao['result']
 
             if dados:
@@ -20,12 +21,12 @@ def start_bot():
                         mensagem = str(dado['message']['text'])
                         nome = dado['message']['chat']['first_name']
                         username = dado['message']['chat']['username']
-                        msg = f'Mensagem Recebida: [{mensagem}] - Chat ID: {self.chat_id} - Nome: {nome} - Update ID: {self.update_id} - Username: {username}'
+                        msg = f'Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
                         print(msg)                     
 
 
-                        if security.validate(username):
-                            interagir(mensagem)
+                        if validate(username):
+                            reply(mensagem, chat_id)
                         else:
                             msg.enviarMensagem('Usuário não autorizado!', chat_id)
 
@@ -44,3 +45,80 @@ def get_messages_by_id(self, update_id):
         link_request += f'&offset={update_id + 1}'
     resp = requests.get(link_request)
     return json.loads(resp.content)
+
+
+##############################################
+#                  SECURITY                  #
+##############################################
+
+def get_users():
+
+    api_key = None
+    
+    try:            
+        api_key = os.environ.get("USERS")
+
+    except Exception as e:
+        print(f'Error - Get KEY from environment: {e}')    
+        api_key = None
+
+    return api_key
+
+
+def validate(self, user):
+
+    users = get_users()
+
+    if user in users:
+        return True
+    else:
+        print(f'\nUsuário {user} não autorizado!')
+        return False
+
+
+
+##############################################
+#                REPLY MESSAGE               #
+##############################################
+
+def reply(message, chat_id):
+
+    message = message.lower()
+    reply_message = get_reply(message)
+
+    send_message(reply_message, chat_id)
+
+
+
+def get_reply(message):
+
+    if message == '/start' or message == 'menu':
+        return 'Bem vindo ao bot!'
+    elif message == '/help':
+        return 'Comandos disponíveis: /start'
+    elif message == '/stop':
+        return 'Bot desligado!'
+    else:
+        return 'Comand not found! Try: MENU'
+
+
+
+def send_message(message, chat_id):
+
+    REGION = os.environ.get("REGION")
+    FUNCTION_NAME = 'function-telegram'
+
+    # DATA
+    data = {
+        'message_type': 'text',
+        'content' : message,
+        'chat_id': chat_id
+    }
+
+    link = f'https://{REGION}.cloudfunctions.net/{FUNCTION_NAME}\" -H \"Content-Type:application/json\" --data \'{data}'
+    resp = requests.post(link)
+
+    if resp.status_code == 200:
+        print(f'\nMessage successfully sent to chat ID: {chat_id}')
+    else:
+        print(f'\nError while sending message to chat ID: {chat_id} - {resp.status_code} - {resp.text}')

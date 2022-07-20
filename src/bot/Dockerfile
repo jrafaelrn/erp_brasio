@@ -1,11 +1,8 @@
 FROM python:3.9
 
 COPY . /app
-
 WORKDIR /app
 
 RUN pip install requests
-
-ENV PORT 47221
 
 CMD ["python", "main.py"]
