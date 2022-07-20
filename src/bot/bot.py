@@ -1,5 +1,6 @@
 import time, requests, json, os
 
+first_time = True
 
 def start_bot():
 
@@ -42,12 +43,18 @@ def get_messages_by_id(update_id):
 
     API_KEY = get_key_from_os('TELEGRAM_API_KEY')
     url_base = f'https://api.telegram.org/bot{API_KEY}/'
-    link_request = f'{url_base}getUpdates?timeout=5'
 
-    if update_id:
-        link_request += f'&offset={update_id + 1}'
+    if first_time:
+        link_request = f'{url_base}getUpdates'
+        first_time = False
     
-    print(f'\nLink request: {link_request}')    
+    else:
+        link_request = f'{url_base}getUpdates?timeout=5'
+
+        if update_id:
+            link_request += f'&offset={update_id + 1}'
+    
+    #print(f'\nLink request: {link_request}')    
     resp = requests.get(link_request)
     
     print(f'Response: {resp.status_code} - {resp.text}')
