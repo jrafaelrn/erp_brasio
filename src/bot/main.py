@@ -1,6 +1,5 @@
 from threading import Thread
-from socket import *
-import bot, os, time
+import bot, os, time, socket
 
 
 def listen():
