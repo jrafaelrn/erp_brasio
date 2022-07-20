@@ -29,7 +29,7 @@ def start_bot():
                         if validate(username):
                             reply(mensagem, chat_id)
                         else:
-                            msg.enviarMensagem('Usuário não autorizado!', chat_id)
+                            reply('Usuário não autorizado!', chat_id)
 
                     except Exception as e:
                         print(f'\nErro: {e}')
@@ -80,7 +80,7 @@ def get_key_from_os(KEY):
     return api_key
 
 
-def validate(self, user):
+def validate(user):
 
     users = get_key_from_os('USERS')
 
@@ -122,6 +122,7 @@ def send_message(message, chat_id):
 
     REGION = os.environ.get("REGION")
     FUNCTION_NAME = 'function-telegram'
+    GCP_PROJECT_ID =  os.environ.get("GCP_PROJECT_ID")
 
     # DATA
     data = {
@@ -130,15 +131,13 @@ def send_message(message, chat_id):
         'chat_id': chat_id
     }
 
-    link = f'https://{REGION}.cloudfunctions.net/{FUNCTION_NAME}\" -H \"Content-Type:application/json\" --data \'{data}'
-    resp = requests.post(link)
+    data = json.dumps(data)
+    headers = {'Content-Type': 'application/json'}
+    link = f'https://{REGION}-{GCP_PROJECT_ID}.cloudfunctions.net/{FUNCTION_NAME}'
+
+    resp = requests.post(link, data = data, headers = headers)
 
     if resp.status_code == 200:
         print(f'\nMessage successfully sent to chat ID: {chat_id}')
     else:
         print(f'\nError while sending message to chat ID: {chat_id} - {resp.status_code} - {resp.text}')
-
-
-if __name__ == '__main__':
-    msg = get_messages_by_id( None)
-    msg = get_messages_by_id( None)
