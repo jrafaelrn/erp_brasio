@@ -4,14 +4,35 @@ import bot, os, time
 
 
 def listen():
-    
-    s = socket(AF_INET, SOCK_STREAM)
-    s.bind(('0.0.0.0', 8080))
-    s.listen(1)
+
+    HOST = '0.0.0.0'
+    PORT = 8080
     
     while True:
-        print('\nWaiting for connection...')
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
+
+            soc.bind((HOST, PORT))
+            soc.listen()
+            conn, addr = soc.accept()
+
+            with conn:
+
+                print(f'Connected by {addr}')
+
+                while True:
+                    data = conn.recv(1024)
+                    if not data:
+                        break
+                    data_decoded = data.decode('utf-8')
+                    print(data_decoded)
+                    time.sleep(1)
+                    conn.sendall(200)
+
+                print('Connection closed.')
+        
         time.sleep(10)
+        print('Keep alive...')
 
 
 if __name__ == '__main__':
