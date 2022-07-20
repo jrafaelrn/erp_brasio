@@ -29,12 +29,7 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
 
       - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v0'
-
-      
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
-      
+        uses: 'google-github-actions/setup-gcloud@v0'    
       
 
       # Configure Docker GCP
@@ -51,6 +46,6 @@ jobs:
 
       # Deploy Image
       - name: Deploy Image
-        run: gcloud run deploy bot --image $IMAGE_NAME --max-instances 1 --region us-central1
+        run: gcloud run deploy bot --image $IMAGE_NAME --max-instances 1 --region us-central1 --timeout 2m
 
   
