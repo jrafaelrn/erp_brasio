@@ -8,14 +8,13 @@ def start_bot():
 
     while True:
            
-        atualizacao = get_messages_by_id(update_id)
-        dados = atualizacao['result']
+        try:
 
-        if dados:
+            atualizacao = get_messages_by_id(update_id)
+            dados = atualizacao['result']
 
-            for dado in dados:
-
-                try:
+            if dados:
+                for dado in dados:
 
                     update_id = dado['update_id']
                     chat_id = dado['message']['from']['id']
@@ -30,9 +29,9 @@ def start_bot():
                     else:
                         reply('Usuário não autorizado!', chat_id)
 
-                except Exception as e:
-                    print(f'\nErro: {e}')
-                    continue
+        except Exception as e:
+            print(f'\nErro: {e}')
+            continue
 
         time.sleep(3)
 
