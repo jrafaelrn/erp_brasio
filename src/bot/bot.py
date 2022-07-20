@@ -48,6 +48,7 @@ def get_messages_by_id(update_id):
         link_request += f'&offset={update_id + 1}'
     
     resp = requests.get(link_request)
+    print(f'Response: {resp.status_code} - {resp.text}')
     return json.loads(resp.content)
 
 
