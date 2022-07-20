@@ -46,6 +46,6 @@ jobs:
 
       # Deploy Image
       - name: Deploy Image
-        run: gcloud run deploy bot --image $IMAGE_NAME --max-instances 1 --region us-central1 --timeout 2m
+        run: gcloud run deploy bot --image $IMAGE_NAME --min-instances 1 --max-instances 1 --region us-central1 --timeout 2m
 
   
