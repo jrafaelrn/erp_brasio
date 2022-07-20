@@ -1,6 +1,5 @@
 import time, requests, json, os
 
-global first_time
 first_time = True
 
 def start_bot():
@@ -44,6 +43,7 @@ def get_messages_by_id(update_id):
 
     API_KEY = get_key_from_os('TELEGRAM_API_KEY')
     url_base = f'https://api.telegram.org/bot{API_KEY}/'
+    global first_time
 
     if first_time:
         link_request = f'{url_base}getUpdates'
@@ -137,3 +137,8 @@ def send_message(message, chat_id):
         print(f'\nMessage successfully sent to chat ID: {chat_id}')
     else:
         print(f'\nError while sending message to chat ID: {chat_id} - {resp.status_code} - {resp.text}')
+
+
+if __name__ == '__main__':
+    msg = get_messages_by_id( None)
+    msg = get_messages_by_id( None)
