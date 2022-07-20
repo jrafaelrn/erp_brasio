@@ -1,6 +1,5 @@
 import time, requests, json, os
 
-first_time = True
 
 def start_bot():
 
@@ -9,33 +8,33 @@ def start_bot():
 
     while True:
            
-            atualizacao = get_messages_by_id(update_id)
-            dados = atualizacao['result']
+        atualizacao = get_messages_by_id(update_id)
+        dados = atualizacao['result']
 
-            if dados:
+        if dados:
 
-                for dado in dados:
+            for dado in dados:
 
-                    try:
-                        update_id = dado['update_id']
-                        chat_id = dado['message']['from']['id']
-                        mensagem = str(dado['message']['text'])
-                        nome = dado['message']['chat']['first_name']
-                        username = dado['message']['chat']['username']
-                        msg = f'Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
-                        print(msg)                     
+                try:
 
+                    update_id = dado['update_id']
+                    chat_id = dado['message']['from']['id']
+                    mensagem = str(dado['message']['text'])
+                    nome = dado['message']['chat']['first_name']
+                    username = dado['message']['chat']['username']
+                    msg = f'Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
+                    print(msg)                     
 
-                        if validate(username):
-                            reply(mensagem, chat_id)
-                        else:
-                            reply('Usuário não autorizado!', chat_id)
+                    if validate(username):
+                        reply(mensagem, chat_id)
+                    else:
+                        reply('Usuário não autorizado!', chat_id)
 
-                    except Exception as e:
-                        print(f'\nErro: {e}')
-                        continue
+                except Exception as e:
+                    print(f'\nErro: {e}')
+                    continue
 
-            time.sleep(3)
+        time.sleep(3)
 
 
 
