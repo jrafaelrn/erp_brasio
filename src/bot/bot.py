@@ -42,7 +42,7 @@ def get_messages_by_id(update_id):
 
     API_KEY = get_key_from_os('TELEGRAM_API_KEY')
     url_base = f'https://api.telegram.org/bot{API_KEY}/'
-    link_request = f'{url_base}getUpdates?timeout=50'
+    link_request = f'{url_base}getUpdates?timeout=5'
 
     if update_id:
         link_request += f'&offset={update_id + 1}'
