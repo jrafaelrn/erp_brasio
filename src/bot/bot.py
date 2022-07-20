@@ -38,11 +38,15 @@ def start_bot():
 
 
 
-def get_messages_by_id(self, update_id):
+def get_messages_by_id(update_id):
 
-    link_request = f'{self.url_base}getUpdates?timeout=50'
+    API_KEY = get_key_from_os('TELEGRAM_API_KEY')
+    url_base = f'https://api.telegram.org/bot{API_KEY}/'
+    link_request = f'{url_base}getUpdates?timeout=50'
+
     if update_id:
         link_request += f'&offset={update_id + 1}'
+    
     resp = requests.get(link_request)
     return json.loads(resp.content)
 
@@ -51,12 +55,12 @@ def get_messages_by_id(self, update_id):
 #                  SECURITY                  #
 ##############################################
 
-def get_users():
+def get_key_from_os(KEY):
 
     api_key = None
     
     try:            
-        api_key = os.environ.get("USERS")
+        api_key = os.environ.get(KEY)
 
     except Exception as e:
         print(f'Error - Get KEY from environment: {e}')    
@@ -67,7 +71,7 @@ def get_users():
 
 def validate(self, user):
 
-    users = get_users()
+    users = get_key_from_os('USERS')
 
     if user in users:
         return True
