@@ -30,7 +30,7 @@ def start_bot():
                         reply('Usuário não autorizado!', chat_id)
 
         except Exception as e:
-            print(f'\nErro: {e}')
+            print(f'Erro: {e}')
             continue
 
         time.sleep(3)
@@ -47,10 +47,10 @@ def get_messages_by_id(update_id):
     if update_id:
         link_request += f'&offset={update_id + 1}'
     
-    print(f'\nLink request: {link_request}')  
-    print(f'\nRequesting messages... Time Stamp: {time.strftime("%H:%M:%S")}'))  
+    print(f'Link request: {link_request}')  
+    print(f'Requesting messages... Time Stamp: {time.strftime("%H:%M:%S")}')  
     resp = requests.get(link_request)
-    print(f'\nRequest finished! Time Stamp: {time.strftime("%H:%M:%S")}')
+    print(f'Request finished! Time Stamp: {time.strftime("%H:%M:%S")}')
     
     print(f'Response: {resp.status_code} - {resp.text}')
     return json.loads(resp.content)
@@ -81,7 +81,7 @@ def validate(user):
     if user in users:
         return True
     else:
-        print(f'\nUsuário {user} não autorizado!')
+        print(f'Usuário {user} não autorizado!')
         return False
 
 
@@ -132,6 +132,6 @@ def send_message(message, chat_id):
     resp = requests.post(link, data = data, headers = headers)
 
     if resp.status_code == 200:
-        print(f'\nMessage successfully sent to chat ID: {chat_id}')
+        print(f'Message successfully sent to chat ID: {chat_id}')
     else:
-        print(f'\nError while sending message to chat ID: {chat_id} - {resp.status_code} - {resp.text}')
+        print(f'Error while sending message to chat ID: {chat_id} - {resp.status_code} - {resp.text}')
