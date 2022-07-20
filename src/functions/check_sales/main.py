@@ -168,15 +168,14 @@ def get_api_key():
     api_key = None
     
     try:
-
+        
         try:
             api_key = keys.GOOGLE_SERVICE_ACCOUNT_KEY 
             
         except Exception as e:
             print(f'Error: {e}')
             
-        secret_google_manager = os.environ.get("GOOGLE_SERVICE_ACCOUNT_KEY")
-        api_key = json.loads(secret_google_manager)['GOOGLE_SERVICE_ACCOUNT_KEY']
+        api_key = os.environ.get("GOOGLE_SERVICE_ACCOUNT_KEY")
 
     except Exception as e:
         print(f'Error: {e}')
