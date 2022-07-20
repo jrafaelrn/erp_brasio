@@ -58,16 +58,6 @@ class telegram(object):
 
 
 
-    def get_messages_by_id(self, update_id):
-
-        link_request = f'{self.url_base}getUpdates?timeout=50'
-        if update_id:
-            link_request += f'&offset={update_id + 1}'
-        resp = requests.get(link_request)
-        return json.loads(resp.content)
-
-
-
     def sendMessage(self, content, chat_id):
 
         print(f'Sending message: {content} - to chat: {chat_id}')
