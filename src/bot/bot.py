@@ -1,5 +1,6 @@
 import time, requests, json, os
 
+global first_time
 first_time = True
 
 def start_bot():
