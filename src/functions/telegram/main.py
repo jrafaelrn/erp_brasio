@@ -79,9 +79,9 @@ class telegram(object):
 
         for option in options_list.iterrows():
             
-            grupo = option[1]['grupo']
-            fornecedor = option[1]['fornecedor']
-            keyboard_button = f'{grupo} - {fornecedor}'
+            category = option[1]['category']
+            entity = option[1]['entity']
+            keyboard_button = f'{category} - {entity}'
             
             keyboard_button_json = {}
             keyboard_button_json['text'] = keyboard_button
@@ -110,10 +110,7 @@ class telegram(object):
 def check(request):
 
     request_json = request.get_json(silent=True)
-    request_args = request.args
-
     print(f'Request jSON: {request_json}')
-    print(f'Request ARGS: {request_args}')
     
     response = None
 
@@ -132,6 +129,14 @@ def check(request):
             print(e)
             response = 'Ocorreu um erro ao enviar a mensagem.'
     
+    elif msg_type == 'inline':
+            
+            try:
+                response = telegram_bot.send_inline_options(msg_content, msg_chat_id)
+            except Exception as e:
+                print(e)
+                response = 'Ocorreu um erro ao enviar a mensagem inline.'
+
     else:
         response = 'Invalid payload'
 

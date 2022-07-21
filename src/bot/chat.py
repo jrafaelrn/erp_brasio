@@ -1,16 +1,16 @@
-import templateMessage, cloudFunctions
+import templateMessage, cloudFunctions, json
 
 ##############################################
 #               CLOUD FUNCTION               #
 ##############################################
 
-def send_message(message, chat_id):
+def send_message(message_type, message, chat_id):
 
     FUNCTION_NAME = 'function-telegram'
 
     # DATA
     data = {
-        'message_type': 'text',
+        'message_type': message_type,
         'content' : message,
         'chat_id': chat_id
     }
@@ -48,7 +48,7 @@ class chat(object):
         message = message.lower()
         reply_message = self.get_reply(message)
 
-        send_message(reply_message, self.chat_id)
+        send_message('text', reply_message, self.chat_id)
 
 
     # Basead on status and message, return a message
@@ -91,7 +91,7 @@ class chat(object):
             self.status = 'menu'
             return 'Não há pendências! Pode relaxar agora...'
 
-        if self.status == 'menu':
+        if self.status == 'menu' or self.status == 'menu_1_auto':
             return self.menu_1_auto(message, next_pendency)
 
         
@@ -102,7 +102,7 @@ class chat(object):
         self.status = 'menu_1_auto'
         self.pendency_id = next_pendency['ID']
         question = templateMessage.msg_make_question(next_pendency)
-        send_message(question, self.chat_id)
+        send_message('text', question, self.chat_id)
         
         # Get auto classification
         FUNCTION_NAME = 'function-bank-auto-classification'
@@ -112,6 +112,12 @@ class chat(object):
         if len(auto_classification) == 0:
             self.status = 'menu_1_manual'
             return self.menu_1_manual(message)
+        
+        # Get categorys
+        print(auto_classification)
+        send_message('inline', auto_classification, self.chat_id)
+        return "Selecione uma opção..."
+
         
 
 

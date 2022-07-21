@@ -28,13 +28,13 @@ def start_bot():
                     if validate(username):
                         interact(username, chat_id, mensagem)
                     else:
-                        chat.send_message('Usuário não autorizado!', chat_id)
+                        chat.send_message('text', 'Usuário não autorizado!', chat_id)
 
         except Exception as e:
             print(f'Erro: {e}')
             continue
 
-        time.sleep(3)
+        time.sleep(2)
 
 
 
