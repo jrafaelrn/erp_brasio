@@ -46,3 +46,14 @@ jobs:
           name: 'function-telegram'
           runtime: 'python39'
           timeout: '180s'
+
+
+      - id: 'deploy-bank-auto-classification'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/bank_auto_classification/'
+          entry_point: 'check'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          name: 'function-bank-auto-classification'
+          runtime: 'python39'
+          timeout: '180s'
