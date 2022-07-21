@@ -77,7 +77,7 @@ class telegram(object):
         keyboards = []
         keyboard = []
 
-        for option in options_list.iterrows():
+        for option in options_list():
             
             category = option[1]['category']
             entity = option[1]['entity']
