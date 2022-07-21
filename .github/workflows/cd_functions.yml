@@ -53,7 +53,7 @@ jobs:
         with:
           source_dir: 'src/functions/bank_auto_classification/'
           entry_point: 'check'
-          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
           name: 'function-bank-auto-classification'
           runtime: 'python39'
           timeout: '180s'
