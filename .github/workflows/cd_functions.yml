@@ -2,7 +2,7 @@ name: 'CD - GCP - Cloud Functions'
 
 on:
   push:
-    branches: [ "master", "bank-auto-classification" ]
+    branches: [ "master", "func_next_bank_pendency" ]
 
 
 jobs:
