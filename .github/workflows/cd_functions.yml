@@ -2,7 +2,7 @@ name: 'CD - GCP - Cloud Functions'
 
 on:
   push:
-    branches: [ "master", "bot_menu1" ]
+    branches: [ "master", "func_transaction_bd" ]
 
 
 jobs:
@@ -66,5 +66,16 @@ jobs:
           entry_point: 'check'
           secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
           name: 'function-bank-next-pendency'
+          runtime: 'python39'
+          timeout: '180s'
+
+
+      - id: 'deploy-bd-transaction'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/bd_transaction/'
+          entry_point: 'check'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          name: 'function-bd-transaction'
           runtime: 'python39'
           timeout: '180s'
