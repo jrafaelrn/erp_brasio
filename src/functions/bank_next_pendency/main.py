@@ -31,7 +31,7 @@ def get_next_pendency():
         # Ao encontrar um lancamento em branco
         if is_import == '' and not(is_classificado == 1) and valor < 0:
             line_dict = line[1]  
-            print(f'\nFound empty classifications: {line_dict}')     
+            print(f'Found empty classifications - ID: {line_dict["ID"]}')
             return line_dict
 
     return None
@@ -47,6 +47,12 @@ def check(request):
     print(f'Request JSON: {request_json}')
     
     response = get_next_pendency()
-    print(f'Response: {response}')
 
-    return response
+    if response is not None:
+        response_json = json.dumps(response)
+    else:
+        response_json = json.dumps({'error': 'No pendency found'})
+    
+    print(f'Response: {response_json}')
+
+    return response_json
