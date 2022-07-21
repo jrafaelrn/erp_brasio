@@ -78,7 +78,7 @@ class chat(object):
 
     def menu_1(self, message):
 
-        FUNCTION_NAME = 'get-next-pendency-bank'
+        FUNCTION_NAME = 'function-bank-next-pendency'
         DATA = {}
         next_pendency = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
 
@@ -105,7 +105,7 @@ class chat(object):
         send_message(question, self.chat_id)
         
         # Get auto classification
-        FUNCTION_NAME = 'bank-auto-classification'
+        FUNCTION_NAME = 'function-bank-auto-classification'
         DATA = {"description": next_pendency['description']}
         auto_classification = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
         

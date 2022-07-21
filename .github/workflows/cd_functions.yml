@@ -57,3 +57,14 @@ jobs:
           name: 'function-bank-auto-classification'
           runtime: 'python39'
           timeout: '180s'
+
+
+      - id: 'deploy-bank-next-pendency'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/bank_next_pendency/'
+          entry_point: 'check'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          name: 'function-bank-next-pendency'
+          runtime: 'python39'
+          timeout: '180s'
