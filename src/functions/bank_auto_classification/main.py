@@ -5,7 +5,8 @@ import pandas as pd
 def open_bd_bank():
 
     service_account = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
-    sa = gspread.service_account_from_dict(service_account)
+    service_account_dict = json.loads(service_account)
+    sa = gspread.service_account_from_dict(service_account_dict)
     bd = sa.open("bd_bot")
     bd_sheet = bd.worksheet('bank')
     bd_pd = pd.DataFrame(bd_sheet.get_all_records())
