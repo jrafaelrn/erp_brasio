@@ -45,7 +45,7 @@ def get_messages_by_id(update_id):
     link_request = f'{url_base}getUpdates'
 
     if update_id:
-        link_request += f'&offset={update_id + 1}'
+        link_request += f'?offset={update_id + 1}'
     
     print(f'Link request: {link_request}')  
     resp = requests.get(link_request)

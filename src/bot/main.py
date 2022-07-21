@@ -31,11 +31,11 @@ def listen():
                 print('Connection closed.')
         
         time.sleep(10)
-        print('Keep alive...')
+        print('...Keep alive...')
 
 
 if __name__ == '__main__':
     Thread(target=bot.start_bot).start()
-    Thread(target=listen).start()
+    #Thread(target=listen).start()
     
     print('Bot finished!')
