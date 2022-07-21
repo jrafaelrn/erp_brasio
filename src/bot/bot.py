@@ -1,4 +1,4 @@
-import time, requests, json, os, cloudFunctions
+import time, requests, json, os, chat
 
 
 def start_bot():
@@ -25,9 +25,9 @@ def start_bot():
                     print(msg)                     
 
                     if validate(username):
-                        reply(mensagem, chat_id)
+                        interact(username, chat_id, mensagem)
                     else:
-                        reply('Usuário não autorizado!', chat_id)
+                        chat.send_message('Usuário não autorizado!', chat_id)
 
         except Exception as e:
             print(f'Erro: {e}')
@@ -85,41 +85,18 @@ def validate(user):
 
 
 ##############################################
-#                REPLY MESSAGE               #
+#                  INTERACT
 ##############################################
 
-def reply(message, chat_id):
+def interact(username, chat_id, message):
 
-    message = message.lower()
-    reply_message = get_reply(message)
+    chats = []
 
-    send_message(reply_message, chat_id)
+    for chat in chats:
 
-
-
-def get_reply(message):
-
-    if message == '/start' or message == 'menu':
-        return 'Bem vindo ao bot!'
-    elif message == '/help':
-        return 'Comandos disponíveis: /start'
-    elif message == '/stop':
-        return 'Bot desligado!'
-    else:
-        return 'Comand not found! Try: MENU'
-
-
-
-def send_message(message, chat_id):
-
-    FUNCTION_NAME = 'function-telegram'
-
-    # DATA
-    data = {
-        'message_type': 'text',
-        'content' : message,
-        'chat_id': chat_id
-    }
-
-    # CLOUD FUNCTION
-    cloudFunctions.cloud_function(FUNCTION_NAME, data)
+        if chat.get_chat_id() == chat_id:
+            chat.reply(message)
+        else:
+            new_chat = chat(username, chat_id)
+            new_chat.reply(message)
+            chats.append(new_chat)
