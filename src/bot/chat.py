@@ -92,7 +92,7 @@ class chat(object):
             return 'Não há pendências! Pode relaxar agora...'
 
         if self.status == 'menu':
-            return self.menu_1_auto(message)
+            return self.menu_1_auto(message, next_pendency)
 
         
             
@@ -100,13 +100,13 @@ class chat(object):
     def menu_1_auto(self, message, next_pendency):
         
         self.status = 'menu_1_auto'
-        self.pendency_id = next_pendency['id']
+        self.pendency_id = next_pendency['ID']
         question = templateMessage.msg_make_question(next_pendency)
         send_message(question, self.chat_id)
         
         # Get auto classification
         FUNCTION_NAME = 'function-bank-auto-classification'
-        DATA = {"description": next_pendency['description']}
+        DATA = {"description": next_pendency['DESCRICAO_ORIGINAL']}
         auto_classification = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
         
         if len(auto_classification) == 0:

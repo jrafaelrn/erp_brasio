@@ -29,11 +29,10 @@ def msg_pendency(date, account, description, value):
 
 def msg_make_question(line):
 
-    id = line[1][0]
-    date = line[1][1]
-    account = line[1][2]
-    description = line[1][3]
-    value = line[1][7]
+    date = line['DATA']
+    account = line['CONTA']
+    description = line['DESCRICAO_ORIGINAL']
+    value = line['VALOR']
 
     pendency = msg_pendency(date, account, description, value)
     
