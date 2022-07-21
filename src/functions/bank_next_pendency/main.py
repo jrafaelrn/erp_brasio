@@ -24,8 +24,8 @@ def get_next_pendency():
     for line in bd_bank.iterrows():
 
         is_import = line[1]['STATUS_ERP']
-        is_classificado = line[1][12]
-        value = line[1][7]
+        is_classificado = line[1]['BOT_CLASSIFICATION']
+        value = line[1]["VALOR"]
         valor = float(value)
 
         # Ao encontrar um lancamento em branco
@@ -49,7 +49,7 @@ def check(request):
     response = get_next_pendency()
 
     if response is not None:
-        response_json = json.dumps(response)
+        response_json = response.to_json()
     else:
         response_json = json.dumps({'error': 'No pendency found'})
     
