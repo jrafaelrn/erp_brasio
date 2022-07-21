@@ -53,6 +53,8 @@ def check(request):
     else:
         response_json = json.dumps({'error': 'No pendency found'})
     
+    # Replace slashes
+    response_json = response_json.replace('\\', '')
     print(f'Response: {response_json}')
 
     return response_json
