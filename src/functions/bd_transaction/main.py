@@ -20,14 +20,14 @@ def insert_transaction(date_trx, account, original_description, document, entity
     bd = open_bd_bank()
 
     # Get Max Id fro last row
-    max_id = bd.col_values(1)[-1]
+    max_id = bd['ID'][-1]
     id = int(max_id) + 1
 
     # Append new row
     row = [id, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
 
     #Save BD
-    line = len(bd.col_values(1)) + 1
+    line = len(bd.index) + 1
     for col in range(ord('a'), ord('i') + 1): 
         coluna = chr(col)
         conteudo = row[col - ord('a')]
