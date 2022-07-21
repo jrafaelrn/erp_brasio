@@ -19,8 +19,8 @@ def insert_transaction(date_trx, account, original_description, document, entity
     entity_bank = entity_bank.strip()
     bd = open_bd_bank()
 
-    # Get Max Id fro last row
-    max_id = bd['ID'][-1]
+    # Get MAX_ID from column ID
+    max_id = bd['ID'].max()
     id = int(max_id) + 1
 
     # Append new row
