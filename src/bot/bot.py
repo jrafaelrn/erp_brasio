@@ -1,5 +1,6 @@
 import time, requests, json, os, chat
 
+chats = []
 
 def start_bot():
 
@@ -90,13 +91,22 @@ def validate(user):
 
 def interact(username, chat_id, message):
 
-    chats = []
+    if len(chats) == 0:
+        new_chat = chat.chat(username, chat_id)
+        new_chat.reply(message)
+        chats.append(new_chat)
+    
+    else:
 
-    for chat in chats:
+        for actual_chat in chats:
 
-        if chat.get_chat_id() == chat_id:
-            chat.reply(message)
-        else:
-            new_chat = chat(username, chat_id)
-            new_chat.reply(message)
-            chats.append(new_chat)
+            if actual_chat.get_chat_id() == chat_id:
+                actual_chat.reply(message)
+            else:
+                new_chat = chat.chat(username, chat_id)
+                new_chat.reply(message)
+                chats.append(new_chat)
+
+
+
+start_bot()

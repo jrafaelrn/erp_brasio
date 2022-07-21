@@ -5,7 +5,7 @@ def cloud_function(FUNCTION_NAME, DATA):
     REGION = os.environ.get("REGION")
     GCP_PROJECT_ID =  os.environ.get("GCP_PROJECT_ID")
 
-    data = json.dumps(data)
+    data = json.dumps(DATA)
     headers = {'Content-Type': 'application/json'}
     link = f'https://{REGION}-{GCP_PROJECT_ID}.cloudfunctions.net/{FUNCTION_NAME}'
 
