@@ -1,5 +1,4 @@
-import math
-import os
+import math, os, cloudFunctions
 
 
 def msg_menu():
@@ -35,7 +34,7 @@ def msg_categorys_erp():
     categorias = ''
     contador = 0
 
-    bd = open_bd_consumer_categoria_fornecedor('Categoria')
+    #bd = open_bd_consumer_categoria_fornecedor('Categoria')
 
     for line in bd.iterrows():
         contador += 1
@@ -45,7 +44,8 @@ def msg_categorys_erp():
     return titulo + categorias
 
 
-def mensagem_fornecedores():
+
+def msg_suppliers_erp():
             
     fornecedores = []
     contador = 0
@@ -70,10 +70,11 @@ def mensagem_fornecedores():
     return fornecedores
 
 
-def mensagem_sucesso(categoria, cliente_fornecedor):
+
+def msg_success(category, supplier):
 
     return f'''
     Pendência preenchida com sucesso! \o/
-    Categoria: {categoria}
-    Cliente/Fornecedor: {cliente_fornecedor}
+    Categoria: {category}
+    Cliente/Fornecedor: {supplier}
     '''
