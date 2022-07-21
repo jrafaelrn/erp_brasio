@@ -1,7 +1,7 @@
 name: 'CD - GCP - Cloud Run'
 
-on:
-  push:
+#on:
+  #push:
     #branches: [ "master", "bot" ]
 
 jobs:
