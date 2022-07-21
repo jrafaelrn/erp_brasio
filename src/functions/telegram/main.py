@@ -79,8 +79,8 @@ class telegram(object):
 
         for option in options_list:
             
-            category = option[1]['category']
-            entity = option[1]['entity']
+            category = option['category']
+            entity = option['entity']
             keyboard_button = f'{category} - {entity}'
             
             keyboard_button_json = {}
