@@ -1,4 +1,4 @@
-import time, requests, json, os
+import time, requests, json, os, cloudFunctions
 
 
 def start_bot():
@@ -112,9 +112,7 @@ def get_reply(message):
 
 def send_message(message, chat_id):
 
-    REGION = os.environ.get("REGION")
     FUNCTION_NAME = 'function-telegram'
-    GCP_PROJECT_ID =  os.environ.get("GCP_PROJECT_ID")
 
     # DATA
     data = {
@@ -123,13 +121,5 @@ def send_message(message, chat_id):
         'chat_id': chat_id
     }
 
-    data = json.dumps(data)
-    headers = {'Content-Type': 'application/json'}
-    link = f'https://{REGION}-{GCP_PROJECT_ID}.cloudfunctions.net/{FUNCTION_NAME}'
-
-    resp = requests.post(link, data = data, headers = headers)
-
-    if resp.status_code == 200:
-        print(f'Message successfully sent to chat ID: {chat_id}')
-    else:
-        print(f'Error while sending message to chat ID: {chat_id} - {resp.status_code} - {resp.text}')
+    # CLOUD FUNCTION
+    cloudFunctions.cloud_function(FUNCTION_NAME, data)
