@@ -27,6 +27,18 @@ def msg_pendency(date, account, description, value):
     '''
 
 
+def msg_make_question(line):
+
+    id = line[1][0]
+    date = line[1][1]
+    account = line[1][2]
+    description = line[1][3]
+    value = line[1][7]
+
+    pendency = msg_pendency(date, account, description, value)
+    
+    return pendency
+
 
 def msg_categorys_erp():
 
@@ -68,6 +80,11 @@ def msg_suppliers_erp():
     fornecedores.pop()
 
     return fornecedores
+
+
+
+
+
 
 
 

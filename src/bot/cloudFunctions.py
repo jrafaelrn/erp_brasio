@@ -13,5 +13,7 @@ def cloud_function(FUNCTION_NAME, DATA):
 
     if resp.status_code == 200:
         print(f'Function {FUNCTION_NAME} executed!')
+        return json.loads(resp.content)
     else:
         print(f'Function {FUNCTION_NAME} not executed! - Data: {data}')
+        return None
