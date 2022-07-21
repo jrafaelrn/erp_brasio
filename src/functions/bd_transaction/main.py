@@ -17,7 +17,6 @@ def open_bd_bank():
 def insert_transaction(date_trx, account, original_description, document, entity, type_trx, value, balance):
 
     entity = entity.strip()
-    date_trx = date_trx.strftime('%d/%m/%Y')
     bd = open_bd_bank()
 
     # Get Max Id fro last row
