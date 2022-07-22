@@ -10,24 +10,24 @@ def open_bd_bank():
     sa = gspread.service_account_from_dict(service_account_dict)
     bd = sa.open("bd_bot")
     bd_sheet = bd.worksheet('bank')
-    bd_pd = pd.DataFrame(bd_sheet.get_all_records())
-    return bd_pd
+    return bd_sheet
 
 
 def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance):
 
     entity_bank = entity_bank.strip()
     bd = open_bd_bank()
+    bd_pd = pd.DataFrame(bd.get_all_records())
 
     # Get MAX_ID from column ID
-    max_id = bd['ID'].max()
+    max_id = bd_pd['ID'].max()
     id = int(max_id) + 1
 
     # Append new row
     row = [id, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
 
     #Save BD
-    line = len(bd.index) + 1
+    line = len(bd_pd.index) + 2
     for col in range(ord('a'), ord('i') + 1): 
         coluna = chr(col)
         conteudo = row[col - ord('a')]
