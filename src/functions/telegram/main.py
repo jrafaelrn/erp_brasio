@@ -1,8 +1,9 @@
 from __future__ import print_function
 from dataclasses import field, fields
+from gc import callbacks
 from flask import escape
 
-import os, sys, json, requests, base64, functions_framework
+import os, sys, json, requests, base64
 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(f'{__file__}'))))
@@ -72,7 +73,6 @@ class telegram(object):
 
         headers = {'Content-Type': 'application/json'}
         data = {}
-        data['reply_markup'] = {}
         
         keyboards = []
         keyboard = []
@@ -83,25 +83,24 @@ class telegram(object):
             entity = option['entity']
             keyboard_button = f'{category} - {entity}'
             
-            keyboard_button_json = {}
-            keyboard_button_json['text'] = keyboard_button
+            keyboard_button_json = []
+            keyboard_button_json.append({"text": keyboard_button, "callback_data" : keyboard_button})
             keyboard.append(keyboard_button_json)
         
         # Add last option
-        keyboard_button_json2 = {}
-        keyboard_button_json2['text'] = 'Nova classificação'
+        keyboard_button_json2 = []
+        keyboard_button_json2.append({"text": "Nova classificação", "callback_data" : "Nova classificação"})
         keyboard.append(keyboard_button_json2)
 
         keyboards.append(keyboard)
-        data['keyboard'] = keyboards
-        data['one_time_keyboard'] = True
-        data['resize_keyboard'] = True
+        data["inline_keyboard"] = keyboard
 
+        print(f'Sending inline options: \n{data} - \nto chat: {chat_id}')
         data = json.dumps(data)
 
         link_resp = f'{self.url_base}sendMessage?chat_id={chat_id}&text=Escolha uma opção:&reply_markup={data}'
         response = requests.get(link_resp, headers=headers, json=data)
-        print(f'\t ==>> {response.text}')
+        print(f'\t ==>> {response.text} - {response.status_code}')
 
 
 
@@ -109,8 +108,10 @@ class telegram(object):
 
 def check(request):
 
-    request_json = request.get_json(silent=True)
+    #request_json = request.get_json(silent=True)
+    request_json = json.dumps(request)
     print(f'Request jSON: {request_json}')
+    request_json = json.loads(request_json)
     
     response = None
 
@@ -141,4 +142,14 @@ def check(request):
         response = 'Invalid payload'
 
     print(f'Response Final ==>> {response}')
-    return str(response.text)
+    return response
+
+
+
+if __name__ == '__main__':
+
+    tel = telegram()
+
+    option_list = {'message_type': 'inline', 'content': [{'category': 'Material para escritório', 'entity': 'Kalunga', 'id': 'Material para escritório|Kalunga'}, {'category': 'Outros', 'entity': 'Genéricos', 'id': 'Outros|Genéricos'}, {'category': 'Salários', 'entity': 'Emerson Sampaio Garcia', 'id': 'Salários|Emerson Sampaio Garcia'}, {'category': 'Combustível', 'entity': 'Posto de Gasolina', 'id': 'Combustível|Posto de Gasolina'}, {'category': 'Itens para Cozinha', 'entity': 'Cartão de Crédito - Bruna Nubank', 'id': 'Itens para Cozinha|Cartão de Crédito - Bruna Nubank'}, {'category': 'Aquisição de Insumos', 'entity': 'Supermercado Diversos', 'id': 'Aquisição de Insumos|Supermercado Diversos'}, {'category': 'Marketing e Publicidade', 'entity': 'Genéricos', 'id': 'Marketing e Publicidade|Genéricos'}, {'category': 'Salários', 'entity': 'Bruna Perandini Garcia', 'id': 'Salários|Bruna Perandini Garcia'}, {'category': 'Salários', 'entity': 'Mônica Mariana Perandini Garcia', 'id': 'Salários|Mônica Mariana Perandini Garcia'}, {'category': 'Aquisição de Insumos', 'entity': 'Atacadão Jundiaí', 'id': 'Aquisição de Insumos|Atacadão Jundiaí'}, {'category': 'Marketing e Publicidade', 'entity': 'Mara Cake Fair', 'id': 'Marketing e Publicidade|Mara Cake Fair'}, {'category': 'Telefone Celular Empresarial', 'entity': 'Tim', 'id': 'Telefone Celular Empresarial|Tim'}], 'chat_id': 572312369}
+
+    check(option_list)
