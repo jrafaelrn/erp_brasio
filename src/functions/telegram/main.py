@@ -84,12 +84,16 @@ class telegram(object):
             keyboard_button = f'{category} - {entity}'
             
             keyboard_button_json = []
-            keyboard_button_json.append({"text": keyboard_button, "callback_data" : keyboard_button})
+            keyboard_button_json.append({
+                "text": keyboard_button, 
+                "callback_data" : keyboard_button
+            })
             keyboard.append(keyboard_button_json)
+            
         
         # Add last option
         keyboard_button_json2 = []
-        keyboard_button_json2.append({"text": "Nova classificação", "callback_data" : "Nova classificação"})
+        keyboard_button_json2.append({"text": "Nova classificação", "callback_data" : "new"})
         keyboard.append(keyboard_button_json2)
 
         keyboards.append(keyboard)

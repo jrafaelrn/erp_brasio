@@ -19,7 +19,12 @@ def start_bot():
 
                     update_id = dado['update_id']
                     chat_id = dado['message']['from']['id']
-                    mensagem = str(dado['message']['text'])
+
+                    try:
+                        mensagem = str(dado['message']['text'])
+                    except:
+                        mensagem = str(dado['callback_query']['data'])
+
                     nome = dado['message']['chat']['first_name']
                     username = dado['message']['chat']['username']
                     msg = f'Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
