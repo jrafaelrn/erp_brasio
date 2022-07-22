@@ -87,10 +87,11 @@ def msg_suppliers_erp():
 
 
 
-def msg_success(category, supplier):
+def msg_success(category, supplier, description):
 
     return f'''
     Pendência preenchida com sucesso! \o/
     Categoria: {category}
     Cliente/Fornecedor: {supplier}
+    Descrição: {description}
     '''

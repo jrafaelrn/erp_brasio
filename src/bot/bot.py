@@ -48,7 +48,7 @@ def get_messages_by_id(update_id):
     if update_id:
         link_request += f'?offset={update_id + 1}'
     
-    print(f'Link request: {link_request}')  
+    #print(f'Link request: {link_request}')  
     resp = requests.get(link_request)
     
     print(f'Response: {resp.status_code} - {resp.text}')
@@ -75,6 +75,7 @@ def get_key_from_os(KEY):
 
 def validate(user):
 
+    user = user.lower()
     users = get_key_from_os('USERS')
 
     if user in users:

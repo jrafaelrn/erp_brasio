@@ -95,7 +95,7 @@ class telegram(object):
         keyboards.append(keyboard)
         data['keyboard'] = keyboards
         data['one_time_keyboard'] = True
-        #data['resize_keyboard'] = True
+        data['resize_keyboard'] = True
 
         data = json.dumps(data)
 
