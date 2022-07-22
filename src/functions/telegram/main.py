@@ -89,7 +89,7 @@ class telegram(object):
                 "callback_data" : keyboard_button
             })
             keyboard.append(keyboard_button_json)
-            
+
         
         # Add last option
         keyboard_button_json2 = []
@@ -112,10 +112,8 @@ class telegram(object):
 
 def check(request):
 
-    #request_json = request.get_json(silent=True)
-    request_json = json.dumps(request)
+    request_json = request.get_json(silent=True)
     print(f'Request jSON: {request_json}')
-    request_json = json.loads(request_json)
     
     response = None
 
@@ -155,5 +153,6 @@ if __name__ == '__main__':
     tel = telegram()
 
     option_list = {'message_type': 'inline', 'content': [{'category': 'Material para escritório', 'entity': 'Kalunga', 'id': 'Material para escritório|Kalunga'}, {'category': 'Outros', 'entity': 'Genéricos', 'id': 'Outros|Genéricos'}, {'category': 'Salários', 'entity': 'Emerson Sampaio Garcia', 'id': 'Salários|Emerson Sampaio Garcia'}, {'category': 'Combustível', 'entity': 'Posto de Gasolina', 'id': 'Combustível|Posto de Gasolina'}, {'category': 'Itens para Cozinha', 'entity': 'Cartão de Crédito - Bruna Nubank', 'id': 'Itens para Cozinha|Cartão de Crédito - Bruna Nubank'}, {'category': 'Aquisição de Insumos', 'entity': 'Supermercado Diversos', 'id': 'Aquisição de Insumos|Supermercado Diversos'}, {'category': 'Marketing e Publicidade', 'entity': 'Genéricos', 'id': 'Marketing e Publicidade|Genéricos'}, {'category': 'Salários', 'entity': 'Bruna Perandini Garcia', 'id': 'Salários|Bruna Perandini Garcia'}, {'category': 'Salários', 'entity': 'Mônica Mariana Perandini Garcia', 'id': 'Salários|Mônica Mariana Perandini Garcia'}, {'category': 'Aquisição de Insumos', 'entity': 'Atacadão Jundiaí', 'id': 'Aquisição de Insumos|Atacadão Jundiaí'}, {'category': 'Marketing e Publicidade', 'entity': 'Mara Cake Fair', 'id': 'Marketing e Publicidade|Mara Cake Fair'}, {'category': 'Telefone Celular Empresarial', 'entity': 'Tim', 'id': 'Telefone Celular Empresarial|Tim'}], 'chat_id': 572312369}
-
-    check(option_list)
+    request_json = json.dumps(option_list)
+    
+    check(request_json)

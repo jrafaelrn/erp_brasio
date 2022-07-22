@@ -18,16 +18,19 @@ def start_bot():
                 for dado in dados:
 
                     update_id = dado['update_id']
-                    chat_id = dado['message']['from']['id']
 
                     try:
                         mensagem = str(dado['message']['text'])
+                        chat_id = dado['message']['from']['id']
+                        nome = dado['message']['chat']['first_name']
+                        username = dado['message']['chat']['username']
                     except:
                         mensagem = str(dado['callback_query']['data'])
+                        chat_id = dado['callback_query']['from']['id']
+                        nome = dado['callback_query']['from']['first_name']
+                        username = dado['callback_query']['from']['username']
 
-                    nome = dado['message']['chat']['first_name']
-                    username = dado['message']['chat']['username']
-                    msg = f'Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
+                    msg = f'--->> Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
                     print(msg)                     
 
                     if validate(username):
