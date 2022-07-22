@@ -2,7 +2,6 @@ name: 'CD - GCP - Cloud Functions'
 
 on:
   push:
-    branches: [ "master", "func_transaction_bd" ]
 
 
 jobs:
