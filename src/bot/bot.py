@@ -71,8 +71,8 @@ def start_bot():
                         username = dado['callback_query']['from']['username']
                         query_id = dado['callback_query']['id']
 
-                    msg = f'--->> Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
-                    print(msg)                     
+                    #msg = f'--->> Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
+                    #print(msg)                     
 
                     if validate(username):
                         interact(username, chat_id, mensagem)
@@ -100,7 +100,7 @@ def get_messages_by_id(update_id):
     #print(f'Link request: {link_request}')  
     resp = requests.get(link_request)
     
-    print(f'--->> Response: {resp.status_code} - {resp.text} - Now: {time.strftime("%H:%M:%S")}')
+    print(f'--->> UPDATE: Response: {resp.status_code} - {resp.text} - Now: {time.strftime("%H:%M:%S")}')
     return json.loads(resp.content)
 
 
@@ -141,7 +141,7 @@ def answer_callback_query(query_id):
     url = f'{url_base}{method_url}'
 
     resp = requests.post(url, data = payload)
-    print(f'Response: {resp.status_code} - {resp.text}')
+    print(f'--> ASNWER CALLBACK - Response: {resp.status_code} - {resp.text}')
 
 
 

@@ -4,6 +4,7 @@ src/bot/__pycache__/
 src/functions/check_sales/token.json
 src/client.py
 src/bot/listener.py
+src/functions/telegram/test.py
 
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json

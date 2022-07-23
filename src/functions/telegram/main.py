@@ -65,7 +65,7 @@ class telegram(object):
         link_resp = f'{self.url_base}sendMessage?chat_id={chat_id}&text={content}'
         
         resp = requests.get(link_resp)
-        print(f'\t<<--- Response: {resp.code} - {resp.text}')
+        print(f'\t<<--- Send message - Response: {resp.status_code} - {resp.text}')
         
         if resp.status_code == 200:
             return "OK - Message sent"
@@ -112,7 +112,7 @@ class telegram(object):
 
         link_resp = f'{self.url_base}sendMessage?chat_id={chat_id}&text=Escolha uma opção:&reply_markup={data}'
         response = requests.get(link_resp, headers=headers, json=data)
-        print(f'\<<--- Response: {response.status_code} - {response.text}')
+        print(f'\<<--- Response: {response.status_code}')
 
         if response.status_code == 200:
             return "OK - Message inline sent"
