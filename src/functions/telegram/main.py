@@ -63,9 +63,14 @@ class telegram(object):
 
         print(f'<<--- Sending message: {content} - to chat: {chat_id}')
         link_resp = f'{self.url_base}sendMessage?chat_id={chat_id}&text={content}'
+        
         resp = requests.get(link_resp)
-        print(f'\t<<--- Response ==>> {resp.content}')
-        return resp
+        print(f'\t<<--- Response: {resp.code} - {resp.text}')
+        
+        if resp.status_code == 200:
+            return "OK - Message sent"
+        else:
+            return "Error - Message not sent"
 
 
     
@@ -102,12 +107,17 @@ class telegram(object):
         keyboards.append(keyboard)
         data["inline_keyboard"] = keyboard
 
-        print(f'Sending inline options: \n{data} - \nto chat: {chat_id}')
+        print(f'<<--- Sending inline options: \n{data} - \nto chat: {chat_id}')
         data = json.dumps(data)
 
         link_resp = f'{self.url_base}sendMessage?chat_id={chat_id}&text=Escolha uma opção:&reply_markup={data}'
         response = requests.get(link_resp, headers=headers, json=data)
-        print(f'\t ==>> {response.text} - {response.status_code}')
+        print(f'\<<--- Response: {response.status_code} - {response.text}')
+
+        if response.status_code == 200:
+            return "OK - Message inline sent"
+        else:
+            return "Error - Message inline not sent"
 
 
 
@@ -146,16 +156,5 @@ def check(request):
     else:
         response = 'Invalid payload'
 
-    print(f'Response Final ==>> {response}')
+    print(f'<<--- Response Final--->> {response}')
     return response
-
-
-
-if __name__ == '__main__':
-
-    tel = telegram()
-
-    option_list = {'message_type': 'inline', 'content': [{'category': 'Material para escritório', 'entity': 'Kalunga', 'id': 'Material para escritório|Kalunga'}, {'category': 'Outros', 'entity': 'Genéricos', 'id': 'Outros|Genéricos'}, {'category': 'Salários', 'entity': 'Emerson Sampaio Garcia', 'id': 'Salários|Emerson Sampaio Garcia'}, {'category': 'Combustível', 'entity': 'Posto de Gasolina', 'id': 'Combustível|Posto de Gasolina'}, {'category': 'Itens para Cozinha', 'entity': 'Cartão de Crédito - Bruna Nubank', 'id': 'Itens para Cozinha|Cartão de Crédito - Bruna Nubank'}, {'category': 'Aquisição de Insumos', 'entity': 'Supermercado Diversos', 'id': 'Aquisição de Insumos|Supermercado Diversos'}, {'category': 'Marketing e Publicidade', 'entity': 'Genéricos', 'id': 'Marketing e Publicidade|Genéricos'}, {'category': 'Salários', 'entity': 'Bruna Perandini Garcia', 'id': 'Salários|Bruna Perandini Garcia'}, {'category': 'Salários', 'entity': 'Mônica Mariana Perandini Garcia', 'id': 'Salários|Mônica Mariana Perandini Garcia'}, {'category': 'Aquisição de Insumos', 'entity': 'Atacadão Jundiaí', 'id': 'Aquisição de Insumos|Atacadão Jundiaí'}, {'category': 'Marketing e Publicidade', 'entity': 'Mara Cake Fair', 'id': 'Marketing e Publicidade|Mara Cake Fair'}, {'category': 'Telefone Celular Empresarial', 'entity': 'Tim', 'id': 'Telefone Celular Empresarial|Tim'}], 'chat_id': 572312369}
-    request_json = json.dumps(option_list)
-    
-    check(request_json)
