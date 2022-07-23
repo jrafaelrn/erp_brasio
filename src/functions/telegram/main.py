@@ -61,10 +61,10 @@ class telegram(object):
 
     def sendMessage(self, content, chat_id):
 
-        print(f'Sending message: {content} - to chat: {chat_id}')
+        print(f'<<--- Sending message: {content} - to chat: {chat_id}')
         link_resp = f'{self.url_base}sendMessage?chat_id={chat_id}&text={content}'
         resp = requests.get(link_resp)
-        print(f'\tResponse ==>> {resp.content}')
+        print(f'\t<<--- Response ==>> {resp.content}')
         return resp
 
 
@@ -93,7 +93,10 @@ class telegram(object):
         
         # Add last option
         keyboard_button_json2 = []
-        keyboard_button_json2.append({"text": "Nova classificação", "callback_data" : "new"})
+        keyboard_button_json2.append({
+            "text": "Nova classificação", 
+            "callback_data" : "new"
+        })
         keyboard.append(keyboard_button_json2)
 
         keyboards.append(keyboard)

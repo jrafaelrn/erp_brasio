@@ -1,67 +1,5 @@
 import time, requests, json, os, chat
 
-chats = []
-
-def start_bot():
-
-    print('Starting bot...')
-    update_id = None
-
-    while True:
-           
-        try:
-
-            atualizacao = get_messages_by_id(update_id)
-            dados = atualizacao['result']
-
-            if dados:
-                for dado in dados:
-
-                    update_id = dado['update_id']
-
-                    try:
-                        mensagem = str(dado['message']['text'])
-                        chat_id = dado['message']['from']['id']
-                        nome = dado['message']['chat']['first_name']
-                        username = dado['message']['chat']['username']
-                    except:
-                        mensagem = str(dado['callback_query']['data'])
-                        chat_id = dado['callback_query']['from']['id']
-                        nome = dado['callback_query']['from']['first_name']
-                        username = dado['callback_query']['from']['username']
-
-                    msg = f'--->> Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
-                    print(msg)                     
-
-                    if validate(username):
-                        interact(username, chat_id, mensagem)
-                    else:
-                        chat.send_message('text', 'Usuário não autorizado!', chat_id)
-
-        except Exception as e:
-            print(f'Erro: {e}')
-            continue
-
-        time.sleep(2)
-
-
-
-def get_messages_by_id(update_id):
-
-    API_KEY = get_key_from_os('TELEGRAM_API_KEY')
-    url_base = f'https://api.telegram.org/bot{API_KEY}/'
-
-    link_request = f'{url_base}getUpdates'
-
-    if update_id:
-        link_request += f'?offset={update_id + 1}'
-    
-    #print(f'Link request: {link_request}')  
-    resp = requests.get(link_request)
-    
-    print(f'Response: {resp.status_code} - {resp.text}')
-    return json.loads(resp.content)
-
 
 ##############################################
 #                  SECURITY                  #
@@ -95,6 +33,80 @@ def validate(user):
 
 
 ##############################################
+#             GLOBAL VARIABLES               #
+##############################################
+
+chats = []
+API_KEY = get_key_from_os('TELEGRAM_API_KEY')
+url_base = f'https://api.telegram.org/bot{API_KEY}/'
+
+
+
+def start_bot():
+
+    print('Starting bot...')
+    update_id = None
+
+    while True:
+           
+        try:
+
+            atualizacao = get_messages_by_id(update_id)
+            dados = atualizacao['result']
+
+            if dados:
+                for dado in dados:
+
+                    update_id = dado['update_id']
+
+                    try:
+                        mensagem = str(dado['message']['text'])
+                        chat_id = dado['message']['from']['id']
+                        nome = dado['message']['chat']['first_name']
+                        username = dado['message']['chat']['username']
+                    except:
+                        mensagem = str(dado['callback_query']['data'])
+                        chat_id = dado['callback_query']['from']['id']
+                        nome = dado['callback_query']['from']['first_name']
+                        username = dado['callback_query']['from']['username']
+                        query_id = dado['callback_query']['id']
+
+                    msg = f'--->> Mensagem Recebida: [{mensagem}] - Chat ID: {chat_id} - Nome: {nome} - Update ID: {update_id} - Username: {username}'
+                    print(msg)                     
+
+                    if validate(username):
+                        interact(username, chat_id, mensagem)
+                    else:
+                        chat.send_message('text', 'Usuário não autorizado!', chat_id)
+                    
+                    answer_callback_query(query_id)
+                    keyboard_remove(chat_id)
+
+        except Exception as e:
+            print(f'Erro: {e}')
+            continue
+
+        time.sleep(2)
+
+
+
+def get_messages_by_id(update_id):
+
+    link_request = f'{url_base}getUpdates'
+
+    if update_id:
+        link_request += f'?offset={update_id + 1}'
+    
+    #print(f'Link request: {link_request}')  
+    resp = requests.get(link_request)
+    
+    print(f'--->> Response: {resp.status_code} - {resp.text} - Now: {time.strftime("%H:%M:%S")}')
+    return json.loads(resp.content)
+
+
+
+
+##############################################
 #                  INTERACT
 ##############################################
 
@@ -115,6 +127,35 @@ def interact(username, chat_id, message):
                 new_chat = chat.chat(username, chat_id)
                 new_chat.reply(message)
                 chats.append(new_chat)
+
+
+def answer_callback_query(query_id):
+
+    method_url = 'answerCallbackQuery'
+    payload = {
+        'callback_query_id': query_id,
+        'show_alert': True,
+        'cache_time': 30
+    }
+    
+    url = f'{url_base}{method_url}'
+
+    resp = requests.post(url, data = payload)
+    print(f'Response: {resp.status_code} - {resp.text}')
+
+
+
+def keyboard_remove(chat_id):
+    
+    headers = {'Content-Type': 'application/json'}
+    method_url = 'sendMessage'
+    payload = {"remove_keyboard" : True}
+    data = json.dumps(payload)
+
+    link_resp = f'{url_base}{method_url}?chat_id={chat_id}&text=Ok&reply_markup={data}'
+    resp = requests.get(link_resp, headers = headers, json = data)
+
+    print(f'XXX - Remove Keyboard - Response: {resp.status_code} - {resp.text}')
 
 
 
