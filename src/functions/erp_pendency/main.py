@@ -164,11 +164,16 @@ def check(request):
     request_json = request.get_json(silent=True)
     print(f'Request JSON: {request_json}')
     
-    entity = request_json['entity']
-    response = get_erp_pendency(entity)
+    entity = request_json['entities']
+    pendencies = []
+    
+    for ent in entity:
+        response = get_erp_pendency(entity)
+        pendencies.append(response)
+            
 
-    if response is not None:
-        response_json = response.to_json()
+    if len(pendencies) > 0:
+        response_json = {'pendencies': pendencies}
     else:
         response_json = json.dumps({'error': 'No pendency found'})
 

@@ -137,14 +137,40 @@ class chat(object):
             FUNCTION_NAME = 'function-bank-auto-classification'
             DATA = {"description": next_pendency['DESCRICAO_ORIGINAL']}
             auto_classification = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
-            
+
             if len(auto_classification) == 0:
                 self.status = 'menu_1_manual'
                 return self.menu_1_manual(message)
             
+            # Get ERP pendency
+            entities = []
+
+            for classification in auto_classification:
+                entities.append(classification['entity'])
+
+            #Remove duplicates and get the pendencies
+            entities = list(set(entities))
+            FUNCTION_NAME = 'function-erp-pendency'
+            DATA = {"entities": entities}
+            erp_pendencies = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
+
+            options_list = []
+
+            try:
+                
+                if erp_pendencies['error'] == 'No pendency found':
+                    pass
+            
+            except:
+                options = erp_pendencies['pendencies']
+                for pendency in options:
+                    options_list.append(pendency)
+
+            options_list.append(auto_classification)    
+            
             # Get categorys
             #print(auto_classification)
-            send_message('inline', auto_classification, self.chat_id)
+            send_message('inline', options_list, self.chat_id)
             self.status = 'menu_1_auto_classification'
             return ""
 
