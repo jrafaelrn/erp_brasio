@@ -8,6 +8,9 @@ from googleapiclient.errors import HttpError
 from oauth2client.service_account import ServiceAccountCredentials
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
+file_erp = None
+df_erp = None
+erp_pendencys = {}
 
 
 #################################
@@ -16,13 +19,16 @@ SCOPES = ['https://www.googleapis.com/auth/drive']
 
 def get_erp_pendency(entity):
     
-    file_erp = get_file()
+    if file_erp == None or df_erp == None:
+    
+        file_erp = get_file()
+    
+        if file_erp is None:
+            return None
+    
+        df_erp = pd.read_excel(io.BytesIO(file_erp))
 
-    if file_erp is None:
-        return None
-
-    df_erp = pd.read_excel(io.BytesIO(file_erp))
-    erp_pendencys = {}
+    
     counter = 1
 
     for line in df_erp.iterrows():
