@@ -62,8 +62,13 @@ def get_erp_pendency(entity):
 def get_file():
 
     API_KEY = get_api_key()
-    file_name = 'Consumer - Contas a Pagar TOTAL.xlsx'
 
+    if API_KEY is None:
+        return None
+
+    
+    print(f'API KEY Found!')
+    file_name = 'Consumer - Contas a Pagar TOTAL.xlsx'
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
 
     with build('drive', 'v3', credentials=creds) as gdrive:
@@ -162,12 +167,12 @@ def get_api_key():
 def check(request):
 
     request_json = request.get_json(silent=True)
-    print(f'Request JSON: {request_json}')
+    print(f'--->> Request JSON: {request_json}')
     
-    entity = request_json['entities']
+    entities = request_json['entities']
     pendencies = []
     
-    for ent in entity:
+    for entity in entities:
         response = get_erp_pendency(entity)
         pendencies.append(response)
             
@@ -177,6 +182,5 @@ def check(request):
     else:
         response_json = json.dumps({'error': 'No pendency found'})
 
-    print(f'Response: {response_json}')
-
+    print(f'<<--- Response JSON: {response_json}')
     return response_json   
