@@ -171,7 +171,7 @@ class chat(object):
                 options = erp_pendencies['pendencies']
                 for option in options:
                     
-                    pendencies = option['pendency']
+                    pendencies = option['pendencies']
 
                     for pendency in pendencies:
 
@@ -184,7 +184,7 @@ class chat(object):
                         value = value.replace('.', ',') 
                         
                         opt_list = f'{category} - {entity} - {description} - Venc.: {due_date} - R$ {value}'
-                        options_list.append(pendency)
+                        options_list.append(opt_list)
 
             # Try append auto classification
             for classification in auto_classification:

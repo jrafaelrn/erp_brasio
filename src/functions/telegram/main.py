@@ -80,15 +80,17 @@ class telegram(object):
         data = {}        
         keyboards = []
         keyboard = []
+        counter = 0
 
         for option in options_list:
             
             keyboard_button_json = []
             keyboard_button_json.append({
                 "text": option, 
-                "callback_data" : option
+                "callback_data" : counter
             })
             keyboard.append(keyboard_button_json)
+            counter += 1
 
 
         keyboards.append(keyboard)
