@@ -1,27 +1,80 @@
-name: 'CD Google Functions'
+name: 'CD - GCP - Cloud Functions'
 
 on:
   push:
-    branches: [master]
 
 
 jobs:
 
-  runs-on: ubuntu-latest
-  env:
-    GOOGLE_DRIVE_KEY : ${{ secrets.GOOGLE_DRIVE_KEY }}
+  deploy:
 
-  job_id:
+    name: 'Deploy to GCP Cloud Functions'
+    runs-on: ubuntu-latest
+    environment: prod
+    env:
+      GOOGLE_SERVICE_ACCOUNT_KEY : ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+
     steps:
-    - uses: 'actions/checkout@v3'
 
-    - id: 'auth'
-      uses: 'google-github-actions/auth@v0'
-      with:
-        credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
+      - name: Checkout
+        uses: 'actions/checkout@v3'
 
-    - id: 'deploy'
-      uses: 'google-github-actions/deploy-cloud-functions@v0'
-      with:
-        name: 'function-check-sales-day'
-        runtime: 'python39'
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
+
+      - id: 'deploy-sales'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/check_sales/'
+          entry_point: 'check'
+          name: 'function-check-sales-day'
+          runtime: 'python39'
+          event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.SALES_TOPIC_ID }}
+          timeout: '180s'
+      
+      
+      - id: 'deploy-telegram'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/telegram/'
+          entry_point: 'check'
+          secret_environment_variables: 'TELEGRAM_API_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/TELEGRAM_API_KEY/versions/'
+          name: 'function-telegram'
+          runtime: 'python39'
+          timeout: '180s'
+
+
+      - id: 'deploy-bank-auto-classification'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/bank_auto_classification/'
+          entry_point: 'check'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          name: 'function-bank-auto-classification'
+          runtime: 'python39'
+          timeout: '180s'
+
+
+      - id: 'deploy-bank-next-pendency'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/bank_next_pendency/'
+          entry_point: 'check'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          name: 'function-bank-next-pendency'
+          runtime: 'python39'
+          timeout: '180s'
+
+
+      - id: 'deploy-bd-transaction'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/bd_transaction/'
+          entry_point: 'check'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          name: 'function-bd-transaction'
+          runtime: 'python39'
+          timeout: '180s'

@@ -1,0 +1,49 @@
+name: 'CD - GCP - Cloud Run'
+
+#on:
+  #push:
+    #branches: [ "master", "bot" ]
+
+jobs:
+
+  deploy:
+
+    name: 'Deploy to GCP Cloud Run'
+    runs-on: ubuntu-latest
+    environment: prod
+    env:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/bot:latest
+    
+    steps:
+      
+      # Git checkout
+      - name: Checkout
+        uses: 'actions/checkout@v3'
+      
+
+      # Authenticate with GCP  
+      - id: 'auth'    
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v0'    
+      
+
+      # Configure Docker GCP
+      - name: Configure Docker GCP
+        run: gcloud auth configure-docker gcr.io
+
+      # Build Image
+      - name: Build Image
+        run: docker build -t $IMAGE_NAME src/bot/
+
+      #Push Image
+      - name: Push Image
+        run: docker push $IMAGE_NAME
+
+      # Deploy Image
+      - name: Deploy Image
+        run: gcloud run deploy bot --image $IMAGE_NAME --min-instances 1 --max-instances 1 --region us-central1 --timeout 2m

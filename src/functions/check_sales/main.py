@@ -1,15 +1,20 @@
 from __future__ import print_function
 from dataclasses import field, fields
-
-import io, os, sys
-
 from httplib2 import Credentials
+from datetime import datetime
+
+import io, os, sys, base64, json
+import pandas as pd
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from datetime import datetime
-import base64
-from keys import GOOGLE_DRIVE_KEY
-import pandas as pd
+
+try:
+    from credentials.keys import GOOGLE_SERVICE_ACCOUNT_KEY
+    from credentials import keys   
+except ImportError:
+    print('No credentials.py file found.')
+    
 
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
@@ -85,7 +90,16 @@ def get_bank_resume_day():
 
 def get_file(file_name):
 
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(GOOGLE_DRIVE_KEY, SCOPES)
+    GOOGLE_SERVICE_ACCOUNT_KEY = get_api_key()
+
+    if GOOGLE_SERVICE_ACCOUNT_KEY is None:
+        print('No API key found.')
+        return
+    else:
+        print('API key found.')
+
+
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(GOOGLE_SERVICE_ACCOUNT_KEY, SCOPES)
 
     with build('drive', 'v3', credentials=creds) as bd:
         
@@ -146,3 +160,27 @@ def calculate(day, bd):
             continue
 
     return total
+
+
+
+def get_api_key():
+
+    api_key = None
+    
+    try:
+        
+        try:
+            api_key = keys.GOOGLE_SERVICE_ACCOUNT_KEY 
+            
+        except Exception as e:
+            print(f'Error: {e}')
+            
+        api_key = os.environ.get("GOOGLE_SERVICE_ACCOUNT_KEY")
+
+    except Exception as e:
+        print(f'Error: {e}')
+        api_key = None    
+    
+    return api_key
+
+
