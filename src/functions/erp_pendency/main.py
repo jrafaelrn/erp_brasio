@@ -10,7 +10,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 SCOPES = ['https://www.googleapis.com/auth/drive']
 file_erp = None
 df_erp = None
-erp_pendencys = {}
 
 
 #################################
@@ -21,9 +20,9 @@ def get_erp_pendency(entity):
 
     global file_erp
     global df_erp
-    global erp_pendencys
+    erp_pendencys = {}
     
-    if file_erp == None or df_erp == None:
+    if file_erp is None or df_erp is None:
     
         file_erp = get_file()
     
@@ -58,7 +57,7 @@ def get_erp_pendency(entity):
             option['description'] = description
             option['value'] = value
 
-            erp_pendencys[f'option{counter}'] = option
+            erp_pendencys[f'{entity}|{counter}'] = option
             counter += 1
 
     if len(erp_pendencys) == 0:
@@ -104,7 +103,6 @@ def get_file():
             file = None
 
         return file.getvalue()
-
 
 
 
@@ -184,7 +182,9 @@ def check(request):
     
     for entity in entities:
         response = get_erp_pendency(entity)
-        pendencies.append(response)
+
+        if response is not None:
+            pendencies.append(response)
             
 
     if len(pendencies) > 0:
