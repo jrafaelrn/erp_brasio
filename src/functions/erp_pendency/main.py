@@ -18,6 +18,10 @@ erp_pendencys = {}
 #################################
 
 def get_erp_pendency(entity):
+
+    global file_erp
+    global df_erp
+    global erp_pendencys
     
     if file_erp == None or df_erp == None:
     
