@@ -123,7 +123,10 @@ class chat(object):
         
         return False, next_pendency
 
-
+    
+    ###################################
+    #         MENU 1  - AUTO          #
+    ###################################
 
     def menu_1_auto(self, message, next_pendency):
         
@@ -164,8 +167,10 @@ class chat(object):
                     pass
             
             except:
+                
                 options = erp_pendencies['pendencies']
                 for option in options:
+                    
                     pendencies = option['pendency']
 
                     for pendency in pendencies:
@@ -234,7 +239,9 @@ class chat(object):
 
         
 
-
+    ###################################
+    #         MENU 1  - MANUAL        #
+    ###################################
     
     def menu_1_manual(self, message):
 

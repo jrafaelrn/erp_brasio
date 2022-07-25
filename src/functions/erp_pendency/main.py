@@ -20,7 +20,7 @@ def get_erp_pendency(entity):
 
     global file_erp
     global df_erp
-    erp_pendencys = {}
+    erp_pendencies = {}
     
     if file_erp is None or df_erp is None:
     
@@ -33,6 +33,7 @@ def get_erp_pendency(entity):
 
     
     counter = 1
+    options = []
 
     for line in df_erp.iterrows():
         
@@ -58,13 +59,14 @@ def get_erp_pendency(entity):
             option['due_date'] = due_date
             option['value'] = value
 
-            erp_pendencys[f'pendency'] = option
+            options.append(option)
             counter += 1
 
-    if len(erp_pendencys) == 0:
+    if len(options) == 0:
         return None
     
-    return erp_pendencys
+    erp_pendencies['pendencies'] = options
+    return erp_pendencies
 
 
 
