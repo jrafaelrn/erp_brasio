@@ -78,7 +78,7 @@ class chat(object):
             self.status = 'menu'
             return templateMessage.msg_menu()
         
-        if (self.status == 'menu' and message == '1') or self.status.startswith('menu_1'):
+        if (self.status == 'menu' and message == '1') or self.status.startswith('menu_1') or message == '/pendencias':
             return self.menu_1(message)
         
         if message == '/stop':
@@ -143,7 +143,7 @@ class chat(object):
                 return self.menu_1_manual(message)
             
             # Get categorys
-            print(auto_classification)
+            #print(auto_classification)
             send_message('inline', auto_classification, self.chat_id)
             self.status = 'menu_1_auto_classification'
             return ""

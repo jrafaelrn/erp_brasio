@@ -46,6 +46,7 @@ def start_bot():
 
     print('Starting bot...')
     update_id = None
+    query_id = None
 
     while True:
            
@@ -79,8 +80,10 @@ def start_bot():
                     else:
                         chat.send_message('text', 'Usuário não autorizado!', chat_id)
                     
-                    answer_callback_query(query_id)
-                    keyboard_remove(chat_id)
+                    if query_id is not None:
+                        answer_callback_query(query_id)
+                        query_id = None
+                        #keyboard_remove(chat_id)
 
         except Exception as e:
             print(f'Erro: {e}')
@@ -95,12 +98,13 @@ def get_messages_by_id(update_id):
     link_request = f'{url_base}getUpdates'
 
     if update_id:
-        link_request += f'?offset={update_id + 1}'
+        update_id +=1
+        link_request += f'?offset={update_id}'
     
-    #print(f'Link request: {link_request}')  
+    #print(f'\nLink request: {link_request}')  
     resp = requests.get(link_request)
     
-    print(f'--->> UPDATE: Response: {resp.status_code} - {resp.text} - Now: {time.strftime("%H:%M:%S")}')
+    print(f'--->> UPDATE {update_id}: Response: {resp.status_code} - {resp.text} - Now: {time.strftime("%H:%M:%S")}')
     return json.loads(resp.content)
 
 
@@ -135,7 +139,7 @@ def answer_callback_query(query_id):
     payload = {
         'callback_query_id': query_id,
         'show_alert': True,
-        'cache_time': 30
+        'cache_time': 300
     }
     
     url = f'{url_base}{method_url}'
@@ -152,7 +156,7 @@ def keyboard_remove(chat_id):
     payload = {"remove_keyboard" : True}
     data = json.dumps(payload)
 
-    link_resp = f'{url_base}{method_url}?chat_id={chat_id}&text=Ok&reply_markup={data}'
+    link_resp = f'{url_base}{method_url}?chat_id={chat_id}&text=...&reply_markup={data}'
     resp = requests.get(link_resp, headers = headers, json = data)
 
     print(f'XXX - Remove Keyboard - Response: {resp.status_code} - {resp.text}')
