@@ -52,12 +52,13 @@ def get_erp_pendency(entity):
             description = column.split(' | ')[0]
             value = line[1]['Valor Previsto']
 
-            option['due_date'] = due_date
             option['category'] = category
+            option['entity'] = entity
             option['description'] = description
+            option['due_date'] = due_date
             option['value'] = value
 
-            erp_pendencys[f'{entity}|{counter}'] = option
+            erp_pendencys[f'pendency'] = option
             counter += 1
 
     if len(erp_pendencys) == 0:

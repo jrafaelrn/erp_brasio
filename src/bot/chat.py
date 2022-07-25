@@ -154,8 +154,10 @@ class chat(object):
             DATA = {"entities": entities}
             erp_pendencies = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
 
+            # Create options to send INLINE
             options_list = []
 
+            # Try append ERP Pendencys
             try:
                 
                 if erp_pendencies['error'] == 'No pendency found':
@@ -163,13 +165,34 @@ class chat(object):
             
             except:
                 options = erp_pendencies['pendencies']
-                for pendency in options:
-                    options_list.append(pendency)
+                for option in options:
+                    pendencies = option['pendency']
 
-            options_list.append(auto_classification)    
+                    for pendency in pendencies:
+
+                        category = pendency['category']
+                        entity = pendency['entity']
+                        description = pendency['description']
+                        due_date = pendency['due_date']
+                        value = float(pendency['value'])
+                        value = f'{value:.2f}'
+                        value = value.replace('.', ',') 
+                        
+                        opt_list = f'{category} - {entity} - {description} - Venc.: {due_date} - R$ {value}'
+                        options_list.append(pendency)
+
+            # Try append auto classification
+            for classification in auto_classification:
+                category = classification['category']
+                entity = classification['entity']
+                keyboard_button = f'{category} - {entity}'
+                options_list.append(keyboard_button)
+
+            # Append new classification
+            options_list.append('Nova classificação')   
             
-            # Get categorys
-            #print(auto_classification)
+            # Send
+            print(options_list)
             send_message('inline', options_list, self.chat_id)
             self.status = 'menu_1_auto_classification'
             return ""
