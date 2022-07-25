@@ -80,7 +80,7 @@ jobs:
           timeout: '180s'
 
 
-      - id: 'deploy-bd-transaction'
+      - id: 'deploy-erp-pendency'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/erp_pendency/'
