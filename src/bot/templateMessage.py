@@ -1,5 +1,7 @@
 import math, os, cloudFunctions
 
+categories = []
+entities = []
 
 def msg_menu():
     
@@ -39,46 +41,42 @@ def msg_make_question(line):
     return pendency
 
 
-def msg_categorys_erp():
+def msg_categories_erp():
 
-    titulo = 'Categorias\n'
-    categorias = ''
-    contador = 0
+    if len(categories) == 0 or len(entities) == 0:
+        get_erp_data()
 
-    #bd = open_bd_consumer_categoria_fornecedor('Categoria')
-
-    for line in bd.iterrows():
-        contador += 1
-        categoria = line[1][2]
-        categorias += f'{contador} - {categoria} {os.linesep}'
-
-    return titulo + categorias
+    return categories
 
 
 
 def msg_suppliers_erp():
             
-    fornecedores = []
-    contador = 0
+    suppliers = []
 
-    bd = open_bd_consumer_categoria_fornecedor('Descrição / Fornecedor')
+    for entity in entities:
+        entity = entity.replace('&', 'e')
+        suppliers.append(entity)
 
-    for line in bd.iterrows():
-        
-        fornecedor = line[1]['Descrição / Fornecedor']
-
-        if fornecedor == None or fornecedor == '':
-            continue
-        else:
-            fornecedor = fornecedor.replace('&', 'e')
-            contador += 1
-
-        fornecedores.append(f'{contador} - {fornecedor} {os.linesep}')   
+    suppliers.append('Novo fornecedor')
     
-    # Remove last one
-    fornecedores.pop()
+    return suppliers
 
-    return fornecedores
+
+
+def get_erp_data():
+
+    global categories
+    global entities
+
+    # Get data
+    filters = ['Categoria', 'Descrição / Fornecedor']
+    FUNCTION_NAME = 'function-erp-classes'
+    DATA = {"filters": filters}
+    classes = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
+
+    categories = classes[filters[0]]
+    entities = classes[filters[1]]
 
 
 
