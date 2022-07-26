@@ -173,7 +173,7 @@ class Consumer(object):
         return data
 
 
-if __name__ == '__main__':
+
+def main():
     consumer = Consumer()
     consumer.abrir_contas_pagar()
-    #consumer.lancar_todos()
