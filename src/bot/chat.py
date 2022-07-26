@@ -1,5 +1,12 @@
 from unicodedata import category
-import templateMessage, cloudFunctions, json
+import templateMessage, cloudFunctions, json, random
+
+phrases = [
+    'Oooh Glooooria, terminou, agora pode ir gastar mais...',
+    'Vivaaaa, acabamos!! Agora vai lavar uma louça... ',
+    'É isso aí, não tem mais jeito, acabou....boa sorte!!',
+    'Graças a Deeeeeus isso acabou!! Agora vai vender, mulher...'
+]
 
 ##############################################
 #               CLOUD FUNCTION               #
@@ -228,7 +235,7 @@ class chat(object):
                 has_finished, next_pendency = self.get_next_pendency()
 
                 if has_finished:
-                    return "Oooh Glooooria, terminou!!!"
+                    return random.choice(phrases)
             
             except:
                 pass
@@ -253,7 +260,7 @@ class chat(object):
             has_finished, next_pendency = self.get_next_pendency()
             
             if has_finished:
-                return 'Uhuuul, acabooou!! Agora pode ir gastar mais...'
+                return random.choice(phrases)
 
             return self.menu_1_auto('1', next_pendency)
 
@@ -296,7 +303,7 @@ class chat(object):
                 return 'Qual o nome do novo fornecedor?'
 
             if self.status == 'menu_1_manual_supplier_new':
-                new_supplier = f'*{message}'
+                new_supplier = f'+{message}'
                 self.entity_actual = new_supplier
 
             self.status = 'menu_1_manual_description'
@@ -319,6 +326,6 @@ class chat(object):
             has_finished, next_pendency = self.get_next_pendency()
             
             if has_finished:
-                return 'Uhuuul, acabooou!! Agora pode ir gastar mais...'
+                return random.choice(phrases)
 
             return self.menu_1_auto('1', next_pendency)
