@@ -20,7 +20,7 @@ def send_message(message_type, message, chat_id):
     cloudFunctions.cloud_function(FUNCTION_NAME, data)
 
 
-def update_pendency(id, category_erp, entity_erp, description_erp):
+def update_pendency(id, category_erp, entity_erp, description_erp, status_erp):
 
     FUNCTION_NAME = 'function-bd-transaction'
 
@@ -30,7 +30,7 @@ def update_pendency(id, category_erp, entity_erp, description_erp):
         'category_erp': category_erp,
         'entity_erp': entity_erp,
         'description_erp': description_erp,
-        'status_erp' : 'Pago'
+        'status_erp' : status_erp
     }
 
     # ARGS
@@ -123,9 +123,15 @@ class chat(object):
         
         return False, next_pendency
 
+    
+    ###################################
+    #         MENU 1  - AUTO          #
+    ###################################
 
-
-    def menu_1_auto(self, message, next_pendency):
+    # Create options to send INLINE
+    options_list = []
+    
+    def menu_1_auto(self, message, next_pendency):        
         
         if self.status == 'menu':
             
@@ -137,26 +143,92 @@ class chat(object):
             FUNCTION_NAME = 'function-bank-auto-classification'
             DATA = {"description": next_pendency['DESCRICAO_ORIGINAL']}
             auto_classification = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
-            
+
             if len(auto_classification) == 0:
                 self.status = 'menu_1_manual'
                 return self.menu_1_manual(message)
             
-            # Get categorys
-            #print(auto_classification)
-            send_message('inline', auto_classification, self.chat_id)
+            # Get ERP pendency
+            entities = []
+
+            for classification in auto_classification:
+                entities.append(classification['entity'])
+
+            #Remove duplicates and get the pendencies
+            entities = list(set(entities))
+            FUNCTION_NAME = 'function-erp-pendency'
+            DATA = {"entities": entities}
+            erp_pendencies = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
+
+
+            # Try append ERP Pendencys
+            try:
+                
+                if erp_pendencies['error'] == 'No pendency found':
+                    pass
+            
+            except:
+                
+                options = erp_pendencies['pendencies']
+                for option in options:
+                    
+                    pendencies = option['pendencies']
+
+                    for pendency in pendencies:
+
+                        category = pendency['category']
+                        entity = pendency['entity']
+                        description = pendency['description']
+                        due_date = pendency['due_date']
+                        value = float(pendency['value'])
+                        value = f'{value:.2f}'
+                        value = value.replace('.', ',') 
+                        
+                        opt_list = f'{category} - {entity} - {description} - Venc.: {due_date} - R$ {value}'
+                        self.options_list.append(opt_list)
+
+            # Try append auto classification
+            for classification in auto_classification:
+                category = classification['category']
+                entity = classification['entity']
+                keyboard_button = f'{category} - {entity}'
+                self.options_list.append(keyboard_button)
+
+            # Append new classification
+            self.options_list.append('Nova classificação')   
+            
+            # Send
+            #print(options_list)
+            send_message('inline', self.options_list, self.chat_id)
             self.status = 'menu_1_auto_classification'
             return ""
 
 
         if self.status == 'menu_1_auto_classification':
 
-            if message.startswith('->'):
+            if message == 'Nova classificação':
                 self.status = 'menu_1_manual'
                 return self.menu_1_manual(message)
 
-            self.category_actual = message.split(' - ')[0]
-            self.entity_actual = message.split(' - ')[1]
+            self.category_actual = self.options_list[int(message)].split(' - ')[0]
+            self.entity_actual = self.options_list[int(message)].split(' - ')[1]
+
+            try:
+                self.description_actual = self.options_list[int(message)].split(' - ')[2]
+                status_erp = self.options_list[int(message)].split(' - ')[3]
+                self.status = 'menu'
+                update_pendency(next_pendency['ID'], self.category_actual, self.entity_actual, self.description_actual, status_erp)
+
+                msg_success = templateMessage.msg_success(self.category_actual, self.entity_actual, self.description_actual)
+                send_message('text', msg_success, self.chat_id)
+
+                has_finished, next_pendency = self.get_next_pendency()
+
+                if has_finished:
+                    return "Oooh Glooooria, terminou!!!"
+            
+            except:
+                pass
 
             # Get description
             self.status = 'menu_1_auto_classification_description'
@@ -168,7 +240,7 @@ class chat(object):
             self.pendency_id = next_pendency['ID']
             self.description_actual = message
             self.status = 'menu'
-            update_pendency(self.pendency_id, self.category_actual, self.entity_actual, self.description_actual)
+            update_pendency(self.pendency_id, self.category_actual, self.entity_actual, self.description_actual, 'Novo')
 
             msg_success = templateMessage.msg_success(self.category_actual, self.entity_actual, self.description_actual)
             send_message('text', msg_success, self.chat_id)
@@ -185,7 +257,9 @@ class chat(object):
 
         
 
-
+    ###################################
+    #         MENU 1  - MANUAL        #
+    ###################################
     
     def menu_1_manual(self, message):
 
