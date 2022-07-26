@@ -89,3 +89,14 @@ jobs:
           name: 'function-erp-pendency'
           runtime: 'python39'
           timeout: '180s'
+
+
+      - id: 'deploy-erp-classes'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/erp_classes/'
+          entry_point: 'check'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          name: 'function-erp-classes'
+          runtime: 'python39'
+          timeout: '180s'
