@@ -100,3 +100,14 @@ jobs:
           name: 'function-erp-classes'
           runtime: 'python39'
           timeout: '180s'
+
+
+      - id: 'deploy-bd-update-from-banks'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/bd_update_banks/'
+          entry_point: 'check'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          name: 'function-bd-update-from-banks'
+          runtime: 'python39'
+          timeout: '180s'

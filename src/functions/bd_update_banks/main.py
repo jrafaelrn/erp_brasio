@@ -194,6 +194,3 @@ def check(request):
 
     print(f'Response: {response}')
     return response
-
-
-update_bd()
