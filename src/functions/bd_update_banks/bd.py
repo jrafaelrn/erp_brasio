@@ -9,7 +9,7 @@ def insert(DATA, ARGS=None):
     REGION = os.environ.get("REGION")
     GCP_PROJECT_ID =  os.environ.get("GCP_PROJECT_ID")
     FUNCTION_NAME = 'function-bd-transaction'
-    ARGS = 'insert'
+    ARGS = 'type=insert'
 
     data = json.dumps(DATA)
     headers = {'Content-Type': 'application/json'}

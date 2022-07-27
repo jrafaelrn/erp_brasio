@@ -132,6 +132,9 @@ def update_transaction(id, category_erp=None, entity_erp=None, status_erp=None, 
 
 def insert(data):
 
+    #Transfor to json
+    data = json.loads(data)
+
     date_trx = data['date_trx']
     account = data['account']
     original_description = data['original_description']
