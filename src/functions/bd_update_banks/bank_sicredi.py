@@ -57,7 +57,7 @@ def import_extrato_sicredi(extrato_file):
 
       except Exception as e:
 
-        print(f'Linha inválida: {line[1][0]} - Error: {e}')
+        #print(f'Linha inválida: {line[1][0]} - Error: {e}')
         data = None
 
         if in_progress:
