@@ -109,7 +109,7 @@ jobs:
           entry_point: 'check'
           event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
           event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IMPORT_BD_TOPIC_ID }}
-          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/,REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/,GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
           name: 'function-bd-update-from-banks'
           runtime: 'python39'
           timeout: '180s'
