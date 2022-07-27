@@ -1,5 +1,12 @@
 from unicodedata import category
-import templateMessage, cloudFunctions, json
+import templateMessage, cloudFunctions, json, random
+
+phrases = [
+    'Oooh Glooooria, terminou, agora pode ir gastar mais...',
+    'Vivaaaa, acabamos!! Agora vai lavar uma louça... ',
+    'É isso aí, não tem mais jeito, acabou....boa sorte!!',
+    'Graças a Deeeeeus isso acabou!! Agora vai vender, mulher...'
+]
 
 ##############################################
 #               CLOUD FUNCTION               #
@@ -107,6 +114,9 @@ class chat(object):
         if self.status == 'menu' or self.status.startswith('menu_1_auto'):
             return self.menu_1_auto(message, next_pendency)
 
+        if self.status.startswith('menu_1_manual'):
+            return self.menu_1_manual(message, next_pendency)
+
     
 
     def get_next_pendency(self):
@@ -146,7 +156,7 @@ class chat(object):
 
             if len(auto_classification) == 0:
                 self.status = 'menu_1_manual'
-                return self.menu_1_manual(message)
+                return self.menu_1_manual(message, next_pendency)
             
             # Get ERP pendency
             entities = []
@@ -206,9 +216,9 @@ class chat(object):
 
         if self.status == 'menu_1_auto_classification':
 
-            if message == 'Nova classificação':
+            if self.options_list[int(message)] == 'Nova classificação':
                 self.status = 'menu_1_manual'
-                return self.menu_1_manual(message)
+                return self.menu_1_manual(message, next_pendency)
 
             self.category_actual = self.options_list[int(message)].split(' - ')[0]
             self.entity_actual = self.options_list[int(message)].split(' - ')[1]
@@ -225,7 +235,7 @@ class chat(object):
                 has_finished, next_pendency = self.get_next_pendency()
 
                 if has_finished:
-                    return "Oooh Glooooria, terminou!!!"
+                    return random.choice(phrases)
             
             except:
                 pass
@@ -250,7 +260,7 @@ class chat(object):
             has_finished, next_pendency = self.get_next_pendency()
             
             if has_finished:
-                return 'Uhuuul, acabooou!! Agora pode ir gastar mais...'
+                return random.choice(phrases)
 
             return self.menu_1_auto('1', next_pendency)
 
@@ -261,7 +271,61 @@ class chat(object):
     #         MENU 1  - MANUAL        #
     ###################################
     
-    def menu_1_manual(self, message):
+    def menu_1_manual(self, message, next_pendency):
 
+        
         if self.status == 'menu_1_manual':
-            pass
+            
+            self.categories = templateMessage.msg_categories_erp()
+            self.status = 'menu_1_manual_category'
+            send_message('inline', self.categories, self.chat_id)
+            return 'Clique em uma categoria'
+
+        
+        if self.status == 'menu_1_manual_category':
+
+            self.category_actual = self.categories[int(message)]
+            self.suppliers = templateMessage.msg_suppliers_erp()
+            self.status = 'menu_1_manual_supplier'
+            send_message('inline', self.suppliers, self.chat_id)
+            return 'Clique em um fornecedor'
+
+
+        if self.status == 'menu_1_manual_supplier' or self.status == 'menu_1_manual_supplier_new':
+
+            try:
+                self.entity_actual = self.suppliers[int(message)]
+            except:
+                self.entity_actual = message
+
+            if self.entity_actual == 'Novo fornecedor':
+                self.status = 'menu_1_manual_supplier_new'
+                return 'Qual o nome do novo fornecedor?'
+
+            if self.status == 'menu_1_manual_supplier_new':
+                new_supplier = f'+{message}'
+                self.entity_actual = new_supplier
+
+            self.status = 'menu_1_manual_description'
+            msg = 'Qual a descrição?'
+            return msg
+
+        
+        if self.status == 'menu_1_manual_description':
+
+            self.description_actual = message
+            self.status = 'menu'
+            pendency_id = next_pendency['ID']
+            update_pendency(pendency_id, self.category_actual, self.entity_actual, self.description_actual, 'Novo')
+
+            msg_success = templateMessage.msg_success(self.category_actual, self.entity_actual, self.description_actual)
+            send_message('text', msg_success, self.chat_id)
+
+
+            #Check if there is another pendency
+            has_finished, next_pendency = self.get_next_pendency()
+            
+            if has_finished:
+                return random.choice(phrases)
+
+            return self.menu_1_auto('1', next_pendency)

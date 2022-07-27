@@ -1,10 +1,12 @@
 src/credentials/*
 src/functions/__pycache__/
 src/bot/__pycache__/
+src/bot/server/__pycache__/
 src/functions/check_sales/token.json
 src/client.py
 src/bot/listener.py
 src/functions/telegram/test.py
+src/bot/server/paths.py
 
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json
