@@ -133,16 +133,20 @@ def update_transaction(id, category_erp=None, entity_erp=None, status_erp=None, 
 def insert(data):
 
     #Transfor to json
-    data = json.loads(data)
+    try:
+        DATA = json.loads(data)
+    except Exception as e:
+        print(f'Error when parse JSON: {e}')
+        DATA = data
 
-    date_trx = data['date_trx']
-    account = data['account']
-    original_description = data['original_description']
-    document = data['document']
-    entity_bank = data['entity_bank']
-    type_trx = data['type_trx']
-    value = data['value']
-    balance = data['balance']
+    date_trx = DATA['date_trx']
+    account = DATA['account']
+    original_description = DATA['original_description']
+    document = DATA['document']
+    entity_bank = DATA['entity_bank']
+    type_trx = DATA['type_trx']
+    value = DATA['value']
+    balance = DATA['balance']
 
     feedback = ''
 
