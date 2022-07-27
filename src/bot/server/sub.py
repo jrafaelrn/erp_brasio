@@ -67,11 +67,9 @@ def listen_download():
             # Remove duplicates
             downloads_day = list(set(downloads_day))
 
-            #say.now('Starting download from banks, in 3, 2, 1, lets go!')
-            #from_bank_to_bd.download_all(downloads_day, import_bd=True)
+            say.now('Starting download from banks, in 3, 2, 1, lets go!')
+            from_bank_to_bd.download_all(downloads_day, import_bd=True)
             downloads_day = []
-            print('Waiting 15 seconds to listen again...')
-            time.sleep(15)
             
             ack_ids = [msg.ack_id for msg in response.received_messages]
             print(f'IMPORT - Total of ACK messages: {len(ack_ids)}')
