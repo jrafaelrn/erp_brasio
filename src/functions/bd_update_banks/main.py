@@ -1,4 +1,4 @@
-import json, gspread, io, os, bank_sicredi
+import json, gspread, io, os, bank_sicredi, base64
 from httplib2 import Credentials
 import pandas as pd
 
@@ -27,13 +27,13 @@ def get_api_key():
             file_content_string = file.read()
     
             api_key = json.loads(file_content_string)
-            print(f'API KEY Found!')
+            print(f'API KEY Found from File!')
             
         except Exception as e:
             print(f'Error: {e}')            
             service_account = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
             api_key = json.loads(service_account)
-            print(f'API KEY Found!')
+            print(f'API KEY Found from Environment!')
 
     except Exception as e:
         print(f'Error: {e}')
@@ -179,12 +179,16 @@ def rename_file(old_name_file):
 #   Call from Cloud Functions   #
 #################################
 
-def check(request):
+def check(event, context):
 
-    request_json = request.get_json(silent=True)
-    parameters = request.args
-    print(f'Request JSON: {request_json}')
-    print(f'Parameters: {parameters}')
+    if type(event) != str:
+        payload = base64.b64decode(event['data']).decode('utf-8')
+    else:
+        payload = event
+
+    response = None
+
+    print(f'Payload: {payload}')
     
     try:
         update_bd()
