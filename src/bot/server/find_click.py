@@ -1,16 +1,30 @@
 import pyautogui, time, os, pathlib
 
+local = None
 
 def find_click(imagem, deltaX=0, deltaY=0, confidence=0.9, clicks=1):
     
+    global local
     print(f'\nLocalizando {imagem} DeltaX= {deltaX} DeltaY= {deltaY} Confidence= {confidence}')
     local = None
 
     #Get absolute path
     path_absolute = pathlib.Path().resolve()
-    path_absolute = (f'{path_absolute}/src/bot/server/').replace('\\', '/')
-    imagem = (f'{path_absolute}{imagem}')
-    imagem_errror = (f'{path_absolute}img/erro.png')
+    path_absolute1 = (f'{path_absolute}/src/bot/server/').replace('\\', '/')
+    path_absolute2 = (f'{path_absolute}/').replace('\\', '/')
+    
+    try:
+        click(path_absolute1, imagem, deltaX, deltaY, confidence, clicks)
+    except:
+        click(path_absolute2, imagem, deltaX, deltaY, confidence, clicks)
+
+
+
+def click(path, imagem, deltaX=0, deltaY=0, confidence=0.9, clicks=1):
+
+    global local
+    path_image = (f'{path}{imagem}')
+    path_erro = (f'{path}img/erro.png')
 
     while True:
         
@@ -18,14 +32,14 @@ def find_click(imagem, deltaX=0, deltaY=0, confidence=0.9, clicks=1):
 
         while tentativas <= 5 and local is None:
             print(f'\tTentativa {tentativas}')
-            local = pyautogui.locateCenterOnScreen(imagem, confidence=confidence)
+            local = pyautogui.locateCenterOnScreen(path_image, confidence=confidence)
             tentativas += 1
             time.sleep(2)
 
         if local is None:
 
             has_erro = None
-            has_erro = pyautogui.locateCenterOnScreen(imagem_errror, confidence=0.5)
+            has_erro = pyautogui.locateCenterOnScreen(path_erro, confidence=0.5)
 
             if not(has_erro is None):
                 print('\n\tRefresh page...\n')

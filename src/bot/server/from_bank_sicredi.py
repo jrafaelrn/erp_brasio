@@ -25,7 +25,8 @@ def entrar_sicredi():
     pyautogui.hotkey('winleft', 'r')
     pyautogui.typewrite(paths.chrome_path.replace(' %s', ''), interval=0.01)
     pyautogui.press('enter')
-    aguardar(3)        
+    aguardar(5)        
+    pyautogui.hotkey('winleft', 'left')
     
     webbrowser.get(paths.chrome_path).open(paths.link_sicredi_home)
     aguardar(3)
@@ -85,7 +86,17 @@ def baixar_extrato(dia_base):
     pyautogui.press('tab', presses=2, interval=1)
     pyautogui.hotkey('alt', 'n')
     aguardar(1)
-    pyautogui.typewrite(day, interval=0.01)
+
+    name_file = ''
+
+    # Check if dia_base is before today
+    if dia_base < datetime.today():
+        name_file = f'{day}-import'
+    else:
+        name_file = f'{day}'
+    
+    pyautogui.typewrite(name_file, interval=0.01)
+
     aguardar(2)
     pyautogui.press('enter')
 
