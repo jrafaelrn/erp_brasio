@@ -107,6 +107,7 @@ jobs:
         with:
           source_dir: 'src/functions/bd_update_banks/'
           entry_point: 'check'
+          event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
           secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
           name: 'function-bd-update-from-banks'
           runtime: 'python39'
