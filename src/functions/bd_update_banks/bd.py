@@ -19,7 +19,7 @@ def insert(DATA, ARGS=None):
 
     if resp.status_code == 200:
         print(f'Function {FUNCTION_NAME} executed!')
-        #print(f'Response: {resp.status_code} - Text: {resp.text} - Content: {resp.content}')
+        print(f'Response Text: {resp.text}')
         
         try:
             try:

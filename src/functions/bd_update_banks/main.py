@@ -132,13 +132,42 @@ def update_bd():
         df = pd.read_excel(io.BytesIO(file_excel))
         bank_sicredi.import_extrato_sicredi(df)
 
-
         # Rename file
+        if rename_file(file_name):
+            print('File renamed!')
+        else:
+            print('ERROR - File not renamed!')
+            break
 
 
 
+def rename_file(old_name_file):
 
+    new_name_file = old_name_file.replace('-import', '-ok')
+    print(f'New name file: {new_name_file}')
+    
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
 
+    with build('drive', 'v3', credentials=creds) as gdrive:
+        
+        try:
+
+            real_name, file_id = get_file_id(gdrive, old_name_file)
+            file_path = get_file_path(gdrive, file_id)
+
+            if file_path.find('Extratos Bancarios/') == -1:
+                return None
+
+            file_metadata = {
+                'name': new_name_file
+            }
+
+            gdrive.files().update(fileId=file_id, body=file_metadata).execute()
+            return True
+
+        except HttpError as error:
+            print(F'An error occurred: {error}')
+            return False
 
 
 
