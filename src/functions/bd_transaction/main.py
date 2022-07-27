@@ -2,12 +2,38 @@ import json, gspread, os
 import pandas as pd
 
 
+def get_api_key():
+
+    api_key = None
+    
+    try:
+        
+        try:
+            file_service_account = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
+    
+            #Open file
+            file = open(file_service_account, 'r')
+            file_content_string = file.read()
+    
+            api_key = json.loads(file_content_string)
+            
+        except Exception as e:
+            print(f'Error: {e}')            
+            service_account = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
+            api_key = json.loads(service_account)
+
+    except Exception as e:
+        print(f'Error: {e}')
+        api_key = None    
+    
+    return api_key
+
+
 
 def open_bd_bank():
 
-    service_account = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
-    service_account_dict = json.loads(service_account)
-    sa = gspread.service_account_from_dict(service_account_dict)
+    API_KEY = get_api_key()
+    sa = gspread.service_account_from_dict(API_KEY)
     bd = sa.open("bd_bot")
     bd_sheet = bd.worksheet('bank')
     return bd_sheet
