@@ -19,6 +19,21 @@ def insert_transaction(date_trx, account, original_description, document, entity
     bd = open_bd_bank()
     bd_pd = pd.DataFrame(bd.get_all_records())
 
+    # loop to check if the transaction already exists
+    for row in bd_pd.iterrows():
+
+        date_row = row[1]['DATA']
+        account_bank = row[1]['CONTA']
+        description = row[1]['DESCRICAO_ORIGINAL']
+        valor = row[1]['VALOR']
+        saldo = row[1]['SALDO']
+
+        if date_row == date_trx and account_bank == account and description == original_description and float(valor) == float(value) and float(saldo) == float(balance):
+            msg = f'Lancamento já existe no banco de dados'
+            print(msg)
+            return msg
+
+    
     # Get MAX_ID from column ID
     max_id = bd_pd['ID'].max()
     id = int(max_id) + 1
