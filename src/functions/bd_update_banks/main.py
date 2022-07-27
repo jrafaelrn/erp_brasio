@@ -83,7 +83,7 @@ def get_file_id(bd, file_name):
 
     for file in response.get('files', []):
 
-        print(f'Found file: {file.get("name")}')
+        #print(f'Found file: {file.get("name")}')
         
         if file.get('name').find(file_name) != -1:
             return file.get('name'), file.get('id')
@@ -106,7 +106,7 @@ def get_file_path(gdrive, file_id):
             path_result = folder.get('name') + '/' + path_result
 
     
-    print(f'Path: {path_result}')
+    #print(f'Path: {path_result}')
     return path_result
 
 
@@ -198,3 +198,5 @@ def check(event, context):
 
     print(f'Response: {response}')
     return response
+
+#update_bd()

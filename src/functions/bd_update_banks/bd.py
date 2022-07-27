@@ -14,7 +14,7 @@ def insert(DATA, ARGS=None):
     data = json.dumps(DATA)
     headers = {'Content-Type': 'application/json'}
     link = f'https://{REGION}-{GCP_PROJECT_ID}.cloudfunctions.net/{FUNCTION_NAME}?{ARGS}'
-    print(f'Link: {link}')
+    #print(f'Link: {link}')
     
     resp = requests.post(link, data = data, headers = headers)
 
