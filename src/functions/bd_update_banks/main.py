@@ -199,4 +199,4 @@ def check(event, context):
     print(f'Response: {response}')
     return response
 
-#update_bd()
+update_bd()

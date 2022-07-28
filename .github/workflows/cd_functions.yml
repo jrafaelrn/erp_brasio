@@ -96,7 +96,7 @@ jobs:
         with:
           source_dir: 'src/functions/erp_classes/'
           entry_point: 'check'
-          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/', REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/', GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}'
           name: 'function-erp-classes'
           runtime: 'python39'
           timeout: '180s'

@@ -52,17 +52,17 @@ def import_extrato_sicredi(extrato_file):
             bd.insert(DATA_JSON)
 
             in_progress = True
-            time.sleep(15)
+            time.sleep(20)
 
 
       except Exception as e:
 
-        #print(f'Linha inválida: {line[1][0]} - Error: {e}')
         data = None
 
         if in_progress:
-            return
-      
+          print(f'Linha inválida: {line[1][0]} - Error: {e}')
+          return
+    
 
 
 def import_cartao_sicredi(name, saldo):

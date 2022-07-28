@@ -6,19 +6,17 @@ import requests, json, os
 
 def insert(DATA, ARGS=None):
 
-    try:
-        FUNCTION_REGION = os.environ.get('FUNCTION_REGION')
-        GCP_PROJECT =  os.environ.get("GCP_PROJECT_ID")
-    except:
-        pass
+    print(f'<<--- Trying insert data into Google Sheets... - {DATA}')
     
+    REGION = os.environ.get('REGION')
+    GCP_PROJECT_ID =  os.environ.get("GCP_PROJECT_ID")    
     FUNCTION_NAME = 'function-bd-transaction'
     ARGS = 'type=insert'
 
     data = json.dumps(DATA)
     headers = {'Content-Type': 'application/json'}
-    link = f'https://{FUNCTION_REGION}-{GCP_PROJECT}.cloudfunctions.net/{FUNCTION_NAME}?{ARGS}'
-    #print(f'Link: {link}')
+    link = f'https://{REGION}-{GCP_PROJECT_ID}.cloudfunctions.net/{FUNCTION_NAME}?{ARGS}'
+    print(f'Link: {link}')
     
     resp = requests.post(link, data = data, headers = headers)
 
