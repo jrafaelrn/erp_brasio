@@ -48,7 +48,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
     # loop to check if the transaction already exists
     for row in bd_pd.iterrows():
 
-        print(f'Row: {row}')
+        #print(f'Row: {row}')
         date_row = row[1]['DATA']
         account_bank = row[1]['CONTA']
         description = row[1]['DESCRICAO_ORIGINAL']
@@ -205,5 +205,3 @@ def check(request):
     
     print(f'Response: {response}')
     return response
-
-insert('{"date_trx": "26/07/2022", "account": "SICREDI", "original_description": "GETNET DEBITO MASTER ", "document": "", "entity_bank": "", "type_trx": "GETNET", "value": 21.77, "balance": 2378.86}')
