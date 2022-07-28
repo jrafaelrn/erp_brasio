@@ -52,7 +52,7 @@ def import_extrato_sicredi(extrato_file):
             bd.insert(DATA_JSON)
 
             in_progress = True
-            time.sleep(20)
+            time.sleep(10)
 
 
       except Exception as e:
