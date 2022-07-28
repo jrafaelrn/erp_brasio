@@ -15,8 +15,8 @@ def import_extrato_sicredi(extrato_file):
       
       # Try convert first column to date
       try:
-        
         date_str = line[1][0]
+        date_date = datetime.strptime(date_str, '%d/%m/%Y')  # Apenas para validacao da linha << Nao remover
         conta = "SICREDI"
         descricao = line[1][1]
         doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(descricao)
@@ -24,13 +24,13 @@ def import_extrato_sicredi(extrato_file):
         valor =  line[1][3]
         saldo = line[1][4]
 
-        '''
+        
         print(f'\nImporting date {line[1][0]}')
         print(f'\tConta: {conta}')
         print(f'\tDescricao: {descricao}')
         print(f'\tTipo: {tipo}')
         print(f'\tValor: {valor}')
-        '''
+        
 
         # Se encontrar uma fatura de cartao, procura o arquivo separado
         if descricao.find('DEB.CTA.FATURA') != -1:

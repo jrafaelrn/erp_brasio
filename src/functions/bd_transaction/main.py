@@ -43,18 +43,19 @@ def insert_transaction(date_trx, account, original_description, document, entity
 
     entity_bank = entity_bank.strip()
     bd = open_bd_bank()
-    bd_pd = pd.DataFrame(bd.get_all_records())
+    bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
 
     # loop to check if the transaction already exists
     for row in bd_pd.iterrows():
 
+        print(f'Row: {row}')
         date_row = row[1]['DATA']
         account_bank = row[1]['CONTA']
         description = row[1]['DESCRICAO_ORIGINAL']
         valor = row[1]['VALOR']
         saldo = row[1]['SALDO']
 
-        print(f'Comparing - Date: {date_trx} x {date_row} - Account: {account} x {account_bank} - Description: {original_description} x {description} - Value: {float(value)} x {float(valor)} - Balance: {float(balance)} x {float(saldo)}')
+        #print(f'Comparing - Date: {date_trx} x {date_row} - Account: {account} x {account_bank} - Description: {original_description} x {description} - Value: {float(value)} x {float(valor)} - Balance: {float(balance)} x {float(saldo)}')
 
         if date_row == date_trx and account_bank == account and description == original_description and float(valor) == float(value) and float(saldo) == float(balance):
             msg = f'Lancamento já existe no banco de dados'
@@ -204,3 +205,5 @@ def check(request):
     
     print(f'Response: {response}')
     return response
+
+insert('{"date_trx": "26/07/2022", "account": "SICREDI", "original_description": "GETNET DEBITO MASTER ", "document": "", "entity_bank": "", "type_trx": "GETNET", "value": 21.77, "balance": 2378.86}')
