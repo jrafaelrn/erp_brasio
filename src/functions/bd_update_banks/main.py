@@ -72,6 +72,7 @@ def get_file(file_name):
 
         except HttpError as error:
             print(F'An error occurred: {error}')
+            print('Probably any file is found.')
             return None, None
 
         return real_name, file.getvalue()
