@@ -38,7 +38,7 @@ def import_extrato_sicredi(extrato_file):
             #import_cartao_sicredi(data, saldo)
         else:
             DATA = {}
-            DATA['date_trx'] = data.strftime('%d/%m/%Y')
+            DATA['date_trx'] = line[1][0]
             DATA['account'] = conta
             DATA['original_description'] = descricao
             DATA['document'] = doc
