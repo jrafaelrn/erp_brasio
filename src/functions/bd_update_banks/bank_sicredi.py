@@ -16,17 +16,12 @@ def import_extrato_sicredi(extrato_file):
       # Try convert first column to date
       try:
         
-        print(f'DATE == [{line[1][0]}] -- TYPE: {type(line[1][0])}')
         date_str = str(line[1][0])
         conta = "SICREDI"
-        print(f'DESCRICAO == [{line[1][1]}] -- TYPE: {type(line[1][1])}')
         descricao = line[1][1]
         doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(descricao)
-        print(f'TIPO == [{line[1][2]}] -- TYPE: {type(line[1][2])}')
         tipo = extract.extract_type(descricao, line[1][2])
-        print(f'VALOR == [{line[1][3]}] -- TYPE: {type(line[1][3])}')
         valor =  float(line[1][3])
-        print(f'SALDO == [{line[1][4]}] -- TYPE: {type(line[1][4])}')
         saldo = float(line[1][4])
 
         
