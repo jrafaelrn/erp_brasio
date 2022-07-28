@@ -33,7 +33,7 @@ jobs:
           runtime: 'python39'
           event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
           event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.SALES_TOPIC_ID }}
-          timeout: '180s'
+          timeout: '540s'
       
       
       - id: 'deploy-telegram'
@@ -44,7 +44,7 @@ jobs:
           secret_environment_variables: 'TELEGRAM_API_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/TELEGRAM_API_KEY/versions/'
           name: 'function-telegram'
           runtime: 'python39'
-          timeout: '180s'
+          timeout: '240s'
 
 
       - id: 'deploy-bank-auto-classification'
@@ -55,7 +55,7 @@ jobs:
           secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
           name: 'function-bank-auto-classification'
           runtime: 'python39'
-          timeout: '180s'
+          timeout: '540s'
 
 
       - id: 'deploy-bank-next-pendency'
@@ -66,7 +66,7 @@ jobs:
           secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
           name: 'function-bank-next-pendency'
           runtime: 'python39'
-          timeout: '180s'
+          timeout: '540s'
 
 
       - id: 'deploy-bd-transaction'
@@ -77,7 +77,7 @@ jobs:
           secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
           name: 'function-bd-transaction'
           runtime: 'python39'
-          timeout: '180s'
+          timeout: '240s'
 
 
       - id: 'deploy-erp-pendency'
@@ -88,7 +88,7 @@ jobs:
           secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
           name: 'function-erp-pendency'
           runtime: 'python39'
-          timeout: '180s'
+          timeout: '540s'
 
 
       - id: 'deploy-erp-classes'
@@ -99,4 +99,21 @@ jobs:
           secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
           name: 'function-erp-classes'
           runtime: 'python39'
-          timeout: '180s'
+          timeout: '540s'
+
+
+      - id: 'deploy-bd-update-from-banks'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/bd_update_banks/'
+          entry_point: 'check'
+          event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IMPORT_BD_TOPIC_ID }}
+          secret_environment_variables: |-
+            GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
+            REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
+            GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
+            MY_CNPJ=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/MY_CNPJ/versions/
+          name: 'function-bd-update-from-banks'
+          runtime: 'python39'
+          timeout: '540s'

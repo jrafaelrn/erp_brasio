@@ -82,6 +82,9 @@ def baixar_extrato(dia_base):
     aguardar(3)
 
     sobrescreve = os.path.isfile(f'{paths.path_drive_sicredi_conta}\\{day}.xls')
+    # Sobrescreve, delete file
+    if sobrescreve:
+        os.remove(f'{paths.path_drive_sicredi_conta}\\{day}.xls')
 
     pyautogui.press('tab', presses=2, interval=1)
     pyautogui.hotkey('alt', 'n')
@@ -93,17 +96,13 @@ def baixar_extrato(dia_base):
     if dia_base < datetime.today():
         name_file = f'{day}-import'
     else:
-        name_file = f'{day}'
+        name_file = (f'{day}').replace('-import', '')
     
     pyautogui.typewrite(name_file, interval=0.01)
 
     aguardar(2)
     pyautogui.press('enter')
 
-    # Sobrescreve
-    if sobrescreve:
-        pyautogui.press('left')
-        pyautogui.press('enter')
     
     #close browser
     aguardar(3)
