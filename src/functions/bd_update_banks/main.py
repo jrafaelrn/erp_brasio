@@ -144,7 +144,7 @@ def update_bd():
 def rename_file(old_name_file):
 
     new_name_file = old_name_file.replace('-import', '-ok')
-    print(f'New name file: {new_name_file}')
+    #print(f'New name file: {new_name_file}')
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
 
@@ -198,5 +198,3 @@ def check(event, context):
 
     print(f'Response: {response}')
     return response
-
-update_bd()

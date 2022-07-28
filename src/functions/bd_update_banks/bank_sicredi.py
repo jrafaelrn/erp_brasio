@@ -24,13 +24,13 @@ def import_extrato_sicredi(extrato_file):
         valor =  float(line[1][3])
         saldo = float(line[1][4])
 
-        
+        '''
         print(f'\nImporting date {line[1][0]}')
         print(f'\tConta: {conta}')
         print(f'\tDescricao: {descricao}')
         print(f'\tTipo: {tipo}')
         print(f'\tValor: {valor}')
-        
+        '''
 
         # Se encontrar uma fatura de cartao, procura o arquivo separado
         if descricao.find('DEB.CTA.FATURA') != -1:
