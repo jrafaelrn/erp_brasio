@@ -72,7 +72,7 @@ def get_file(file_name):
 
         except HttpError as error:
             print(F'An error occurred: {error}')
-            file = None, None
+            return None, None
 
         return real_name, file.getvalue()
 
