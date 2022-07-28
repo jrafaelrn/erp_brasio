@@ -16,13 +16,13 @@ def import_extrato_sicredi(extrato_file):
       # Try convert first column to date
       try:
         
-        date_str = str(line[1][0])
+        date_str = line[1][0]
         conta = "SICREDI"
         descricao = line[1][1]
         doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(descricao)
         tipo = extract.extract_type(descricao, line[1][2])
-        valor =  float(line[1][3])
-        saldo = float(line[1][4])
+        valor =  line[1][3]
+        saldo = line[1][4]
 
         '''
         print(f'\nImporting date {line[1][0]}')
@@ -60,7 +60,7 @@ def import_extrato_sicredi(extrato_file):
         data = None
 
         if in_progress:
-          print(f'Linha inválida: {line[1][0]} - Error: {e}')
+          print(f'Linha inválida: {line} - Error: {e}')
           return
     
 
