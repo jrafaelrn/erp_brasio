@@ -91,12 +91,13 @@ def baixar_extrato(dia_base):
     aguardar(1)
 
     name_file = ''
-
+    
     # Check if dia_base is before today
-    if dia_base < datetime.today():
+    
+    if dia_base.date() < datetime.today().date():
         name_file = f'{day}-import'
     else:
-        name_file = (f'{day}').replace('-import', '')
+        name_file = f'{day}'
     
     pyautogui.typewrite(name_file, interval=0.01)
 

@@ -118,14 +118,16 @@ def get_file_id(bd, file_name):
     file_name_ok = f'{file_name}-ok.xls'
     file_name_import = f'{file_name}-import.xls'
 
+    print(f'Searching file...: {file_name_ok} or {file_name_import}')
+
     for file in response.get('files', []):
 
-        print(f'Found file: {file.get("name")}')
+        #print(f'Found file: {file.get("name")}')
         
         if file.get('name') == file_name_ok or file.get('name') == file_name_import:
             return file.get('id')
         
-        time.sleep(1)
+        time.sleep(0.1)
     
     return None
 
