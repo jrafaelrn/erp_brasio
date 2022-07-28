@@ -131,6 +131,7 @@ def calculate(bd):
     total = 0
     detalhes = {}
     detalhes_array = []
+    MY_CNPJ = os.environ.get('MY_CNPJ')
     
     # Loop through rows
     for row in bd.iterrows():
@@ -142,7 +143,7 @@ def calculate(bd):
             tipo = row[1][2]
             valor = float(row[1][3])
 
-            if valor > 0 and description.find('40847221000114') == -1:
+            if valor > 0 and description.find(MY_CNPJ) == -1:
                 total += valor
                 valor_ptbr = (f'R$ {valor:.2f}').replace('.', ',')
                 detalhe_str = f'{description} - {valor_ptbr}'
