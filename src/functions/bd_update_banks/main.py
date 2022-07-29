@@ -1,4 +1,4 @@
-import json, gspread, io, os, bank_sicredi, base64
+import json, gspread, io, os, bank_sicredi, base64, bank_pagbank
 from httplib2 import Credentials
 from datetime import datetime
 import pandas as pd
@@ -179,73 +179,119 @@ def update_bd():
 
     for file_to_import in files_to_import:
         
-        # Import BANK SICREDI
-        file_name = file_to_import['name']
-        file_id = file_to_import['id']
-        file_path = file_to_import['path']
-        file_path_filter = 'Sicredi/Conta/'
+        update_bd_from_sicredi(file_to_import)
+        update_bd_from_pagbank(file_to_import)
+            
 
-        if file_path.find(file_path_filter) == -1:
-            continue
+##########################################
+#               SICREDI                  #
+##########################################
+
+def update_bd_from_sicredi(file_to_import):
+
+    balance_card, date_payment_card, file_id_card, card_name_file_filter = update_bd_from_sicredi_account(file_to_import)
+
+    # Import CARD SICREDI
+    if balance_card is not None:
+        update_bd_from_sicredi_card(file_id_card, balance_card, date_payment_card, card_name_file_filter)
+
+
+
+def update_bd_from_sicredi_account(file_to_import):
+
+    # Import BANK SICREDI
+    file_name = file_to_import['name']
+    file_id = file_to_import['id']
+    file_path = file_to_import['path']
+    file_path_filter = 'Sicredi/Conta/'
+
+    if file_path.find(file_path_filter) == -1:
+        return None, None, None, None
+    
+    import_card = False
+
+    file_excel = get_file(file_id)
+
+    if file_excel is None:
+        print('No file found!')
+        return None, None, None, None
+            
+    df = pd.read_excel(io.BytesIO(file_excel))
+    import_card, balance_card, date_payment_card = bank_sicredi.import_extrato_sicredi(df)
+    card_name_file_filter = None
+    file_id_card = None
+
+    # Check if card file exists
+    if import_card:
+
+        card_path_file_filter = 'Sicredi/Cartao/'
+        card_name_file_filter = datetime.strptime(date_payment_card, '%d/%m/%Y').strftime('%Y-%m') + '-import.xls'
+        file_name_card, file_id_card = check_if_file_exists(card_path_file_filter, card_name_file_filter)
+
+        if file_name_card is False:
+            return None, None, None, None
+
+
+    # Rename file
+    if rename_file(file_id, file_name):
+        print('File renamed!')
+    else:
+        print('ERROR - File not renamed!')   
+
+    return balance_card, date_payment_card, file_id_card, card_name_file_filter
         
-        import_card = False
-
-        file_excel = get_file(file_id)
-
-        if file_excel is None:
-            print('No file found!')
-            continue
-                
-        df = pd.read_excel(io.BytesIO(file_excel))
-        import_card, balance_card, date_payment_card = bank_sicredi.import_extrato_sicredi(df)
 
 
-        # Check if card file exists
-        if import_card:
+def update_bd_from_sicredi_card(file_id_card, balance_card, date_payment_card, card_name_file_filter):
 
-            card_path_file_filter = 'Sicredi/Cartao/'
-            card_name_file_filter = datetime.strptime(date_payment_card, '%d/%m/%Y').strftime('%Y-%m') + '-import.xls'
-            file_name_card, file_id_card = check_if_file_exists(card_path_file_filter, card_name_file_filter)
+    file_excel = get_file(file_id_card)
 
-            if file_name_card is False:
-                continue
+    if file_excel is None:
+        print('No file found!')
+        return
+    
+    df = pd.read_excel(io.BytesIO(file_excel))            
+    bank_sicredi.import_card_sicredi(df, balance_card, date_payment_card)
 
-
-        # Rename file
-        if rename_file(file_id, file_name):
-            print('File renamed!')
-        else:
-            print('ERROR - File not renamed!')            
-            continue
-
-
-        # Import CARD SICREDI
-        if import_card:
-            
-            file_excel = get_file(file_id_card)
-
-            if file_excel is None:
-                print('No file found!')
-                continue
-            
-            df = pd.read_excel(io.BytesIO(file_excel))            
-            bank_sicredi.import_card_sicredi(df, balance_card, date_payment_card)
-
-            # Rename file
-            if rename_file(file_id_card, card_name_file_filter):
-                print('File renamed!')
-            else:
-                print('ERROR - File not renamed!')  
-                continue
+    # Rename file
+    if rename_file(file_id_card, card_name_file_filter):
+        print('File renamed!')
+    else:
+        print('ERROR - File not renamed!')  
 
 
 
 
+##########################################
+#               PAGBANK                  #
+##########################################
 
+def update_bd_from_pagbank(file_to_import):
 
+    # Import BANK SICREDI
+    file_name = file_to_import['name']
+    file_id = file_to_import['id']
+    file_path = file_to_import['path']
+    file_path_filter = 'PagBank/Conta/'
 
+    if file_path.find(file_path_filter) == -1:
+        return
+    
+    file_excel = get_file(file_id)
 
+    if file_excel is None:
+        print('No file found!')
+        return
 
+    
+    df = pd.read_csv(io.BytesIO(file_excel), sep=';')
+    bank_pagbank.import_extrato_pagbank(df)
+
+    # Rename file
+    if rename_file(file_id, file_name):
+        print('File renamed!')
+    else:
+        print('ERROR - File not renamed!') 
 
 
 
