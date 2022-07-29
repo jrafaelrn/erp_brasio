@@ -55,12 +55,12 @@ def extract_type(description, type):
     return 'CARTAO DEB'
   elif description.find('GETNET') != -1:
     return 'GETNET'
+  elif description.find('CONVENIO') != -1 or description.find('CONVENIOS') != -1:
+    return 'DEB AUTOMATICO'
   elif description.find(MY_CNPJ) != -1:
     return 'INTERNO'
   elif description.find('SUB ') != -1:
     return 'IFOOD'
-  elif description.find('CONVENIO') != -1 or description.find('CONVENIOS') != -1:
-    return 'DEB AUTOMATICO'
   elif description.find('FATURA') != -1:
     return 'CARTAO CRED'
   elif type.find('PIX ENVIADO') != -1:
@@ -68,7 +68,12 @@ def extract_type(description, type):
   elif type.find('PIX RECEBIDO') != -1:
     return 'PIX_CRED'
   elif description.find('PIX') != -1:
-    return type
+    if description.find('RECEBI') != -1:
+      return 'PIX_CRED'
+    elif description.find('PAGAME') != -1:
+      return 'PIX_DEB'
+    else:
+      return 'PIX'
   elif description.find('PLANO DE RECEBIMENTO') != -1:
     return 'LINK'
   else:

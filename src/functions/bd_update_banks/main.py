@@ -1,5 +1,6 @@
 import json, gspread, io, os, bank_sicredi, base64
 from httplib2 import Credentials
+from datetime import datetime
 import pandas as pd
 
 from googleapiclient.discovery import build
@@ -8,6 +9,7 @@ from googleapiclient.errors import HttpError
 from oauth2client.service_account import ServiceAccountCredentials
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
+files_to_import = []
 
 #################################
 #       GOOGLE DRIVE API        #
@@ -45,10 +47,13 @@ def get_api_key():
 API_KEY = get_api_key()
 
 
-def get_file(file_name):
+
+def get_files_to_import():
+
+    global files_to_import
 
     if API_KEY is None:
-        return None, None
+        return False
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
 
@@ -56,11 +61,39 @@ def get_file(file_name):
         
         try:
 
-            real_name, file_id = get_file_id(gdrive, file_name)
-            file_path = get_file_path(gdrive, file_id)
+            response = gdrive.files().list(fields='nextPageToken, ' 'files(id, name)').execute()
+            
+            for file in response.get('files', []):
+                
+                name_file = file.get('name')
+                id_file = file.get('id')
+                path_file = get_file_path(gdrive, id_file)
 
-            if file_path.find('Extratos Bancarios/') == -1:
-                return None, None
+                if name_file.find('-import') == -1:
+                    continue
+
+                file_to_import = {}
+                file_to_import['name'] = name_file
+                file_to_import['id'] = id_file
+                file_to_import['path'] = path_file
+                files_to_import.append(file_to_import)
+
+            return True
+            
+        except Exception as error:
+            print(F'An error occurred: {error}')
+            return False
+
+
+
+
+def get_file(file_id):
+    
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
+
+    with build('drive', 'v3', credentials=creds) as gdrive:
+        
+        try:
 
             request = gdrive.files().get_media(fileId=file_id)
             file = io.BytesIO()
@@ -68,28 +101,15 @@ def get_file(file_name):
             done = False
             while done is False:
                 status, done = downloader.next_chunk()
-                print(F'Download {int(status.progress() * 100)}.')
+                print(F'Download {int(status.progress() * 100)}%')
 
         except HttpError as error:
             print(F'An error occurred: {error}')
             print('Probably any file is found.')
-            return None, None
+            return None
 
-        return real_name, file.getvalue()
+        return file.getvalue()
 
-
-def get_file_id(bd, file_name):
-
-    response = bd.files().list(fields='nextPageToken, ' 'files(id, name)').execute()
-
-    for file in response.get('files', []):
-
-        #print(f'Found file: {file.get("name")}')
-        
-        if file.get('name').find(file_name) != -1:
-            return file.get('name'), file.get('id')
-    
-    return None
 
 
 def get_file_path(gdrive, file_id):
@@ -107,42 +127,12 @@ def get_file_path(gdrive, file_id):
             path_result = folder.get('name') + '/' + path_result
 
     
-    #print(f'Path: {path_result}')
+    print(f'Path: {path_result}')
     return path_result
 
 
 
-
-
-#################################
-#      PRINCIPAL - METHOD       #
-#################################
-
-def update_bd():
-
-    while True:
-        
-        file_to_import = '-import.'
-        file_name, file_excel = get_file(file_to_import)
-
-        if file_excel is None:
-            print('Finished or No file found!')
-            break
-        
-        
-        df = pd.read_excel(io.BytesIO(file_excel))
-        bank_sicredi.import_extrato_sicredi(df)
-
-        # Rename file
-        if rename_file(file_name):
-            print('File renamed!')
-        else:
-            print('ERROR - File not renamed!')
-            break
-
-
-
-def rename_file(old_name_file):
+def rename_file(file_id, old_name_file):
 
     new_name_file = old_name_file.replace('-import', '-ok')
     #print(f'New name file: {new_name_file}')
@@ -152,12 +142,6 @@ def rename_file(old_name_file):
     with build('drive', 'v3', credentials=creds) as gdrive:
         
         try:
-
-            real_name, file_id = get_file_id(gdrive, old_name_file)
-            file_path = get_file_path(gdrive, file_id)
-
-            if file_path.find('Extratos Bancarios/') == -1:
-                return None
 
             file_metadata = {
                 'name': new_name_file
@@ -169,6 +153,95 @@ def rename_file(old_name_file):
         except HttpError as error:
             print(F'An error occurred: {error}')
             return False
+
+
+
+def check_if_file_exists(path_filter, name_filter):
+
+    global files_to_import
+
+    for file in files_to_import:
+        if file['path'].find(path_filter) != -1 and file['name'] == name_filter:
+            return True, file['id']
+
+    return False, None
+
+
+
+#################################
+#      PRINCIPAL - METHOD       #
+#################################
+
+def update_bd():
+
+    get_files_to_import()
+    global files_to_import
+
+    for file_to_import in files_to_import:
+        
+        # Import BANK SICREDI
+        file_name = file_to_import['name']
+        file_id = file_to_import['id']
+        file_path = file_to_import['path']
+        file_path_filter = 'Sicredi/Conta/'
+
+        if file_path.find(file_path_filter) == -1:
+            continue
+        
+        import_card = False
+
+        file_excel = get_file(file_id)
+
+        if file_excel is None:
+            print('No file found!')
+            continue
+                
+        df = pd.read_excel(io.BytesIO(file_excel))
+        import_card, balance_card, date_payment_card = bank_sicredi.import_extrato_sicredi(df)
+
+
+        # Check if card file exists
+        if import_card:
+
+            card_path_file_filter = 'Sicredi/Cartao/'
+            card_name_file_filter = datetime.strptime(date_payment_card, '%d/%m/%Y').strftime('%Y-%m') + '-import.xls'
+            file_name_card, file_id_card = check_if_file_exists(card_path_file_filter, card_name_file_filter)
+
+            if file_name_card is False:
+                continue
+
+
+        # Rename file
+        if rename_file(file_id, file_name):
+            print('File renamed!')
+        else:
+            print('ERROR - File not renamed!')            
+            continue
+
+
+        # Import CARD SICREDI
+        if import_card:
+            
+            file_excel = get_file(file_id_card)
+
+            if file_excel is None:
+                print('No file found!')
+                continue
+            
+            df = pd.read_excel(io.BytesIO(file_excel))            
+            bank_sicredi.import_card_sicredi(df, balance_card, date_payment_card)
+
+            # Rename file
+            if rename_file(file_id_card, card_name_file_filter):
+                print('File renamed!')
+            else:
+                print('ERROR - File not renamed!')  
+                continue
+
+
+
+
+
 
 
 
