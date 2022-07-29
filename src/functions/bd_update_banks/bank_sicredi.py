@@ -12,7 +12,7 @@ def import_extrato_sicredi(extrato_file):
     
     in_progress = False
     import_card = False
-    balance_card = 0
+    balance_card = None
     date_payment_card = None
 
     for line in extrato_file.iterrows():
