@@ -1,5 +1,6 @@
-import os, extract, bd, time, json
+import os, extract, bd, time, json, re
 from datetime import datetime
+import pandas as pd
 
 
 ##########################################
@@ -10,6 +11,9 @@ from datetime import datetime
 def import_extrato_sicredi(extrato_file):
     
     in_progress = False
+    import_card = False
+    balance_card = 0
+    date_payment_card = None
 
     for line in extrato_file.iterrows():
       
@@ -34,25 +38,28 @@ def import_extrato_sicredi(extrato_file):
 
         # Se encontrar uma fatura de cartao, procura o arquivo separado
         if descricao.find('DEB.CTA.FATURA') != -1:
+            import_card = True
+            balance_card = saldo
+            date_payment_card = date_str
             continue
-            #import_cartao_sicredi(data, saldo)
-        else:
-            DATA = {}
-            DATA['date_trx'] = date_str
-            DATA['account'] = conta
-            DATA['original_description'] = descricao
-            DATA['document'] = doc
-            DATA['entity_bank'] = nome
-            DATA['type_trx'] = tipo
-            DATA['value'] = valor
-            DATA['balance'] = saldo
+            
 
-            DATA_JSON = json.dumps(DATA)
+        DATA = {}
+        DATA['date_trx'] = date_str
+        DATA['account'] = conta
+        DATA['original_description'] = descricao
+        DATA['document'] = doc
+        DATA['entity_bank'] = nome
+        DATA['type_trx'] = tipo
+        DATA['value'] = valor
+        DATA['balance'] = saldo
 
-            bd.insert(DATA_JSON)
+        DATA_JSON = json.dumps(DATA)
 
-            in_progress = True
-            time.sleep(10)
+        bd.insert(DATA_JSON)
+
+        in_progress = True
+        time.sleep(10)
 
 
       except Exception as e:
@@ -61,23 +68,19 @@ def import_extrato_sicredi(extrato_file):
 
         if in_progress:
           print(f'Linha inválida: {line} - Error: {e}')
-          return
+          return import_card, balance_card, date_payment_card
     
 
 
-def import_cartao_sicredi(name, saldo):
+def import_card_sicredi(extrato_file, balance, date_payment_card):
 
     print(f'\n\n... Importing cartao Sicredi...\n')
 
     # If name is date
-    if type(name) == datetime:
-      name_file = name.strftime('%Y-%m')
+    #if type(extrato_file) == datetime:
+      #name_file = extrato_file.strftime('%Y-%m')
 
-    # If not, import
-    cartao_file = pd.read_excel(f'{path_drive_sicredi_cartao}/{name_file}.xls')
-
-
-    for line in cartao_file.iterrows():
+    for line in extrato_file.iterrows():
       
       # Try convert first column to date
       try:
@@ -85,7 +88,7 @@ def import_cartao_sicredi(name, saldo):
         linha = line[1][0]
         data = datetime.strptime(linha, '%d/%m/%Y')  # Apenas para validacao da linha
         conta = "SICREDI"
-        descricao = f'{line[1][1]} - {line[1][2]}'
+        descricao = f'{line[1][1]} - {line[1][2]} - ({linha})'
         tipo = 'CARTAO CRED'
         valor = line[1][3]
 
@@ -104,16 +107,25 @@ def import_cartao_sicredi(name, saldo):
         if valor > 0:
           continue
 
-        inserir_lancamento(name, conta, descricao, '', fornecedor, tipo, valor, saldo)
+        DATA = {}
+        DATA['date_trx'] = date_payment_card
+        DATA['account'] = conta
+        DATA['original_description'] = descricao
+        DATA['document'] = ''
+        DATA['entity_bank'] = fornecedor
+        DATA['type_trx'] = tipo
+        DATA['value'] = valor
+        DATA['balance'] = balance
+
+        DATA_JSON = json.dumps(DATA)
+
+        bd.insert(DATA_JSON)
         
       except Exception as e:
         msg = f'Linha inválida: {linha}\n\t error: {e}'
         #print(msg)
-        logging.warning(msg)
         data = None
-      
-    #Update name
-    os.rename(f'{path_drive_sicredi_cartao}/{name_file}.xls', f'{path_drive_sicredi_cartao}/{name_file}-ok.xls')
+
 
 
 

@@ -52,8 +52,8 @@ def check_sales_day():
     
     GOAL = 600
     msgs_bellow = [
-        'O dia não foi bom, mas ainda não acabou. Vamos lá!',
-        'Quase lá, bota esse corpo pra jogooo e vamos vender mais!',
+        'O dia não tá fácil, mas ainda não acabou. Vamos lá!',
+        'Quase lá, bota esse corpo pra jogooo e booora vender mais!',
         'Ainda dá tempo de vender mais, correeeeee!!!',
     ]
 
