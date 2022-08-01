@@ -9,7 +9,7 @@ def open_bd_bank():
     sa = gspread.service_account_from_dict(service_account_dict)
     bd = sa.open("bd_bot")
     bd_sheet = bd.worksheet('bank')
-    bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
+    bd_pd = pd.DataFrame(bd_sheet.get_all_records(value_render_option='UNFORMATTED_VALUE'))
     return bd_pd
 
 

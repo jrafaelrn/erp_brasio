@@ -29,7 +29,7 @@ class Consumer(object):
     def lancar_todos(self):
 
         bd_bot = bd.open_bd_bank()
-        df_bd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
+        df_bd = pd.DataFrame(bd_bot.get_all_records(value_render_option='UNFORMATTED_VALUE'))
 
         for row in df_bd.iterrows():
 
