@@ -11,3 +11,12 @@ O projeto está sendo desenvolvido como base para o estudo de:
 - Google Cloud Run, Google Cloud Functions e Google Scheduler
 - Docker
 - CD com GitHub Actions
+
+
+O que o bot faz?
+
+Como baixar?
+
+Como instalar?
+
+Como executar?

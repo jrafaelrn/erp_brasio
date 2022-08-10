@@ -23,7 +23,8 @@ def entrar_sicredi():
 
     #Open chrome
     pyautogui.hotkey('winleft', 'r')
-    pyautogui.typewrite(paths.chrome_path.replace(' %s', ''), interval=0.01)
+    aguardar(1)
+    pyautogui.typewrite(paths.chrome_path.replace(' %s', ''), interval=0.1)
     pyautogui.press('enter')
     aguardar(5)        
     pyautogui.hotkey('winleft', 'left')

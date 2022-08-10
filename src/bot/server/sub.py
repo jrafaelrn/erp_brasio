@@ -67,7 +67,7 @@ def listen_download():
             # Remove duplicates
             downloads_day = list(set(downloads_day))
 
-            say.now('Starting download from banks, in 3, 2, 1, lets go!')
+            #say.now('Starting download from banks, in 3, 2, 1, lets go!')
             from_bank_to_bd.download_all(downloads_day, import_bd=True)
             downloads_day = []
             
