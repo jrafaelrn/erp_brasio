@@ -72,7 +72,7 @@ def import_extrato_sicredi(extrato_file):
       if in_progress:
         return import_card, balance_card, date_payment_card
 
-      if line[1][0].find('Saldo') != -1:
+      if line[1][0].find('Saldo da Conta') != -1:
         return None, None, None
   
 
