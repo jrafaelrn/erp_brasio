@@ -27,7 +27,7 @@ def extract_cpf_cnpj_cliente_fornecedor_from_description(description):
 
   # Clear the description
   if description.find('RECEBIMENTO PIX ') != -1:
-    description = description.replace('RECEBIMENTO PIX ', '')
+    description = description.replace('RECEBIMENTO PIX ', '').replace('SICREDI ', '')
     return get_cpf_cnpj(description)
 
   elif description.find('PAGAMENTO PIX ') != -1:
