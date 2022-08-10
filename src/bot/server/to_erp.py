@@ -12,6 +12,8 @@ class Consumer(object):
 
         time.sleep(10)
         print('Abrindo contas a pagar')
+        #Click center of screen
+        pyautogui.click(x=pyautogui.size()[0]/2, y=pyautogui.size()[1]/2)
         pyautogui.hotkey('alt', 'f')
         time.sleep(3)
         pyautogui.hotkey('c', 'o')
@@ -177,3 +179,7 @@ class Consumer(object):
 def main():
     consumer = Consumer()
     consumer.abrir_contas_pagar()
+
+
+if __name__ == '__main__':
+    main()

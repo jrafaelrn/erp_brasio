@@ -66,11 +66,12 @@ def get_files_to_import():
             for file in response.get('files', []):
                 
                 name_file = file.get('name')
+                if name_file.find('-import') == -1:
+                    continue
+                
                 id_file = file.get('id')
                 path_file = get_file_path(gdrive, id_file)
 
-                if name_file.find('-import') == -1:
-                    continue
 
                 file_to_import = {}
                 file_to_import['name'] = name_file
@@ -318,3 +319,8 @@ def check(event, context):
 
     print(f'Response: {response}')
     return response
+
+
+if __name__ == '__main__':
+    update_bd()
+    print('Update BD!')
