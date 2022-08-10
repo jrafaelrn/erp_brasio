@@ -77,6 +77,7 @@ def get_files_to_import():
                 file_to_import['name'] = name_file
                 file_to_import['id'] = id_file
                 file_to_import['path'] = path_file
+                print(f'File to import: {file_to_import}')
                 files_to_import.append(file_to_import)
 
             return True
