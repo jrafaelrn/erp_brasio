@@ -10,7 +10,7 @@ import pandas as pd
 # Day: string with file name
 def import_extrato_sicredi(extrato_file):
 
-  print(f'... Importing extrato Sicredi...{extrato_file}')
+  print(f'... Importing extrato Sicredi...')
   
   in_progress = False
   import_card = False
@@ -18,9 +18,14 @@ def import_extrato_sicredi(extrato_file):
   date_payment_card = None
 
   for line in extrato_file.iterrows():
+
+    print(f'Line: {line}')
+    if line[1][0].find('Saldo') != -1:
+      return None, None, None
     
     # Try convert first column to date
     try:
+
       date_str = line[1][0]
       date_date = datetime.strptime(date_str, '%d/%m/%Y')  # Apenas para validacao da linha << Nao remover
       conta = "SICREDI"
@@ -63,13 +68,12 @@ def import_extrato_sicredi(extrato_file):
       in_progress = True
       time.sleep(10)
 
-
     except Exception as e:
 
       data = None
+      print(f'Linha inválida: {line} - Error: {e}')
 
       if in_progress:
-        print(f'Linha inválida: {line} - Error: {e}')
         return import_card, balance_card, date_payment_card
   
 
