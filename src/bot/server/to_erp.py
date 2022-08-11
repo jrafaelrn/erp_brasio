@@ -12,6 +12,8 @@ class Consumer(object):
 
         time.sleep(10)
         print('Abrindo contas a pagar')
+        #Click center of screen
+        pyautogui.click(x=pyautogui.size()[0]/2, y=pyautogui.size()[1]/2)
         pyautogui.hotkey('alt', 'f')
         time.sleep(3)
         pyautogui.hotkey('c', 'o')
@@ -29,7 +31,7 @@ class Consumer(object):
     def lancar_todos(self):
 
         bd_bot = bd.open_bd_bank()
-        df_bd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
+        df_bd = pd.DataFrame(bd_bot.get_all_records(value_render_option='UNFORMATTED_VALUE'))
 
         for row in df_bd.iterrows():
 
@@ -177,3 +179,7 @@ class Consumer(object):
 def main():
     consumer = Consumer()
     consumer.abrir_contas_pagar()
+
+
+if __name__ == '__main__':
+    main()

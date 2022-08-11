@@ -170,7 +170,8 @@ class chat(object):
             DATA = {"entities": entities}
             erp_pendencies = cloudFunctions.cloud_function(FUNCTION_NAME, DATA)
 
-
+            options_list = []
+            
             # Try append ERP Pendencys
             try:
                 
