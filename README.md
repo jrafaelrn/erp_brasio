@@ -12,11 +12,20 @@ O projeto está sendo desenvolvido como base para o estudo de:
 - Docker
 - CD com GitHub Actions
 
+---
 
-O que o bot faz?
+## Resumo
+<br>
 
-Como baixar?
+### O que o bot faz?
+<br>
 
-Como instalar?
 
-Como executar?
+### Como baixar?
+<br>
+
+### Como instalar?
+<br>
+
+### Como executar?
+<br>
