@@ -7,12 +7,12 @@ def get_cpf_cnpj(text):
 
     cnpj = int(text[:14])
     cnpj = str(cnpj)
-    nome = text[14:]
+    nome = text[15:]
     return cnpj, nome
   
   except:
 
-    cpf = text[:12]
+    cpf = text[:11]
     nome = text[12:]
     return cpf, nome
 
