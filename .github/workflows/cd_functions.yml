@@ -30,7 +30,7 @@ jobs:
           pip install flake8 pytest
           pwd
           ls -lah
-          pip install -r functions/bd_update_banks/requirements.txt
+          pip install -r src/functions/bd_update_banks/requirements.txt
 
       - name: Run tests
         run: |
