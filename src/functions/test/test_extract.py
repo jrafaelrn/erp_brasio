@@ -1,6 +1,9 @@
-import unittest, sys
+import unittest, sys, os
 
-sys.path.append('../functions/')
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
 from bd_update_banks.extract import *
 
 
