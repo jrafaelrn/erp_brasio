@@ -6,6 +6,38 @@ on:
 
 jobs:
 
+  test:
+
+    name: 'Test'
+    runs-on: ubuntu-latest
+    strategy: 
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          pwd
+          ls -lah
+          pip install -r src/functions/bd_update_banks/requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest
+
+
+
   deploy:
 
     name: 'Deploy to GCP Cloud Functions'
@@ -13,6 +45,8 @@ jobs:
     environment: prod
     env:
       GOOGLE_SERVICE_ACCOUNT_KEY : ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+    
+    needs: test
 
     steps:
 
