@@ -91,6 +91,10 @@ def start_bot():
 
         time.sleep(1)
 
+        #Print keep alive each 1 min
+        if time.strftime("%S") == '00':
+            print(f'\nKeep alive - Now: {time.strftime("%H:%M:%S")}')
+
 
 
 def get_messages_by_id(update_id):
