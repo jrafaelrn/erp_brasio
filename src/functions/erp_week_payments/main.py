@@ -1,6 +1,7 @@
 from httplib2 import Credentials
-import os, json, io, datetime, sender, gspread
+import os, json, io, datetime, gspread
 import pandas as pd
+from sender import *
 
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
