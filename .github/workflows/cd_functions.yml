@@ -156,3 +156,19 @@ jobs:
           name: 'function-bd-update-from-banks'
           runtime: 'python39'
           timeout: '540s'
+
+
+      - id: 'deploy-week-payments'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/erp_week_payments/'
+          entry_point: 'check'
+          name: 'function-week_payments'
+          runtime: 'python39'
+          event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.WEEK_PAYMENTS_TOPIC_ID }}
+          secret_environment_variables: |-
+            GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
+            REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
+            GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
+          timeout: '540s'
