@@ -1,7 +1,9 @@
+from __future__ import print_function
+from dataclasses import field, fields
+
 from httplib2 import Credentials
-import os, json, io, datetime, gspread
+import os, json, io, datetime, sender, gspread
 import pandas as pd
-from sender import *
 
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
@@ -82,7 +84,7 @@ def in_week(day_string):
     day = datetime.datetime.strptime(day_string, '%d/%m/%Y')
 
     # Check if day is in the next 7 days
-    if day <= today + datetime.timedelta(days=7):
+    if day <= today + datetime.timedelta(days=6):
         return True
 
     return False
