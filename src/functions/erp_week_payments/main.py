@@ -60,7 +60,6 @@ def get_week_payments():
             entity_line = column.split(' | ')[1]
             value = line[1]['Valor Previsto']
 
-            option['category'] = category
             option['entity'] = entity_line
             option['description'] = description
             option['due_date'] = due_date
@@ -114,14 +113,18 @@ def send_payments(payments):
     if len(chats_id) == 0:
         return 'Vendas calculadas, mas não foi possível enviar a mensagem pois não há chats cadastrados.'
 
-    msg = 'Próximos pagamentos:\n'
+    msg = 'Pagamentos em aberto:\n\n'
     total = 0
+    payments = payments['pendencies']
+
 
     for payment in payments:
-        msg += f'Vencimento: {payment["due_date"]} - Categoria: {payment["category"]} - Fornecedor: {payment["entity"]} - Descrição: {payment["description"]} - Valor: {payment["value"]}\n'
+        valor_payment = (f'{payment["value"]:.2f}').replace('.', ',')
+        msg += f'Vencimento: {payment["due_date"]} - Fornecedor: {payment["entity"]} - Descrição: {payment["description"]} - Valor: R$ {valor_payment}\n\n'
         total += float(payment["value"])
 
-    msg += f'Total: {total}'
+    total = (f'{total:.2f}').replace('.', ',')
+    msg += f'Total: R$ {total}'
 
     for chat_id in chats_id:
         sender.send_message(msg, chat_id)
@@ -235,8 +238,9 @@ def get_api_key():
 
 def check(request):
 
-    request_json = request.get_json(silent=True)
-    print(f'--->> Request JSON: {request_json}')
+    if request is not None:
+        request_json = request.get_json(silent=True)
+        print(f'--->> Request JSON: {request_json}')
 
     response = get_week_payments()
     send_payments(response)
@@ -249,3 +253,7 @@ def check(request):
 
     print(f'<<--- Response JSON: {response_json}')
     return response_json   
+
+
+if __name__ == '__main__':
+    check(None)
