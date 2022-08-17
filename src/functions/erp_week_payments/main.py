@@ -1,8 +1,5 @@
-from __future__ import print_function
-from dataclasses import field, fields
-
+import os, json, io, datetime, sys, sender, gspread
 from httplib2 import Credentials
-import os, json, io, datetime, sender, gspread
 import pandas as pd
 
 from googleapiclient.discovery import build
