@@ -1,4 +1,4 @@
-import os, json, io, datetime, sys, sender, gspread
+import os, json, io, datetime, sys, sender, gspread, base64
 from httplib2 import Credentials
 import pandas as pd
 
@@ -233,12 +233,15 @@ def get_api_key():
 #   Call from Cloud Functions   #
 #################################
 
-def check(request):
+def check(event, context):
 
-    if request is not None:
-        request_json = request.get_json(silent=True)
-        print(f'--->> Request JSON: {request_json}')
-
+    if type(event) != str:
+        payload = base64.b64decode(event['data']).decode('utf-8')
+    else:
+        payload = event
+    
+    print(f'Payload: {payload}')
+    
     response = get_week_payments()
     send_payments(response)
 
