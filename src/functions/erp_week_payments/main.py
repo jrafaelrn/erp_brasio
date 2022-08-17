@@ -249,8 +249,4 @@ def check(request):
         response_json = json.dumps({'error': 'No pendency found'})
 
     print(f'<<--- Response JSON: {response_json}')
-    return response_json   
-
-
-if __name__ == '__main__':
-    check(None)
+    return response_json
