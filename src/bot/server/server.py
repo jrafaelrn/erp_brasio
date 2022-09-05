@@ -26,8 +26,8 @@ def subscribe_download_from_banks():
 #     THREADS      #
 #####################
 
-thread_consumer = threading.Thread(target=main)
-thread_consumer.start()
+#thread_consumer = threading.Thread(target=main)
+#thread_consumer.start()
 
 thread_subscribe = threading.Thread(target=subscribe_download_from_banks)
 thread_subscribe.start()

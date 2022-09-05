@@ -1,5 +1,5 @@
 from datetime import datetime
-import extract, bd, json
+import extract, bd, json, requests
 
 
 ##########################################
@@ -33,3 +33,28 @@ def import_extrato_pagbank(extrato_file):
         DATA_JSON = json.dumps(DATA)
 
         bd.insert(DATA_JSON)
+
+
+
+# Day format = YYYY-MM-DD
+def api_import(day):
+
+    page_number = 1
+    page_size = 1000
+    edi_version = 2.01
+    movement_type = [1, 2, 3]
+    
+    for mov_type in movement_type:
+    
+        url = f"https://edi.api.pagseguro.com.br/edi/v1/{edi_version}/movimentos?dataMovimento={day}&pageNumber={page_number}&pageSize={page_size}&tipoMovimento={mov_type}"
+        headers = {"Accept": "application/json"}
+
+        response = requests.get(url, headers=headers)
+
+        print(f'GET: {url}')
+        print(f'RESPONSE: {response.text}')
+
+
+
+day = '2022-08-20'
+api_import(day)
