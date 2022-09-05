@@ -1,7 +1,7 @@
 from turtle import update
 import pyautogui, time, bd
 import pandas as pd
-from pynput.keyboard import Controller
+from pynput.keyboard import Key, Controller
 from bd import *
 
 
@@ -12,6 +12,8 @@ class Consumer(object):
 
         time.sleep(10)
         print('Abrindo contas a pagar')
+        time.sleep(3)
+
         #Click center of screen
         pyautogui.click(x=pyautogui.size()[0]/2, y=pyautogui.size()[1]/2)
         pyautogui.hotkey('alt', 'f')
@@ -179,6 +181,7 @@ class Consumer(object):
 def main():
     consumer = Consumer()
     consumer.abrir_contas_pagar()
+    #consumer.lancar_todos()
 
 
 if __name__ == '__main__':
