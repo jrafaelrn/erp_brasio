@@ -6,7 +6,7 @@ import extract, bd, json, requests
 #               PAGBANK                  #
 ##########################################
 
-def import_extrato_pagbank(extrato_file):
+def import_extrato_pagbank(extrato_file, conta):
 
     for line in extrato_file.iterrows():     
         
@@ -17,7 +17,7 @@ def import_extrato_pagbank(extrato_file):
         doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(tipo_old)
         tipo = extract.extract_type(descricao, tipo_old)
         valor = float(line[1][4].replace(',', '.'))
-        conta = "PAGBANK"
+        conta = conta.upper()
         descricao = f'{tipo_old} - {descricao}'
 
         DATA = {}
