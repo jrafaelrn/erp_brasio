@@ -76,6 +76,7 @@ jobs:
       
       
       - id: 'deploy-telegram'
+        name: 'Deploy Telegram'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/telegram/'
@@ -87,6 +88,7 @@ jobs:
 
 
       - id: 'deploy-bank-auto-classification'
+        name: 'Deploy Bank Auto Classification'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/bank_auto_classification/'
@@ -98,6 +100,7 @@ jobs:
 
 
       - id: 'deploy-bank-next-pendency'
+        name: 'Deploy Bank Next Pendency'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/bank_next_pendency/'
@@ -109,6 +112,7 @@ jobs:
 
 
       - id: 'deploy-bd-transaction'
+        name: 'Deploy BD Transaction'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/bd_transaction/'
@@ -120,6 +124,7 @@ jobs:
 
 
       - id: 'deploy-erp-pendency'
+        name: 'Deploy ERP Pendency'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/erp_pendency/'
@@ -131,6 +136,7 @@ jobs:
 
 
       - id: 'deploy-erp-classes'
+        name: 'Deploy ERP Classes'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/erp_classes/'
@@ -142,6 +148,7 @@ jobs:
 
 
       - id: 'deploy-bd-update-from-banks'
+        name: 'Deploy BD Update From Banks'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/bd_update_banks/'
@@ -159,6 +166,7 @@ jobs:
 
 
       - id: 'deploy-week-payments'
+        name: 'Deploy Week Payments'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/erp_week_payments/'
@@ -175,6 +183,7 @@ jobs:
 
       
       - id: 'deploy-bank-download-api'
+        name: 'Deploy Bank Download API'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/bank_download/'
