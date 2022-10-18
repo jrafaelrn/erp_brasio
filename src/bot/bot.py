@@ -108,7 +108,7 @@ def get_messages_by_id(update_id):
     #print(f'\nLink request: {link_request}')  
     resp = requests.get(link_request)
     
-    #print(f'--->> UPDATE {update_id}: Response: {resp.status_code} - {resp.text} - Now: {time.strftime("%H:%M:%S")}')
+    print(f'--->> UPDATE {update_id}: Response: {resp.status_code} - {resp.text} - Now: {time.strftime("%H:%M:%S")}')
     return json.loads(resp.content)
 
 
