@@ -279,6 +279,7 @@ def update_bd_from_pagbank(file_to_import):
     file_id = file_to_import['id']
     file_path = file_to_import['path']
     file_path_filter = r"(.)*PagBank(.)*/Conta/"
+    conta_filter = r"Extratos Bancarios/(.*)/Conta"
 
     filter = re.match(file_path_filter, file_path)
     if not filter:
@@ -290,9 +291,10 @@ def update_bd_from_pagbank(file_to_import):
         print('No file found!')
         return
 
+    conta = re.split(conta_filter, file_path)[1]
     
     df = pd.read_csv(io.BytesIO(file_excel), sep=';')
-    bank_pagbank.import_extrato_pagbank(df)
+    bank_pagbank.import_extrato_pagbank(df, conta)
 
     # Rename file
     if rename_file(file_id, file_name):
