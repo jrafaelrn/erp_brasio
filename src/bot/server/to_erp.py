@@ -15,16 +15,19 @@ class Consumer(object):
         time.sleep(3)
 
         #Click center of screen
+
         pyautogui.click(x=pyautogui.size()[0]/2, y=pyautogui.size()[1]/2)
         pyautogui.hotkey('alt', 'f')
         time.sleep(3)
         pyautogui.hotkey('c', 'o')
         time.sleep(3)
         
+        
         #Click center of screen
         pyautogui.click(x=pyautogui.size()[0]/2, y=pyautogui.size()[1]/2)
         time.sleep(3)
         pyautogui.press('f2')
+        
 
         self.lancar_todos()
 
@@ -181,7 +184,6 @@ class Consumer(object):
 def main():
     consumer = Consumer()
     consumer.abrir_contas_pagar()
-    #consumer.lancar_todos()
 
 
 if __name__ == '__main__':

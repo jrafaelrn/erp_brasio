@@ -172,3 +172,19 @@ jobs:
             REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
             GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
           timeout: '540s'
+
+      
+      - id: 'deploy-bank-download-api'
+        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        with:
+          source_dir: 'src/functions/bank_download/'
+          entry_point: 'check'
+          name: 'function-bank-download-api'
+          runtime: 'python39'
+          event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/download-all-banks-sub
+          secret_environment_variables: |-
+            GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
+            REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
+            GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
+          timeout: '540s'

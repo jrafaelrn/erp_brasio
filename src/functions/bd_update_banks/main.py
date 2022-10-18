@@ -1,4 +1,4 @@
-import json, gspread, io, os, bank_sicredi, base64, bank_pagbank
+import json, gspread, io, os, re, bank_sicredi, base64, bank_pagbank
 from httplib2 import Credentials
 from datetime import datetime
 import pandas as pd
@@ -53,6 +53,7 @@ def get_files_to_import():
     global files_to_import
 
     if API_KEY is None:
+        print('API KEY not found!')
         return False
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
@@ -66,6 +67,7 @@ def get_files_to_import():
             for file in response.get('files', []):
                 
                 name_file = file.get('name')
+                print(f'File: {name_file}')
                 if name_file.find('-import') == -1:
                     continue
                 
@@ -276,9 +278,10 @@ def update_bd_from_pagbank(file_to_import):
     file_name = file_to_import['name']
     file_id = file_to_import['id']
     file_path = file_to_import['path']
-    file_path_filter = 'PagBank/Conta/'
+    file_path_filter = r"(.)*PagBank(.)*/Conta/"
 
-    if file_path.find(file_path_filter) == -1:
+    filter = re.match(file_path_filter, file_path)
+    if not filter:
         return
     
     file_excel = get_file(file_id)
