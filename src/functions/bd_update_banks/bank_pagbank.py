@@ -18,7 +18,7 @@ def import_extrato_pagbank(extrato_file, conta):
         tipo = extract.extract_type(descricao, tipo_old)
         valor = float(line[1][4].replace(',', '.'))
         conta = conta.upper()
-        descricao = f'{tipo_old} - {descricao}'
+        descricao = (f'{tipo_old} - {descricao}').upper()
 
         DATA = {}
         DATA['date_trx'] = line[1][1]

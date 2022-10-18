@@ -40,6 +40,10 @@ def extract_cpf_cnpj_cliente_fornecedor_from_description(description):
   
   elif description.find('CDB PAGBANK') != -1:
     return '', 'Investimentos - PagBank'
+
+  # Pix PagBank
+  elif description.find('PIX RECEBIDO - ') != -1:
+    return '', description.replace('PIX RECEBIDO - ', '')
   
   else:
     return '', ''
@@ -78,4 +82,3 @@ def extract_type(description, type):
     return 'LINK'
   else:
     return "OUTROS"
-
