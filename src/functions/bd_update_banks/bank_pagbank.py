@@ -8,6 +8,8 @@ import extract, bd, json, requests, time
 
 def import_extrato_pagbank(extrato_file, conta):
 
+    print(f'Importing PagBank file: {extrato_file}')
+
     for line in extrato_file.iterrows():     
         
         cod_transacao = line[1][0]
@@ -15,6 +17,8 @@ def import_extrato_pagbank(extrato_file, conta):
         tipo_old = line[1][2]
         descricao = line[1][3]
         doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(tipo_old)
+        print(f'DOC: {doc} - NOME: {nome}')
+
         tipo = extract.extract_type(descricao, tipo_old)
         valor = float(line[1][4].replace(',', '.'))
         conta = conta.upper()
