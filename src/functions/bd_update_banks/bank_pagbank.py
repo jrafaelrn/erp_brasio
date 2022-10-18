@@ -1,5 +1,5 @@
 from datetime import datetime
-import extract, bd, json, requests
+import extract, bd, json, requests, time
 
 
 ##########################################
@@ -33,6 +33,8 @@ def import_extrato_pagbank(extrato_file, conta):
         DATA_JSON = json.dumps(DATA)
 
         bd.insert(DATA_JSON)
+
+        time.sleep(2)
 
 
 

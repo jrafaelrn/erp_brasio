@@ -59,6 +59,7 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
 
       - id: 'deploy-sales'
+        name: 'Deploy Sales'
         uses: 'google-github-actions/deploy-cloud-functions@v0'
         with:
           source_dir: 'src/functions/check_sales/'
