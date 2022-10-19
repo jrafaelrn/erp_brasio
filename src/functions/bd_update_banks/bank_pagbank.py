@@ -15,7 +15,7 @@ def import_extrato_pagbank(extrato_file, conta):
         cod_transacao = str(line[1][0])
         data = datetime.strptime(line[1][1], '%d/%m/%Y')
         tipo_old = str(line[1][2])
-        descricao = str(f'{line[1][3]}')
+        descricao = str(f'{tipo_old} - {line[1][3]}')
         doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(descricao)
         print(f'DOC: {doc} - NOME: {nome}')
 
