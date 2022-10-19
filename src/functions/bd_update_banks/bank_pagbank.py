@@ -22,7 +22,7 @@ def import_extrato_pagbank(extrato_file, conta):
         tipo = str(extract.extract_type(descricao, tipo_old))
         valor = float(line[1][4].replace(',', '.'))
         conta = str(conta.upper())
-        descricao = str((f'{tipo_old} - {descricao}').upper())
+        descricao = descricao.upper()
 
         DATA = {}
         DATA['date_trx'] = line[1][1]
@@ -38,7 +38,7 @@ def import_extrato_pagbank(extrato_file, conta):
 
         bd.insert(DATA_JSON)
 
-        time.sleep(2)
+        time.sleep(4)
 
 
 
