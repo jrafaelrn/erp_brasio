@@ -16,7 +16,7 @@ services:
 
   bot:
     build: 
-      context: /src/bot
+      context: ./src/bot
       dockerfile: Dockerfile
     restart: always
 
