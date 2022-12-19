@@ -13,6 +13,7 @@ class TestExtraction(unittest.TestCase):
         self.assertEqual(extract_cpf_cnpj_cliente_fornecedor_from_description('RECEBIMENTO PIX SICREDI 12345678910 ABCD'), ('12345678910', 'ABCD'))
         self.assertEqual(extract_cpf_cnpj_cliente_fornecedor_from_description('PAGAMENTO PIX 88111222000199 EMPRESA XYZ'), ('88111222000199', 'EMPRESA XYZ'))
         self.assertEqual(extract_cpf_cnpj_cliente_fornecedor_from_description('COMPRAS NACIONAIS LOJA ABC'), ('', 'LOJA ABC'))
+        self.assertEqual(extract_cpf_cnpj_cliente_fornecedor_from_description('Pix Recebido - Joao dos Santos'), ('', 'JOAO DOS SANTOS'))
         
 
     def test_extract_type(self):
