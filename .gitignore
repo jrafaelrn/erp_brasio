@@ -6,6 +6,8 @@ src/bot/listener.py
 src/functions/telegram/test.py
 src/bot/server/paths.py
 
+db_data/*
+
 
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json
