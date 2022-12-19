@@ -45,6 +45,7 @@ url_base = f'https://api.telegram.org/bot{API_KEY}/'
 def start_bot():
 
     print('Starting bot...')
+    print(f'API KEY: {API_KEY}')
     update_id = None
     query_id = None
 
