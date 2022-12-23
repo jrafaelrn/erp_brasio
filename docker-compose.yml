@@ -22,3 +22,16 @@ services:
     environment:
       - API_KEY=${API_KEY}
 
+  web:
+    build: 
+      context: ./src/site
+      dockerfile: Dockerfile
+    restart: always
+    depends_on: 
+      - db
+    ports:
+      - 8000:8000
+    volumes:
+      - ./src/site:/app
+
+
