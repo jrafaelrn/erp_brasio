@@ -2,7 +2,7 @@ name: 'CD - GCP - Cloud Functions'
 
 on:
   push:
-    branch: [main]
+    branches: [main]
 
 
 jobs:
