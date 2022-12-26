@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+
+  bot:
+    build: 
+      context: ./src/bot
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - API_KEY=${API_KEY}
+
+  web:
+    build: 
+      context: ./src/site
+      dockerfile: Dockerfile
+    restart: always
+    depends_on: 
+      - db
+    ports:
+      - 8000:8000
+    volumes:
+      - ./src/site:/app
+
+

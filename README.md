@@ -1,7 +1,8 @@
 ## ERP Bot
-### Projeto com objetivo de criar um bot para Telegram que funciona como um ERP para pequenas empresas.
+### Projeto com objetivo de criar um bot para Telegram (e futuramente outros meios de comunicação) que funciona como um ERP para pequenas empresas.
 <br>
 
+[![Coverage Status](https://coveralls.io/repos/github/jrafaelrn/bot_erp/badge.svg?branch=master)](https://coveralls.io/github/jrafaelrn/bot_erp?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/64886d4f38ef1973a25f/maintainability)](https://codeclimate.com/github/jrafaelrn/bot_erp/maintainability)
 ---
 
 <br>
