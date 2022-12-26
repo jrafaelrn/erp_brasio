@@ -3,7 +3,7 @@ FROM python:3.10
 COPY . /app
 WORKDIR /app
 
-RUN pip install requests django Pillow psycopg2
+RUN pip install requests django Pillow psycopg2 coveralls
 
 EXPOSE 8000
 
