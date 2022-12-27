@@ -41,7 +41,7 @@ def manual_integration(request):
     api = request.POST.get('Conectar')
     
     response = render(request, "integrations.html")
-    response.set_cookie(f"status_{api}", "Processando...")
+    response.set_cookie(f"status_{api}", "Processando...", expires=60*60*24*30*60)
     
     return response 
 
