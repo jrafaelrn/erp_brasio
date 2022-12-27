@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .apis import *
+from django.core.mail import send_mail
+
 
 
 
@@ -37,8 +38,11 @@ def integration_request(request):
 def manual_integration(request):
     
     mailer = import_mailer()    
-    mailer.send_email(request)
+    #mailer.send_email(request)
+    username = request.get_signed_cookie("username")
     api = request.POST.get('Conectar')
+    
+    send_email_credentials_request(username, api, 'tec@luaempresas.com')
     
     response = render(request, "integrations.html")
     response.set_cookie(f"status_{api}", "Processando...", expires=60*60*24*30*60)
@@ -55,3 +59,20 @@ def import_mailer():
     sys.path.append(parent_dir + '/tools')
     import mailer as mail
     return mail
+    
+
+
+def send_email_credentials_request(username:str, api:str, to:str):    
+    
+    try:
+        subject = 'New credentials request'
+        message = f'User {username} requested new credentials for {api}'
+        recipient_list = [to]
+        
+        send_mail(subject, message, recipient_list)
+        print('Email sent!')
+    
+    except Exception as e:
+        print(f'Error sending email: {e}')
+        pass   
+

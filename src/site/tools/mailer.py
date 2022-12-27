@@ -15,7 +15,7 @@ def send_email(request):
     email_password = os.getenv('EMAIL_PASSWORD')
     email_smtp = os.getenv('EMAIL_SMTP')
     
-    print(f'Sendinf email from {email_from} to {email_to}')
+    print(f'Sending email from {email_from} to {email_to}')
     
     subject = 'New credentials request'
     body = f'User {request.user.username} requested new credentials for {request.POST.get("Conectar")}'

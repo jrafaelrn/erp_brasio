@@ -31,7 +31,20 @@ services:
       - db
     ports:
       - 8000:8000
+    links:
+      - db:db
     volumes:
       - ./src/site:/app
 
-
+  pg-admin:
+    image: dpage/pgadmin4
+    restart: always
+    depends_on: 
+      - db
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@mail.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    ports:
+      - 8080:80
+    links:
+      - db:db
