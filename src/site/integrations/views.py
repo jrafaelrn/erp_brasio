@@ -38,7 +38,12 @@ def manual_integration(request):
     
     mailer = import_mailer()    
     mailer.send_email(request)
-    return render(request, "integrations.html", {"ok": "Verifique seu e-mail."})
+    api = request.POST.get('Conectar')
+    
+    response = render(request, "integrations.html")
+    response.set_cookie(f"status_{api}", "Processando...")
+    
+    return response 
 
 
 
