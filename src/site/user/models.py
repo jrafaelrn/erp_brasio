@@ -7,7 +7,8 @@ class Client(models.Model):
     razao_social = models.CharField(max_length=100)
 
     def __str__(self):
-        return (f'{self.document} - {self.razao_social}')
+        name = f'{self.document} - {self.razao_social}'
+        return name
 
 
 class UserClient(AbstractUser):
@@ -24,4 +25,4 @@ class UserClient(AbstractUser):
     REQUIRED_FIELDS = ['password']
 
     def __str__(self):
-        return self.user_document
+        return str(self.user_document)
