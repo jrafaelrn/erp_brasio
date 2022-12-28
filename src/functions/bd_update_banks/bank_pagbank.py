@@ -12,8 +12,8 @@ def import_extrato_pagbank(extrato_file, conta):
         
         cod_transacao = line[1][0]
         data = datetime.strptime(line[1][1], '%d/%m/%Y')
-        tipo_old = line[1][2]
-        descricao = line[1][3]
+        tipo_old = (line[1][2]).upper()
+        descricao = (line[1][3]).upper()
         doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(tipo_old)
         tipo = extract.extract_type(descricao, tipo_old)
         valor = float(line[1][4].replace(',', '.'))
