@@ -8,9 +8,9 @@ import extract, bd, json, requests, time
 
 def import_extrato_pagbank(extrato_file, conta):
 
-    for line in extrato_file.iterrows():
-        
-        print(f'Importing PagBank file: {extrato_file}')     
+    print(f'Importing PagBank file: {extrato_file}')     
+    
+    for line in extrato_file.iterrows():        
         
         cod_transacao = str(line[1][0])
         data = datetime.strptime(line[1][1], '%d/%m/%Y')
