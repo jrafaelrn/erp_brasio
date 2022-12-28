@@ -84,7 +84,7 @@ def start_bot():
                     if query_id is not None:
                         answer_callback_query(query_id)
                         query_id = None
-                        #keyboard_remove(chat_id)
+                        keyboard_remove(chat_id)
 
         except Exception as e:
             print(f'Erro: {e}')

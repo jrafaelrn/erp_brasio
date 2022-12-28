@@ -41,6 +41,8 @@ def open_bd_bank():
 
 def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance):
 
+    print(f'Starting insert transaction - Date: {date_trx} - Account: {account} - Original Description: {original_description} - Document: {document} - Entity Bank: {entity_bank} - Type Trx: {type_trx} - Value: {value} - Balance: {balance}')
+
     entity_bank = entity_bank.strip()
     bd = open_bd_bank()
     bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
@@ -66,6 +68,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
     # Get MAX_ID from column ID
     max_id = bd_pd['ID'].max()
     id = int(max_id) + 1
+    print(f'ID: {id}')
 
     # Append new row
     row = [id, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
