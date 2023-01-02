@@ -38,7 +38,7 @@ def import_extrato_pagbank(extrato_file, conta):
 
         bd.insert(DATA_JSON)
 
-        time.sleep(4)
+        time.sleep(2)
 
 
 
