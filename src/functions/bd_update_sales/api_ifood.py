@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from .importer import ImporterApi_Interface
 from retry import retry
-import os, time
+import os, time, requests
 
 def configure():
     load_dotenv()
@@ -9,8 +9,6 @@ def configure():
 
 # STATIC VARIABLES
 BASE_URL = 'https://merchant-api.ifood.com.br'
-CLIENT_ID = os.getenv('IFOOD_CLIENT_ID')
-CLIENT_SECRET = os.getenv('IFOOD_CLIENT_SECRET')
 
 
 # Implements the "Importer" interface 
@@ -20,13 +18,30 @@ CLIENT_SECRET = os.getenv('IFOOD_CLIENT_SECRET')
 
 class ApiIfood(ImporterApi_Interface):
     
+    accessToken = None
+    
     def __init__(self):
         configure()
+        self.CLIENT_ID = os.getenv('IFOOD_CLIENT_ID')
+        self.CLIENT_SECRET = os.getenv('IFOOD_CLIENT_SECRET')
         self.api_name = 'ifood'
     
     
     def connect(self):
-        print('Getting API KEY from {self.api_name}...')        
+        print('Getting Access Token from {self.api_name}...')        
+        
+        URL = f'{BASE_URL}/authentication/v1.0/ouath/token'
+        
+        post = requests.post(URL, data={
+            'clientId': self.CLIENT_ID,
+            'clientSecret': self.CLIENT_SECRET,
+            'grant_type': 'client_credentials'
+        })
+        
+        print(post)
+        accessToken = post.json()['accessToken']
+        print(f'Access Token: {accessToken}')
+        
     
     def download(self) -> bool:
         print(f'Downloading data from {self.api_name}...')
@@ -36,7 +51,7 @@ class ApiIfood(ImporterApi_Interface):
         print(f'Saving data from {self.api_name}...')
         
     
-    @retry(delay=120, tries=1000)
+    @retry(delay=10, tries=1000)
     def start(self):
         
         try:
@@ -49,6 +64,7 @@ class ApiIfood(ImporterApi_Interface):
                 
         except Exception as e:
             print(f'Error: {e}')
+            raise e
                 
                 
 
