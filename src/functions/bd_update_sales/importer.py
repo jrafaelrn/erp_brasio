@@ -1,12 +1,13 @@
 from abc import abstractmethod, ABC
 
-
+# Interface that should be used for all APIs.
 class ImporterApi_Interface(ABC):
     
     @abstractmethod
     def __init__(self, api):
         self.api = api
         print(f'Starting API to {self.api}...')
+        pass
         
         
     @abstractmethod

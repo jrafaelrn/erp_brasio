@@ -15,18 +15,19 @@ CLIENT_SECRET = os.getenv('IFOOD_CLIENT_SECRET')
 
 # Implements the "Importer" interface 
 # to provide all the necessary methods 
-# for downloading Ifood API data and saving it 
+# for downloading Rappi API data and saving it 
 # in the database.
 
-class ApiIfood(ImporterApi_Interface):
+class ApiRappi(ImporterApi_Interface):
     
     def __init__(self):
         configure()
-        self.api_name = 'ifood'
+        self.api_name = 'rappi'
     
     
     def connect(self):
-        print('Getting API KEY from {self.api_name}...')        
+        print('Getting API KEY from {self.api_name}...')
+        
     
     def download(self) -> bool:
         print(f'Downloading data from {self.api_name}...')
@@ -45,7 +46,7 @@ class ApiIfood(ImporterApi_Interface):
                 self.connect()
                 self.download()
                 self.save_db()
-                time.sleep(5)
+                time.sleep(7)
                 
         except Exception as e:
             print(f'Error: {e}')
@@ -53,5 +54,5 @@ class ApiIfood(ImporterApi_Interface):
                 
 
 def start():
-    ifood = ApiIfood()
-    ifood.start()
+    rappi = ApiRappi()
+    rappi.start()
