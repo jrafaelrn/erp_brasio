@@ -18,8 +18,6 @@ BASE_URL = 'https://merchant-api.ifood.com.br'
 
 class ApiIfood(ImporterApi_Interface):
     
-    accessToken = None
-    
     def __init__(self):
         configure()
         self.CLIENT_ID = os.getenv('IFOOD_CLIENT_ID')
@@ -28,27 +26,63 @@ class ApiIfood(ImporterApi_Interface):
     
     
     def connect(self):
-        print('Getting Access Token from {self.api_name}...')        
+        print(f'Getting Access Token from {self.api_name}...')        
         
-        URL = f'{BASE_URL}/authentication/v1.0/ouath/token'
-        
-        post = requests.post(URL, data={
+        URL = f'{BASE_URL}/authentication/v1.0/oauth/token'
+        data={
             'clientId': self.CLIENT_ID,
             'clientSecret': self.CLIENT_SECRET,
-            'grant_type': 'client_credentials'
-        })
+            'grantType': 'client_credentials'
+        }
         
-        print(post)
-        accessToken = post.json()['accessToken']
-        print(f'Access Token: {accessToken}')
+        post = requests.post(URL, data=data)
+        
+        self.accessToken = post.json()['accessToken']
+
         
     
     def download(self) -> bool:
         print(f'Downloading data from {self.api_name}...')
+        
+        # MERCHANTS
+        self.merchants = self.download_merchants()
+        
+        # ORDERS
+        self.orders = self.download_orders()
+    
+    
+    def download_merchants(self):
+        
+        merchants = []
+        URL = f'{BASE_URL}/merchant/v1.0/merchants'
+        auth = f'Bearer {self.accessToken}'
+        headers = {"Authorization": auth}
+        
+        post = requests.get(URL, headers=headers)
+        
+        return post.json()
+            
+        
+    def download_orders(self):
+        
+        orders = []
+        URL = f'{BASE_URL}/order/v1.0/events:polling'
+        auth = f'Bearer {self.accessToken}'
+        headers = {"Authorization": auth}
+        
+        post = requests.get(URL, headers=headers)
+        
+        if post.status_code != 200:
+            print(f'Status code: {post.status_code}')
+            return None
+        
+        return post.json()
+    
     
     
     def save_db(self) -> bool:
         print(f'Saving data from {self.api_name}...')
+        
         
     
     @retry(delay=10, tries=1000)
@@ -56,8 +90,9 @@ class ApiIfood(ImporterApi_Interface):
         
         try:
             
+            self.connect()
+            
             while True:
-                self.connect()
                 self.download()
                 self.save_db()
                 time.sleep(5)

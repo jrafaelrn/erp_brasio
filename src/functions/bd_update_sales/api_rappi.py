@@ -26,7 +26,7 @@ class ApiRappi(ImporterApi_Interface):
     
     
     def connect(self):
-        print('Getting API KEY from {self.api_name}...')
+        print(f'Getting API KEY from {self.api_name}...')
         
     
     def download(self) -> bool:

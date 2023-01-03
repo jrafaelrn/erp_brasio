@@ -3,7 +3,7 @@ import importlib, multiprocessing
 
 def get_apis_list():
 
-    API_BASE_LIST = ['ifood', 'rappi']
+    API_BASE_LIST = ['ifood']
     modules_name = lambda x : f'api_{x}'
     MODULES_API_LIST = list(map(modules_name, API_BASE_LIST))
     return MODULES_API_LIST
