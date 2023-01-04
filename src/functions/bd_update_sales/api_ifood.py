@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from .importer import ImporterApi_Interface
+from importer import ImporterApi_Interface
 from retry import retry
 import os, time, requests
 

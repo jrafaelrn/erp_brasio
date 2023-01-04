@@ -4,7 +4,7 @@ import os
 
 
 try:
-    ACTUAL_FOLDER = os.getcwd() + "\\src\\functions"
+    ACTUAL_FOLDER = os.path.join(os.getcwd(), "src", "functions")
     ACTUAL_FOLDERS_REQUIREMENTS = os.listdir("src/functions")
     ACTUAL_FILE_REQUIREMENTS = os.path.join(ACTUAL_FOLDER, "requirements.txt")
     os.path.exists(ACTUAL_FOLDER)
