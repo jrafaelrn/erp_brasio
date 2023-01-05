@@ -9,10 +9,9 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: user
       POSTGRES_DB: db
-    ports:
-      - 5432:5432
     volumes:
       - ./db_data:/var/lib/postgresql/data
+
 
   bot:
     build: 
@@ -35,6 +34,7 @@ services:
     volumes:
       - ./src/site:/app
 
+  
   pg-admin:
     image: dpage/pgadmin4
     restart: always
@@ -47,6 +47,7 @@ services:
       - 8080:80
     links:
       - db:db
+
 
   functions:
     build: 
