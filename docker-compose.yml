@@ -19,8 +19,7 @@ services:
       context: ./src/bot
       dockerfile: Dockerfile
     restart: always
-    environment:
-      - API_KEY=${API_KEY}
+
 
   site:
     build: 

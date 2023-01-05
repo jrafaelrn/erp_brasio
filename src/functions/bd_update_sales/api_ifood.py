@@ -1,7 +1,8 @@
 from dotenv import load_dotenv
 from importer import ImporterApi_Interface
 from retry import retry
-import os, time, requests
+from bd_sales import DbSalesIfood
+import os, time, requests, hashlib
 
 def configure():
     load_dotenv()
@@ -42,13 +43,17 @@ class ApiIfood(ImporterApi_Interface):
         
     
     def download(self) -> bool:
+        
         print(f'Downloading data from {self.api_name}...')
         
         # MERCHANTS
         self.merchants = self.download_merchants()
+        self.merchants_hash_downloaded = hashlib.md5(str(self.merchants).encode('utf-8')).hexdigest()
         
         # ORDERS
         self.orders = self.download_orders()
+        
+        return True
     
     
     def download_merchants(self):
@@ -80,8 +85,17 @@ class ApiIfood(ImporterApi_Interface):
     
     
     
-    def save_db(self) -> bool:
+    def save_db(self):
         print(f'Saving data from {self.api_name}...')
+        
+        db = DbSalesIfood()
+        
+        if self.merchants_hash_downloaded != self.merchants_hash_saved:
+            db.insert_merchants(self.merchants)
+            self.merchants_hash_saved = self.merchants_hash_downloaded
+            
+        db.insert_orders(self.orders)
+        
         
         
     
@@ -91,10 +105,12 @@ class ApiIfood(ImporterApi_Interface):
         try:
             
             self.connect()
+            self.merchants_hash_saved = None
             
             while True:
-                self.download()
-                self.save_db()
+                if self.download():
+                    self.save_db()
+                    
                 time.sleep(5)
                 
         except Exception as e:
