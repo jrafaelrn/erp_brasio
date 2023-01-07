@@ -2,12 +2,11 @@ from multiprocessing import Pool, Process
 import importlib, multiprocessing
 
 
-def get_apis_list():
+def get_apis_list(apis_name):
 
-    API_BASE_LIST = ['ifood']
     modules_name = lambda x : f'api_{x}'
-    MODULES_API_LIST = list(map(modules_name, API_BASE_LIST))
-    return MODULES_API_LIST
+    modules_api_list = list(map(modules_name, apis_name))
+    return modules_api_list
 
 
 
@@ -48,8 +47,9 @@ def send_email():
 
 def run():
     
-    # Gets the list of all modules(files) starting with "api_"
-    modules = get_apis_list()
+    # Gets the list of all modules(files) starting with "api_ + base list"
+    API_BASE_LIST = ['ifood']
+    modules = get_apis_list(API_BASE_LIST)
     
     # Turns all modules into processes, with the "start" method to run
     procs = transform_module_into_processes(modules)

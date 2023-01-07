@@ -115,6 +115,7 @@ class ApiIfood(ImporterApi_Interface):
     ###############################
     
     def save_db(self):
+        
         print(f'Saving data from {self.api_name}...')
         
         db = DbSalesIfood()
@@ -133,6 +134,7 @@ class ApiIfood(ImporterApi_Interface):
     
     def send_ack(id):
         pass
+    
     
     ###############################
     #           WATCHER           #

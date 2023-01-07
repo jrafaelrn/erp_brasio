@@ -20,6 +20,9 @@ def main():
 
 
 if __name__ == "__main__":
-    print("Waiting for database to be ready...")
-    #time.sleep(15)
+    
+    if sys.argv[1] == "runserver":
+        print("Waiting for database to be ready...")
+        time.sleep(15)
+    
     main()

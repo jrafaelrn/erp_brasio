@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class Client(models.Model):
+    
     document = models.CharField(max_length=14, primary_key=True)
     nome_fantasia = models.CharField(max_length=100)
     razao_social = models.CharField(max_length=100)
@@ -13,7 +14,7 @@ class Client(models.Model):
 
 class UserClient(AbstractUser):
     
-    user_document = models.ForeignKey(Client, on_delete=models.DO_NOTHING, default='1')
+    user_document = models.ManyToManyField(Client)
     
     whatsapp_number = models.CharField(max_length=20, unique=True)
     whatsapp_chat_id = models.CharField(max_length=20, unique=True)
