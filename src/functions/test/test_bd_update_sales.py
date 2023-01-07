@@ -13,7 +13,3 @@ class TestApi(unittest.TestCase):
     
     def test_api_list(self):
         self.assertEqual(get_apis_list(['ifood', 'rappi']), ['api_ifood', 'api_rappi'])
-
-
-if __name__ == '__main__':
-    unittest.main()

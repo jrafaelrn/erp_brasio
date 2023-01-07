@@ -8,6 +8,8 @@ class Integration(models.Model):
     integration_name = models.CharField(max_length=100)
     integration_client_id = models.CharField(max_length=100)
     integration_api_key = models.CharField(max_length=100)
+    
+    models.UniqueConstraint(fields=['client_document', 'integration_name'], name='unique_integration')
 
     def __str__(self):
         return self.integration_name

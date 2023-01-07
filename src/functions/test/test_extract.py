@@ -21,7 +21,3 @@ class TestExtraction(unittest.TestCase):
         self.assertEqual(extract_type('GETNET DEBITO ELO', 'XYZ'), 'GETNET')
         self.assertEqual(extract_type('CONVENIO', 'DEB AUTOMATICO'), 'DEB AUTOMATICO')
         self.assertEqual(extract_type('DEBITO CONVENIOS ID', '9876'), 'DEB AUTOMATICO')
-
-
-if __name__ == '__main__':
-    unittest.main()
