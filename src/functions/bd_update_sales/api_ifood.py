@@ -66,18 +66,20 @@ class ApiIfood(ImporterApi_Interface):
         print(f'Downloading data from {self.api_name}...')
         
         # MERCHANTS
-        merchants = self.download_merchants()
-        self.merchants_details = self.download_merchants_details(merchants)
-        self.merchants_hash_downloaded = hashlib.md5(str(merchants).encode('utf-8')).hexdigest()
+        self.merchants = self.download_merchants()
+        #self.merchants_details = self.download_merchants_details(merchants)
+        self.merchants_hash_downloaded = hashlib.md5(str(self.merchants).encode('utf-8')).hexdigest()
         
         # ORDERS
         self.orders = self.download_orders()
+        self.orders_details = self.download_orders_details(self.orders)
         
         return True
     
     
     def download_merchants(self):
         
+        print('\tDownloading merchants...')
         merchants = []
         URL = f'{BASE_URL}/merchant/v1.0/merchants'        
         post = requests.get(URL, headers=self.headers)
@@ -87,6 +89,7 @@ class ApiIfood(ImporterApi_Interface):
 
     def download_merchants_details(self, merchants):
         
+        print('\tDownloading merchants details...')
         URL = f'{BASE_URL}/merchant/v1.0/merchants/'
         merchants_details = []
         
@@ -99,15 +102,32 @@ class ApiIfood(ImporterApi_Interface):
         
     def download_orders(self):
         
+        print('\tDownloading orders...')
         orders = []
         URL = f'{BASE_URL}/order/v1.0/events:polling'        
         post = requests.get(URL, headers=self.headers)
         
         if post.status_code != 200:
-            print(f'Status code: {post.status_code}')
+            print(f'\t\tStatus code: {post.status_code}')
             return None
         
         return post.json()
+    
+    
+    def download_orders_details(self, orders):
+        
+        print('\tDownloading orders details...')
+        orders_details = []
+        URL = f'{BASE_URL}/order/v1.0/orders/'
+        
+        for order in orders:
+            URL = f"{URL}{order['orderId']}"
+            post = requests.get(URL, headers=self.headers)
+            
+            if post.status_code == 200:
+                orders_details.append(post.json())
+                
+        return orders_details
     
     
     ###############################
@@ -121,7 +141,7 @@ class ApiIfood(ImporterApi_Interface):
         db = DbSalesIfood()
         
         if self.merchants_hash_downloaded != self.merchants_hash_saved:
-            db.insert_merchants(self.merchants_details)
+            db.insert_merchants(self.merchants)
             self.merchants_hash_saved = self.merchants_hash_downloaded
         
         if self.orders != None:

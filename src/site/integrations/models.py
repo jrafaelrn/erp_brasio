@@ -6,8 +6,8 @@ class Integration(models.Model):
     
     client_document = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
     integration_name = models.CharField(max_length=100)
-    integration_client_id = models.CharField(max_length=100)
-    integration_api_key = models.CharField(max_length=100)
+    integration_client_id = models.CharField(max_length=100, blank=True)
+    integration_api_key = models.CharField(max_length=100, blank=True)
     
     models.UniqueConstraint(fields=['client_document', 'integration_name'], name='unique_integration')
 
