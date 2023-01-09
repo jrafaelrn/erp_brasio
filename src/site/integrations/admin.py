@@ -1,4 +1,10 @@
 from django.contrib import admin
-from .models import Integration
+from .models import Integration, IntegrationTransaction
 
-admin.site.register(Integration)
+
+class IntegrationTransactionInline(admin.StackedInline):
+    model = IntegrationTransaction
+
+@admin.register(Integration)
+class IntegrationAdmin(admin.ModelAdmin):
+    inlines = [IntegrationTransactionInline]

@@ -1,15 +1,26 @@
 from django.db import models
 from user.models import Client
 
-# Create your models here.
+
 class Integration(models.Model):
     
-    client_document = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
+    client_document = models.ForeignKey(Client, on_delete=models.PROTECT)
     integration_name = models.CharField(max_length=100)
-    integration_client_id = models.CharField(max_length=100, blank=True)
-    integration_api_key = models.CharField(max_length=100, blank=True)
+    status = models.CharField(max_length=30)
     
     models.UniqueConstraint(fields=['client_document', 'integration_name'], name='unique_integration')
 
     def __str__(self):
-        return self.integration_name
+        return f'{self.client_document} - {self.integration_name}'
+    
+    def __eq__(self, other):
+        return self.client_document == other.client_document and self.integration_name == other.integration_name
+    
+    def __hash__(self):
+        return hash((self.client_document, self.integration_name))
+    
+    
+class IntegrationTransaction(models.Model):
+    
+    integration = models.ForeignKey(Integration, on_delete=models.PROTECT, related_name='integration_transaction')
+    identifier = models.CharField(max_length=100)    

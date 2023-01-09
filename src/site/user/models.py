@@ -16,11 +16,11 @@ class UserClient(AbstractUser):
     
     user_document = models.ManyToManyField(Client)
     
-    whatsapp_number = models.CharField(max_length=20, unique=True)
-    whatsapp_chat_id = models.CharField(max_length=20, unique=True)
+    whatsapp_number = models.CharField(max_length=20, unique=True, blank=True)
+    whatsapp_chat_id = models.CharField(max_length=20, unique=True, blank=True)
     
-    telegram_username = models.CharField(max_length=40, unique=True)
-    telegram_chat_id = models.CharField(max_length=20, unique=True)
+    telegram_username = models.CharField(max_length=40, unique=True, blank=True)
+    telegram_chat_id = models.CharField(max_length=20, unique=True, blank=True)
     
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['password']

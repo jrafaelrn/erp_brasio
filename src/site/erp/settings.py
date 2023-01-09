@@ -69,13 +69,22 @@ WSGI_APPLICATION = "erp.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Check host name (to validate if running Docker)
+host = os.system("ping -c 1 db")
+if host == 0:
+    print("Running Docker")
+    host = "db"
+else:
+    print(host)
+    host = "localhost"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "db",
         "USER": "user",
         "PASSWORD": "password",
-        "HOST": "db",
+        "HOST": host,
         "PORT": "5432",
     }
 }
