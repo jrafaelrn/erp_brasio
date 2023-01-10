@@ -24,6 +24,8 @@ class Product(models.Model):
 
 class ProductSale(models.Model):
     
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    sale = models.ForeignKey('Sale', on_delete=models.PROTECT)
     quantity = models.FloatField(null=False, blank=False)
     unit = models.CharField(max_length=10, null=False, blank=False)
     
@@ -67,7 +69,7 @@ class Delivery(models.Model):
     
     delivery_date_time = models.DateTimeField(null=True)
     observations = models.CharField(max_length=100, null=True)    
-    address = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='address_delivery', null=True)
+    address = models.ForeignKey(Address, on_delete=models.PROTECT, null=True)
     
 
     
@@ -111,20 +113,21 @@ class Fee(models.Model):
     value = models.FloatField(null=False, blank=False)
     liabilities = models.CharField(max_length=200, null=False)
     
+
     
-class Sale(models.Models):
+class Sale(models.Model):
     
     total_sales = models.FloatField(null=False, blank=False)
     total_discount = models.FloatField(null=False, blank=False)
     total_shipping = models.FloatField(null=False, blank=False)
     total_products = models.FloatField(null=False, blank=False)
     
-    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name='client_sale', null=True)
-    delivery = models.ForeignKey(Delivery, on_delete=models.PROTECT, related_name='delivery_sale', null=True)
-    products = models.ManyToManyField(Product, related_name='products_sale', null=True, through='ProductSale')
-    payments = models.ManyToManyField(Payment, related_name='payments_sale', null=True)
-    benefits = models.ManyToManyField(Benefit, related_name='benefits_sale', null=True)
-    fees = models.ManyToManyField(Fee, related_name='fees_sale', null=True)
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, null=True)
+    delivery = models.ForeignKey(Delivery, on_delete=models.PROTECT, null=True)
+    products = models.ManyToManyField(Product, through='ProductSale')
+    payments = models.ManyToManyField(Payment)
+    benefits = models.ManyToManyField(Benefit)
+    fees = models.ManyToManyField(Fee)
     
     order_amount = models.FloatField(null=False, blank=False)
     prepaid_amount = models.FloatField(null=False, blank=False)
@@ -137,14 +140,14 @@ class Sale(models.Models):
 # Represents a sales transaction
 class Transaction(models.Model):
     
-    api = models.ForeignKey(IntegrationTransaction, on_delete=models.PROTECT, related_name='api_source')
-    id_api = models.CharField(max_length=100, primary_key=True)
+    api_source = models.ForeignKey(IntegrationTransaction, on_delete=models.PROTECT)
+    api_id = models.CharField(max_length=100, primary_key=True)
     created_at = models.DateTimeField()
     closed_at = models.DateTimeField()
     
     models.UniqueConstraint(fields=['api', 'id_api'], name='unique_transaction')
     
-    sale = models.ForeignKey(Sale, on_delete=models.PROTECT, related_name='transaction_sale')
+    sale = models.ForeignKey(Sale, on_delete=models.PROTECT)
     
 
 
@@ -161,14 +164,14 @@ class IfoodClient(models.Model):
 
 class Ifood(models.Model):
     
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='transaction_ifood')
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
     display_id = models.CharField(max_length=10)
     order_type = models.CharField(max_length=20)
     order_timing = models.CharField(max_length=20)
     sales_channel = models.CharField(max_length=30)
     extra_info = models.CharField(max_length=100)
     
-    ifood_client_details = models.ForeignKey(IfoodClient, on_delete=models.PROTECT, related_name='ifood_client_details', null=True)
+    ifood_client_details = models.ForeignKey(IfoodClient, on_delete=models.PROTECT, null=True)
     
     
     
