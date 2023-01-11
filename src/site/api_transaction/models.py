@@ -5,10 +5,10 @@ from integrations.models import IntegrationTransaction
 class Client(models.Model):
     
     name = models.CharField(max_length=100, null=False, blank=False)
-    email = models.EmailField(blank=True)
-    phone_number = models.CharField(max_length=20, blank=True)
-    document = models.CharField(max_length=14, null=True)
-    group = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(null=True, unique=True)
+    phone_number = models.CharField(max_length=20, null=True, unique=True)
+    document = models.CharField(max_length=14, null=True, unique=True)
+    group = models.CharField(max_length=100, null=True)
     id = models.CharField(max_length=100, primary_key=True)
     
 
@@ -117,10 +117,10 @@ class Fee(models.Model):
     
 class Sale(models.Model):
     
-    total_sales = models.FloatField(null=False, blank=False)
+    total_products = models.FloatField(null=False, blank=False)
     total_discount = models.FloatField(null=False, blank=False)
     total_shipping = models.FloatField(null=False, blank=False)
-    total_products = models.FloatField(null=False, blank=False)
+    total_fees = models.FloatField(null=False, blank=False)
     
     client = models.ForeignKey(Client, on_delete=models.PROTECT, null=True)
     delivery = models.ForeignKey(Delivery, on_delete=models.PROTECT, null=True)
@@ -143,7 +143,7 @@ class Transaction(models.Model):
     api_source = models.ForeignKey(IntegrationTransaction, on_delete=models.PROTECT)
     api_id = models.CharField(max_length=100, primary_key=True)
     created_at = models.DateTimeField()
-    closed_at = models.DateTimeField()
+    closed_at = models.DateTimeField(null=True)
     
     models.UniqueConstraint(fields=['api', 'id_api'], name='unique_transaction')
     

@@ -45,7 +45,8 @@ class DbSales():
             except:
                 self.bd_return = None
             
-            print(f'Executed: {command} with values: {values} -> Result: {self.bd_return}')
+            print(f'Executed: [{command}] -> Result: {self.bd_return}')
+            self.commit()
             return self.bd_return
         
         except Exception as e:
@@ -57,7 +58,7 @@ class DbSales():
     def commit(self):
         
         try:
-            self.db.commit()
+            self.connection.commit()
             return True
         
         except Exception as e:
@@ -84,6 +85,7 @@ class DbSalesIfood():
             
             print(f'Inserting merchant: {merchant}')
             
+            
         db.disconnect()
             
             
@@ -91,11 +93,48 @@ class DbSalesIfood():
     
     def insert_orders(self, orders):
         
-        db = DbSales()
-        db.connect()
+        self.db = DbSales()
+        self.db.connect()
         
         for order in orders:
             
-            print(f'Inserting order: {order}')
+            self.insert_sale(order)
+            api_source_id = self.get_source_id(order)
     
-        db.disconnect()
+        self.db.disconnect()
+    
+    
+    
+    def get_source_id(self, order):
+        return order['merchant']['id']
+        
+    
+    
+    def insert_sale(self, order):
+        
+        total = order['total']
+        
+        total_products = total['subTotal']
+        total_shipping = total['deliveryFee']
+        total_discount = total['benefits']
+        total_fees = total['additionalFees']        
+        order_amount = total['orderAmount']
+        
+        pre_paid_amount = order['payments']['prepaid']
+        pending_amount = order['payments']['pending']
+        
+        db_table = 'api_transaction_sale'
+        
+        self.db.execute(f'INSERT INTO {db_table} (total_products, total_shipping, total_discount, total_fees, order_amount, prepaid_amount, pending_amount) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id', (total_products, total_shipping, total_discount, total_fees, order_amount, pre_paid_amount, pending_amount))
+        
+    
+    
+    def insert_transaction_base(self, api_source_id, order):
+        pass
+    
+    
+    def insert_transaction_client():
+        pass
+    
+    def insert_transaction_delivery():
+        pass

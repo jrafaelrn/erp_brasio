@@ -13,9 +13,6 @@ class Integration(models.Model):
     def __str__(self):
         return f'{self.client_document} - {self.integration_name}'
     
-    def __eq__(self, other):
-        return self.client_document == other.client_document and self.integration_name == other.integration_name
-    
     def __hash__(self):
         return hash((self.client_document, self.integration_name))
     

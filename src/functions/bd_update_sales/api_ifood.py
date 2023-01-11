@@ -32,10 +32,16 @@ class ApiIfood(ImporterApi_Interface):
     ###############################
     
     def connect(self):
+        
         print(f'Getting Access Token from {self.api_name}...')     
         
-        if self.accessToken != None:
-            return   
+        try:
+            if os.environ.get('IFOOD_ACCESS_TOKEN') != "":
+                self.configure_headers(self.accessToken)
+                return   
+        except:
+            pass
+        
         
         URL = f'{BASE_URL}/authentication/v1.0/oauth/token'
         data={
@@ -47,6 +53,7 @@ class ApiIfood(ImporterApi_Interface):
         post = requests.post(URL, data=data)
         
         self.accessToken = post.json()['accessToken']
+        os.environ['IFOOD_ACCESS_TOKEN'] = str(self.accessToken)
         self.configure_headers(self.accessToken)
         print(f'\tAccess Token obtained!')
 
@@ -66,13 +73,14 @@ class ApiIfood(ImporterApi_Interface):
         print(f'Downloading data from {self.api_name}...')
         
         # MERCHANTS
-        self.merchants = self.download_merchants()
+        #self.merchants = self.download_merchants()
         #self.merchants_details = self.download_merchants_details(merchants)
-        self.merchants_hash_downloaded = hashlib.md5(str(self.merchants).encode('utf-8')).hexdigest()
+        #self.merchants_hash_downloaded = hashlib.md5(str(self.merchants).encode('utf-8')).hexdigest()
         
         # ORDERS
-        self.orders = self.download_orders()
-        self.orders_details = self.download_orders_details(self.orders)
+        orders = self.download_orders()
+        if orders != None:
+            self.orders_details = self.download_orders_details(orders)
         
         return True
     
@@ -140,12 +148,12 @@ class ApiIfood(ImporterApi_Interface):
         
         db = DbSalesIfood()
         
-        if self.merchants_hash_downloaded != self.merchants_hash_saved:
-            db.insert_merchants(self.merchants)
-            self.merchants_hash_saved = self.merchants_hash_downloaded
+        #if self.merchants_hash_downloaded != self.merchants_hash_saved:
+            #db.insert_merchants(self.merchants)
+            #self.merchants_hash_saved = self.merchants_hash_downloaded
         
-        if self.orders != None:
-            db.insert_orders(self.orders)
+        if self.orders_details != None:
+            db.insert_orders(self.orders_details)
         
     
     def send_acks():
@@ -176,6 +184,7 @@ class ApiIfood(ImporterApi_Interface):
                 
         except Exception as e:
             print(f'Error: {e}')
+            os.environ['IFOOD_ACCESS_TOKEN'] = ""
             raise e
                 
                 
