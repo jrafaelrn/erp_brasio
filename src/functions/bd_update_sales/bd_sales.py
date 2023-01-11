@@ -98,16 +98,12 @@ class DbSalesIfood():
         
         for order in orders:
             
-            self.insert_sale(order)
-            api_source_id = self.get_source_id(order)
+            id_sale = self.insert_sale(order)[0]
+            self.insert_transaction_base(id_sale, order)
     
         self.db.disconnect()
     
     
-    
-    def get_source_id(self, order):
-        return order['merchant']['id']
-        
     
     
     def insert_sale(self, order):
@@ -125,12 +121,32 @@ class DbSalesIfood():
         
         db_table = 'api_transaction_sale'
         
-        self.db.execute(f'INSERT INTO {db_table} (total_products, total_shipping, total_discount, total_fees, order_amount, prepaid_amount, pending_amount) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id', (total_products, total_shipping, total_discount, total_fees, order_amount, pre_paid_amount, pending_amount))
+        id_sale = self.db.execute(f'INSERT INTO {db_table} (total_products, total_shipping, total_discount, total_fees, order_amount, prepaid_amount, pending_amount) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id', (total_products, total_shipping, total_discount, total_fees, order_amount, pre_paid_amount, pending_amount))
+        
+        return id_sale[0]
+    
+    
+    
+    def get_source_id(self, order):
+        
+        db_table = 'integrations_integrationtransaction'
+        merchant_id = order['merchant']['id']
+        source_id = self.db.execute(f'SELECT id FROM {db_table} WHERE identifier = %s', (merchant_id,))
+        return source_id[0][0]
         
     
-    
-    def insert_transaction_base(self, api_source_id, order):
-        pass
+        
+    def insert_transaction_base(self, id_sale, order):
+        
+        db_table = 'api_transaction_transaction'
+        
+        created_at = order['createdAt']
+        api_source_id = self.get_source_id(order)
+        api_id = order['id']
+        
+        self.db.execute(f'INSERT INTO {db_table} (api_id, created_at, api_source_id, sale_id) VALUES (%s, %s, %s, %s)', (api_id, created_at, api_source_id, id_sale))
+        
+        
     
     
     def insert_transaction_client():

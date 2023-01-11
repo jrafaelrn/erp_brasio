@@ -36,26 +36,22 @@ class ApiIfood(ImporterApi_Interface):
         print(f'Getting Access Token from {self.api_name}...')     
         
         try:
-            if os.environ.get('IFOOD_ACCESS_TOKEN') != "":
-                self.configure_headers(self.accessToken)
+            if self.accessToken != None:
                 return   
-        except:
-            pass
+            
+            URL = f'{BASE_URL}/authentication/v1.0/oauth/token'
+            data={
+                'clientId': self.CLIENT_ID,
+                'clientSecret': self.CLIENT_SECRET,
+                'grantType': 'client_credentials'
+            }
+            
+            post = requests.post(URL, data=data)            
+            self.accessToken = post.json()['accessToken']
         
-        
-        URL = f'{BASE_URL}/authentication/v1.0/oauth/token'
-        data={
-            'clientId': self.CLIENT_ID,
-            'clientSecret': self.CLIENT_SECRET,
-            'grantType': 'client_credentials'
-        }
-        
-        post = requests.post(URL, data=data)
-        
-        self.accessToken = post.json()['accessToken']
-        os.environ['IFOOD_ACCESS_TOKEN'] = str(self.accessToken)
-        self.configure_headers(self.accessToken)
-        print(f'\tAccess Token obtained!')
+        finally:
+            self.configure_headers(self.accessToken)
+            print(f'\tAccess Token obtained!')
 
 
     
@@ -79,8 +75,7 @@ class ApiIfood(ImporterApi_Interface):
         
         # ORDERS
         orders = self.download_orders()
-        if orders != None:
-            self.orders_details = self.download_orders_details(orders)
+        self.orders_details = self.download_orders_details(orders) if orders != None else None
         
         return True
     
@@ -184,7 +179,6 @@ class ApiIfood(ImporterApi_Interface):
                 
         except Exception as e:
             print(f'Error: {e}')
-            os.environ['IFOOD_ACCESS_TOKEN'] = ""
             raise e
                 
                 
