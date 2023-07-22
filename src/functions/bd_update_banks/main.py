@@ -22,10 +22,12 @@ def get_api_key():
     try:
         
         try:
-            file_service_account = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
+            file_service_account = 'key.json'
+            actual_folder = os.path.dirname(os.path.abspath(__file__))
+            actual_folder = os.path.join(actual_folder, file_service_account)
     
             #Open file
-            file = open(file_service_account, 'r')
+            file = open(actual_folder, 'r')
             file_content_string = file.read()
     
             api_key = json.loads(file_content_string)
@@ -210,9 +212,9 @@ def update_bd_from_sicredi_account(file_to_import):
     file_name = file_to_import['name']
     file_id = file_to_import['id']
     file_path = file_to_import['path']
-    file_path_filter = 'Sicredi/Conta/'
+    account_name = str(file_path.split('/')[1]).upper()
 
-    if file_path.find(file_path_filter) == -1:
+    if not check_folder_path(file_path):
         return None, None, None, None
     
     import_card = False
@@ -224,7 +226,7 @@ def update_bd_from_sicredi_account(file_to_import):
         return None, None, None, None
             
     df = pd.read_excel(io.BytesIO(file_excel))
-    import_card, balance_card, date_payment_card = bank_sicredi.import_extrato_sicredi(df)
+    import_card, balance_card, date_payment_card = bank_sicredi.import_extrato_sicredi(df, account_name)
     card_name_file_filter = None
     file_id_card = None
 
@@ -279,11 +281,8 @@ def update_bd_from_pagbank(file_to_import):
     file_name = file_to_import['name']
     file_id = file_to_import['id']
     file_path = file_to_import['path']
-    file_path_filter = r"(.)*PagBank(.)*/Conta/"
-    conta_filter = r"Extratos Bancarios/(.*)/Conta"
-
-    filter = re.match(file_path_filter, file_path)
-    if not filter:
+    
+    if not check_folder_path(file_path):
         return
     
     file_excel = get_file(file_id)
@@ -292,7 +291,7 @@ def update_bd_from_pagbank(file_to_import):
         print('No file found!')
         return
 
-    conta = re.split(conta_filter, file_path)[1]
+    conta = re.split(file_path)[1]
     
     df = pd.read_csv(io.BytesIO(file_excel), sep=';')
     bank_pagbank.import_extrato_pagbank(df, conta)
@@ -302,6 +301,30 @@ def update_bd_from_pagbank(file_to_import):
         print('File renamed!')
     else:
         print('ERROR - File not renamed!') 
+        
+        
+        
+##########################################
+#               FUNCTIONS                #
+##########################################
+
+def check_folder_path(folder_to_check):
+    
+    file_path_filter = ['Sicredi/Conta/','Sicredi-Bruna/Conta-CSV/'] 
+    
+    for path_filter in file_path_filter:
+        if folder_to_check.find(path_filter) != -1:
+            return True
+        
+        
+    file_path_filter = r"(.)*PagBank(.)*/Conta/"
+    conta_filter = r"Extratos Bancarios/(.*)/Conta"
+
+    filter = re.match(file_path_filter, folder_to_check)
+    if filter:
+        return True
+        
+    return False
 
 
 

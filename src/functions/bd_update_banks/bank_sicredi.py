@@ -8,7 +8,7 @@ import pandas as pd
 ##########################################
 
 # Day: string with file name
-def import_extrato_sicredi(extrato_file):
+def import_extrato_sicredi(extrato_file, account_name):
 
   print(f'... Importing extrato Sicredi...')
   
@@ -24,7 +24,7 @@ def import_extrato_sicredi(extrato_file):
 
       date_str = line[1][0]
       date_date = datetime.strptime(date_str, '%d/%m/%Y')  # Apenas para validacao da linha << Nao remover
-      conta = "SICREDI"
+      conta = account_name
       descricao = line[1][1]
       doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(descricao)
       tipo = extract.extract_type(descricao, line[1][2])

@@ -13,3 +13,4 @@ db_data/*
 gha-creds-*.json
 
 *.env
+src/functions/bd_update_banks/key.json
