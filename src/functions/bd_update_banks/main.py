@@ -215,6 +215,7 @@ def update_bd_from_sicredi_account(file_to_import):
     account_name = str(file_path.split('/')[1]).upper()
 
     if not check_folder_path(file_path):
+        print(f'Folder not CHECK_FOLDER: {file_path}')
         return None, None, None, None
     
     import_card = False
@@ -308,12 +309,12 @@ def update_bd_from_pagbank(file_to_import):
 #               FUNCTIONS                #
 ##########################################
 
-def check_folder_path(folder_to_check):
+def check_folder_path(folder_to_check: str):
     
     file_path_filter = ['Sicredi/Conta/','Sicredi-Bruna/Conta-CSV/'] 
     
     for path_filter in file_path_filter:
-        if folder_to_check.find(path_filter) != -1:
+        if folder_to_check.upper().find(path_filter.upper()) != -1:
             return True
         
         
