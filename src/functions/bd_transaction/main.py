@@ -1,4 +1,6 @@
 import json, gspread, os
+import string
+import random
 import pandas as pd
 
 
@@ -65,9 +67,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
             return msg
 
     
-    # Get MAX_ID from column ID
-    max_id = bd_pd['ID'].max()
-    id = int(max_id) + 1
+    id = id_generator(6)
     print(f'ID: {id}')
 
     # Append new row
@@ -183,6 +183,13 @@ def update(data):
         print(feedback)
 
     return feedback
+
+
+
+
+def id_generator(size, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 
 
 
