@@ -10,6 +10,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 files_to_import = []
+account_name = None
 
 #################################
 #       GOOGLE DRIVE API        #
@@ -207,6 +208,8 @@ def update_bd_from_sicredi(file_to_import):
 
 
 def update_bd_from_sicredi_account(file_to_import):
+    
+    global account_name
 
     # Import BANK SICREDI
     file_name = file_to_import['name']
@@ -254,6 +257,8 @@ def update_bd_from_sicredi_account(file_to_import):
 
 def update_bd_from_sicredi_card(file_id_card, balance_card, date_payment_card, card_name_file_filter):
 
+    global account_name
+    
     file_excel = get_file(file_id_card)
 
     if file_excel is None:
@@ -261,7 +266,7 @@ def update_bd_from_sicredi_card(file_id_card, balance_card, date_payment_card, c
         return
     
     df = pd.read_excel(io.BytesIO(file_excel))            
-    bank_sicredi.import_card_sicredi(df, balance_card, date_payment_card)
+    bank_sicredi.import_card_sicredi(df, balance_card, date_payment_card, account_name)
 
     # Rename file
     if rename_file(file_id_card, card_name_file_filter):

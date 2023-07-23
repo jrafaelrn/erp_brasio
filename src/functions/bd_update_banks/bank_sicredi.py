@@ -79,7 +79,7 @@ def import_extrato_sicredi(extrato_file, account_name):
   
 
 
-def import_card_sicredi(extrato_file, balance, date_payment_card):
+def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
 
     print(f'\n\n... Importing cartao Sicredi...\n')
 
@@ -93,8 +93,12 @@ def import_card_sicredi(extrato_file, balance, date_payment_card):
       try:
         
         linha = line[1][0]
-        data = datetime.strptime(linha, '%d/%m/%Y')  # Apenas para validacao da linha
-        conta = "SICREDI"
+        
+        try:
+          data = datetime.strptime(linha, '%d/%m/%Y')  # Apenas para validacao da linha
+        except:
+          data = datetime.strptime(str(linha), '%d/%m/%Y')  # Apenas para validacao da linha
+        
         descricao = f'{line[1][1]} - {line[1][2]} - ({linha})'
         tipo = 'CARTAO CRED'
         valor = line[1][3]
