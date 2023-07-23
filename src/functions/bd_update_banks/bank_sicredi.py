@@ -81,7 +81,7 @@ def import_extrato_sicredi(extrato_file, account_name):
 
 def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
 
-    print(f'\n\n... Importing cartao Sicredi...\n')
+    print(f'...... Importing cartao Sicredi......\n')
 
     # If name is date
     #if type(extrato_file) == datetime:
@@ -134,7 +134,7 @@ def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
         
       except Exception as e:
         msg = f'Linha inválida: {linha}\n\t error: {e}'
-        #print(msg)
+        print(msg)
         data = None
 
 

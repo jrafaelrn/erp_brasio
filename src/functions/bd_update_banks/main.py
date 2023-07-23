@@ -236,12 +236,15 @@ def update_bd_from_sicredi_account(file_to_import):
 
     # Check if card file exists
     if import_card:
+        
+        print(f'Checking if card file exists...')
 
         card_path_file_filter = f'{account_name}/CARTAO-CSV/'
         card_name_file_filter = datetime.strptime(date_payment_card, '%d/%m/%Y').strftime('%Y-%m') + '-import.xls'
         file_name_card, file_id_card = check_if_file_exists(card_path_file_filter, card_name_file_filter)
 
         if file_name_card is False:
+            print(f'Card file not found! -- Card Path File Filter: {card_path_file_filter} -- Card Name File Filter: {card_name_file_filter}')
             return None, None, None, None
 
 
