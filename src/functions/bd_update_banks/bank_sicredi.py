@@ -10,7 +10,7 @@ import pandas as pd
 # Day: string with file name
 def import_extrato_sicredi(extrato_file, account_name):
 
-  print(f'... Importing extrato Sicredi...')
+  print(f'... Importing extrato {account_name} from File {extrato_file} ...')
   
   in_progress = False
   import_card = False

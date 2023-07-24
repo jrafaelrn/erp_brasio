@@ -85,7 +85,7 @@ def get_files_to_import():
                 print(f'File to import: {file_to_import}')
                 files_to_import.append(file_to_import)
 
-            print(f'Finishid Search --> Files to import: {files_to_import}')
+            print(f'==== Finishid Search --> Files to import: {files_to_import}')
             return True
             
         except Exception as error:
