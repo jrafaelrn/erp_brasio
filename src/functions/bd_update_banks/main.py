@@ -54,6 +54,7 @@ API_KEY = get_api_key()
 def get_files_to_import():
 
     global files_to_import
+    print('Searching for files to import...')
 
     if API_KEY is None:
         print('API KEY not found!')
@@ -70,7 +71,7 @@ def get_files_to_import():
             for file in response.get('files', []):
                 
                 name_file = file.get('name')
-                print(f'File: {name_file}')
+                #print(f'File: {name_file}')
                 if name_file.find('-import') == -1:
                     continue
                 
