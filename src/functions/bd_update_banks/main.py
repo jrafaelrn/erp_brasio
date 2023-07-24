@@ -185,10 +185,11 @@ def update_bd():
 
     get_files_to_import()
     global files_to_import
+    print(f'.... Files to import...: {files_to_import}')
 
     for file_to_import in files_to_import:
 
-        print(f'Importing file...: {file_to_import}')
+        print(f'.........Importing file...: {file_to_import}')
         
         update_bd_from_sicredi(file_to_import)
         update_bd_from_pagbank(file_to_import)
