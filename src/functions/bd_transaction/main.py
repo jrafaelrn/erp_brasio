@@ -41,7 +41,7 @@ def open_bd_bank():
     return bd_sheet
 
 
-def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance):
+def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank):
 
     print(f'Starting insert transaction - Date: {date_trx} - Account: {account} - Original Description: {original_description} - Document: {document} - Entity Bank: {entity_bank} - Type Trx: {type_trx} - Value: {value} - Balance: {balance}')
 
@@ -65,13 +65,11 @@ def insert_transaction(date_trx, account, original_description, document, entity
             msg = f'Lancamento já existe no banco de dados'
             print(msg)
             return msg
-
     
-    id = id_generator(6)
-    print(f'ID: {id}')
+    print(f'ID: {id_bank}')
 
     # Append new row
-    row = [id, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
+    row = [id_bank, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
 
     #Save BD
     line = len(bd_pd.index) + 2
@@ -85,7 +83,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
         bd.update(f'{coluna}{line}', conteudo)
 
 
-    msg = f'Lancamento inserido!! ID: {id} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
+    msg = f'Lancamento inserido!! ID: {id_bank} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
     print(msg) 
     return msg
 
@@ -153,11 +151,16 @@ def insert(data):
     type_trx = DATA['type_trx']
     value = DATA['value']
     balance = DATA['balance']
+    
+    try:
+        id_bank = DATA['id_bank']
+    except:
+        id_bank = id_generator(6)
 
     feedback = ''
 
     try:
-        feedback = insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance)
+        feedback = insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank)
     except Exception as e:
         feedback = f'Error when inserting transaction: {e}' 
         print(feedback)
