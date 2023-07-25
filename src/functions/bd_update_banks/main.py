@@ -191,8 +191,11 @@ def update_bd():
 
         print(f'.........Importing file...: {file_to_import}')
         
-        update_bd_from_sicredi(file_to_import)
-        update_bd_from_pagbank(file_to_import)
+        if file_to_import.get('path').find('Sicredi') != -1:
+            update_bd_from_sicredi(file_to_import)
+            
+        if file_to_import.get('path').find('PagBank') != -1:
+            update_bd_from_pagbank(file_to_import)
             
 
 ##########################################
@@ -200,6 +203,8 @@ def update_bd():
 ##########################################
 
 def update_bd_from_sicredi(file_to_import):
+    
+    print(f'Updating BD from Sicredi: {file_to_import}')
 
     balance_card, date_payment_card, file_id_card, card_name_file_filter = update_bd_from_sicredi_account(file_to_import)
 
@@ -290,7 +295,7 @@ def update_bd_from_pagbank(file_to_import):
     
     print(f'...Updating BD from PagBank...: {file_to_import}')
 
-    # Import BANK SICREDI
+    # Import BANK PAGBANK
     file_name = file_to_import['name']
     file_id = file_to_import['id']
     file_path = file_to_import['path']
@@ -305,7 +310,7 @@ def update_bd_from_pagbank(file_to_import):
         print('No file found!')
         return
 
-    conta = re.split(file_path)[1]
+    conta = file_path.split('/')[1].upper()
     
     df = pd.read_csv(io.BytesIO(file_excel), sep=';')
     bank_pagbank.import_extrato_pagbank(df, conta)
