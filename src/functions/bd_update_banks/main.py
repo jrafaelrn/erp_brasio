@@ -287,6 +287,8 @@ def update_bd_from_sicredi_card(file_id_card, balance_card, date_payment_card, c
 ##########################################
 
 def update_bd_from_pagbank(file_to_import):
+    
+    print(f'...Updating BD from PagBank...: {file_to_import}')
 
     # Import BANK SICREDI
     file_name = file_to_import['name']
@@ -294,6 +296,7 @@ def update_bd_from_pagbank(file_to_import):
     file_path = file_to_import['path']
     
     if not check_folder_path(file_path):
+        print(f'Folder not pass CHECK_FOLDER: {file_path}')
         return
     
     file_excel = get_file(file_id)
