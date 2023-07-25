@@ -63,7 +63,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
         #print(f'Comparing - Date: {date_trx} x {date_row} - Account: {account} x {account_bank} - Description: {original_description} x {description} - Value: {float(value)} x {float(valor)} - Balance: {float(balance)} x {float(saldo)}')
 
         if id_row == id_bank or date_row == date_trx and account_bank == account and description == original_description and float(valor) == float(value) and float(saldo) == float(balance):
-            msg = f'Lancamento já existe no banco de dados'
+            msg = f'Lancamento já existe no banco de dados - ID: {id_bank} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
             print(msg)
             return msg
     
