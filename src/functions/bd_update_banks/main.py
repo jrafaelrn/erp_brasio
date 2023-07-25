@@ -191,10 +191,10 @@ def update_bd():
 
         print(f'.........Importing file...: {file_to_import}')
         
-        if file_to_import.get('path').find('Sicredi') != -1:
+        if file_to_import.get('path').upper().find('SICREDI') != -1:
             update_bd_from_sicredi(file_to_import)
             
-        if file_to_import.get('path').find('PagBank') != -1:
+        if file_to_import.get('path').upper().find('PAGBANK') != -1:
             update_bd_from_pagbank(file_to_import)
             
 
