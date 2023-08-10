@@ -1,4 +1,5 @@
 django
+django-role-permissions
 Pillow 
 psycopg2-binary
 coveralls
