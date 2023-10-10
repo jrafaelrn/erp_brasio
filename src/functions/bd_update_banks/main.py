@@ -329,7 +329,7 @@ def update_bd_from_pagbank(file_to_import):
 
 def check_folder_path(folder_to_check: str):
     
-    file_path_filter = ['Sicredi/Conta/','Sicredi-Bruna/Conta-CSV/'] 
+    file_path_filter = ['Sicredi/Conta/','Sicredi-Bruna/Conta-CSV/', 'Sicredi-Bruna-0002/Conta-CSV/'] 
     
     for path_filter in file_path_filter:
         if folder_to_check.upper().find(path_filter.upper()) != -1:
