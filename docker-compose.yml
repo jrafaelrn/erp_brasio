@@ -9,18 +9,18 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: user
       POSTGRES_DB: db
-    ports:
-      - 5432:5432
     volumes:
       - ./db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
 
   bot:
     build: 
       context: ./src/bot
       dockerfile: Dockerfile
     restart: always
-    environment:
-      - API_KEY=${API_KEY}
+
 
   site:
     build: 
@@ -36,6 +36,7 @@ services:
     volumes:
       - ./src/site:/app
 
+  
   pg-admin:
     image: dpage/pgadmin4
     depends_on: 
@@ -47,6 +48,7 @@ services:
       - 8080:80
     links:
       - db:db
+
 
   functions:
     build: 

@@ -1,30 +1,63 @@
-class connectAPI:
+from multiprocessing import Pool, Process
+import importlib, multiprocessing
+
+
+def get_apis_list(apis_name):
+
+    modules_name = lambda x : f'api_{x}'
+    modules_api_list = list(map(modules_name, apis_name))
+    return modules_api_list
+
+
+
+def transform_module_into_processes(modules):
+
+    procs = []
+
+    for module in modules:
+        
+        print(f'Importing module: {module}')
+        mod = importlib.import_module(module)
+        
+        # Creating process
+        proc = multiprocessing.Process(target=mod.start)
+        procs.append(proc)
+        
+    return procs
+
+
+
+def run_processes(procs):
     
-    def __init__(self, api_name):
-        print(f'Starting API to {api_name}')
-        self.api_name = api_name
-        
-        
-    def send_email(self):
-        print(f'Sending email to {self.api_name}')
-        pass
+    # Starting all processes
+    for proc in procs:        
+        proc.start()
+
+    
+    for proc in procs:
+        proc.join()
+                        
+
+    
+    
+def send_email():
+    pass
+    
     
 
-    def connect(self):
-        print(f'Connecting to {self.api_name}')
-        pass
+def run():
     
+    # Gets the list of all modules(files) starting with "api_ + base list"
+    API_BASE_LIST = ['ifood']
+    modules = get_apis_list(API_BASE_LIST)
     
-    def run(self):
+    # Turns all modules into processes, with the "start" method to run
+    procs = transform_module_into_processes(modules)
+    
+    run_processes(procs)
+    
         
-        try:
-            print(f'Running {self.api_name}')
-            self.send_email()
-            self.connect()
-            print(f'Finished sucessfully {self.api_name}!')
-            return True
-        except:
-            print(f'Error running {self.api_name}')
-            return False
-        
-    
+
+
+if __name__ == '__main__':
+    run()            

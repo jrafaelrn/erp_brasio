@@ -1,10 +1,10 @@
 from multiprocessing import Pool
 
 from requirements_generator import install_requirements
-from .bd_update_sales import *
+from bd_update_sales.apis import run
 
 
-install_requirements()
-
-#with Pool() as p:
-# results = p.imap_unordered(bd_update_sales)
+if __name__ == '__main__':
+    print(f'Starting system at {__name__}...')
+    install_requirements()
+    run()

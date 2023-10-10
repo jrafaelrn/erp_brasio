@@ -1,0 +1,3 @@
+retry
+python-dotenv
+psychopg2-binary

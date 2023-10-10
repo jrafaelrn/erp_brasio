@@ -4,3 +4,5 @@ Pillow
 psycopg2-binary
 coveralls
 python-dotenv
+requests 
+psycopg2

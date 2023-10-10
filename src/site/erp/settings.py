@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
+
+load_dotenv()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'usuarios',
     'rolepermissions',
+    "api_transaction"
 ]
 
 MIDDLEWARE = [
@@ -76,13 +81,31 @@ WSGI_APPLICATION = 'erp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Check host name (to validate if running Docker)
+host = os.system("ping -c 1 db")
+if host == 0:
+    print("Running Docker")
+    host = "db"
+else:
+    print(host)
+    host = "localhost"
+
+# Check host name (to validate if running Docker)
+host = os.system("ping -c 1 db")
+if host == 0:
+    print("Running Docker")
+    host = "db"
+else:
+    print(host)
+    host = "localhost"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "db",
         "USER": "user",
         "PASSWORD": "password",
-        "HOST": "localhost",
+        "HOST": host,
         "PORT": "5432",
     }
 }

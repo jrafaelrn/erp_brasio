@@ -2,6 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import time
 
 
 def main():
@@ -18,5 +19,10 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    
+    if sys.argv[1] == "runserver":
+        print("Waiting for database to be ready...")
+        time.sleep(15)
+    
     main()
