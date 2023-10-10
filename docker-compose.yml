@@ -39,7 +39,6 @@ services:
   
   pg-admin:
     image: dpage/pgadmin4
-    restart: always
     depends_on: 
       - db
     environment:

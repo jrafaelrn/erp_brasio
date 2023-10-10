@@ -33,6 +33,7 @@ def import_extrato_pagbank(extrato_file, conta):
         DATA['type_trx'] = tipo
         DATA['value'] = valor
         DATA['balance'] = 0
+        DATA['id_bank'] = cod_transacao
 
         DATA_JSON = json.dumps(DATA)
 

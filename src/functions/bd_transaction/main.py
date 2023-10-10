@@ -1,4 +1,6 @@
 import json, gspread, os
+import string
+import random
 import pandas as pd
 
 
@@ -39,7 +41,7 @@ def open_bd_bank():
     return bd_sheet
 
 
-def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance):
+def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank):
 
     print(f'Starting insert transaction - Date: {date_trx} - Account: {account} - Original Description: {original_description} - Document: {document} - Entity Bank: {entity_bank} - Type Trx: {type_trx} - Value: {value} - Balance: {balance}')
 
@@ -51,6 +53,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
     for row in bd_pd.iterrows():
 
         #print(f'Row: {row}')
+        id_row = row[1]['ID_BANCO']
         date_row = row[1]['DATA']
         account_bank = row[1]['CONTA']
         description = row[1]['DESCRICAO_ORIGINAL']
@@ -59,19 +62,15 @@ def insert_transaction(date_trx, account, original_description, document, entity
 
         #print(f'Comparing - Date: {date_trx} x {date_row} - Account: {account} x {account_bank} - Description: {original_description} x {description} - Value: {float(value)} x {float(valor)} - Balance: {float(balance)} x {float(saldo)}')
 
-        if date_row == date_trx and account_bank == account and description == original_description and float(valor) == float(value) and float(saldo) == float(balance):
-            msg = f'Lancamento já existe no banco de dados'
+        if id_row == id_bank:
+            msg = f'Lancamento já existe no banco de dados - ID: {id_bank} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
             print(msg)
             return msg
-
     
-    # Get MAX_ID from column ID
-    max_id = bd_pd['ID'].max()
-    id = int(max_id) + 1
-    print(f'ID: {id}')
+    print(f'ID to add to Bank: {id_bank}')
 
     # Append new row
-    row = [id, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
+    row = [id_bank, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
 
     #Save BD
     line = len(bd_pd.index) + 2
@@ -85,7 +84,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
         bd.update(f'{coluna}{line}', conteudo)
 
 
-    msg = f'Lancamento inserido!! ID: {id} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
+    msg = f'Lancamento inserido!! ID: {id_bank} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
     print(msg) 
     return msg
 
@@ -153,11 +152,16 @@ def insert(data):
     type_trx = DATA['type_trx']
     value = DATA['value']
     balance = DATA['balance']
+    
+    try:
+        id_bank = DATA['id_bank']
+    except:
+        id_bank = id_generator(6)
 
     feedback = ''
 
     try:
-        feedback = insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance)
+        feedback = insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank)
     except Exception as e:
         feedback = f'Error when inserting transaction: {e}' 
         print(feedback)
@@ -183,6 +187,13 @@ def update(data):
         print(feedback)
 
     return feedback
+
+
+
+
+def id_generator(size, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 
 
 

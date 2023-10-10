@@ -8,9 +8,9 @@ import pandas as pd
 ##########################################
 
 # Day: string with file name
-def import_extrato_sicredi(extrato_file):
+def import_extrato_sicredi(extrato_file, account_name):
 
-  print(f'... Importing extrato Sicredi...')
+  print(f'... Importing extrato {account_name} from File {extrato_file} ...')
   
   in_progress = False
   import_card = False
@@ -24,7 +24,7 @@ def import_extrato_sicredi(extrato_file):
 
       date_str = line[1][0]
       date_date = datetime.strptime(date_str, '%d/%m/%Y')  # Apenas para validacao da linha << Nao remover
-      conta = "SICREDI"
+      conta = account_name
       descricao = line[1][1]
       doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(descricao)
       tipo = extract.extract_type(descricao, line[1][2])
@@ -62,7 +62,7 @@ def import_extrato_sicredi(extrato_file):
       bd.insert(DATA_JSON)
 
       in_progress = True
-      time.sleep(10)
+      time.sleep(3)
 
     except Exception as e:
 
@@ -79,9 +79,9 @@ def import_extrato_sicredi(extrato_file):
   
 
 
-def import_card_sicredi(extrato_file, balance, date_payment_card):
+def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
 
-    print(f'\n\n... Importing cartao Sicredi...\n')
+    print(f'...... Importing cartao Sicredi......\n')
 
     # If name is date
     #if type(extrato_file) == datetime:
@@ -93,8 +93,12 @@ def import_card_sicredi(extrato_file, balance, date_payment_card):
       try:
         
         linha = line[1][0]
-        data = datetime.strptime(linha, '%d/%m/%Y')  # Apenas para validacao da linha
-        conta = "SICREDI"
+        
+        try:
+          data = datetime.strptime(linha, '%d/%m/%Y')  # Apenas para validacao da linha
+        except:
+          data = datetime.strptime(str(linha), '%d/%m/%Y')  # Apenas para validacao da linha
+        
         descricao = f'{line[1][1]} - {line[1][2]} - ({linha})'
         tipo = 'CARTAO CRED'
         valor = line[1][3]
@@ -130,7 +134,7 @@ def import_card_sicredi(extrato_file, balance, date_payment_card):
         
       except Exception as e:
         msg = f'Linha inválida: {linha}\n\t error: {e}'
-        #print(msg)
+        print(msg)
         data = None
 
 

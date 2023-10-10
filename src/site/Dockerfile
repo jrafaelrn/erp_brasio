@@ -6,7 +6,9 @@ ENV PYTHONUNBUFFERED=1
 COPY . /app
 WORKDIR /app
 
-RUN pip install requests django Pillow psycopg2 coveralls python-dotenv
+RUN pip install requests -r requirements.txt
+
+EXPOSE 8000
 
 RUN chown -R $USER:$USER manage.py
 
