@@ -25,7 +25,7 @@ def import_extrato_sicredi(extrato_file, account_name):
       date_str = line[1][0]
       date_date = datetime.strptime(date_str, '%d/%m/%Y')  # Apenas para validacao da linha << Nao remover
       conta = account_name
-      descricao = line[1][1]
+      descricao = (line[1][1]).upper()
       doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(descricao)
       tipo = extract.extract_type(descricao, line[1][2])
       valor =  line[1][3]
@@ -62,7 +62,7 @@ def import_extrato_sicredi(extrato_file, account_name):
       bd.insert(DATA_JSON)
 
       in_progress = True
-      time.sleep(3)
+      
 
     except Exception as e:
 

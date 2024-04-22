@@ -71,20 +71,20 @@ def get_files_to_import():
             for file in response.get('files', []):
                 
                 name_file = file.get('name')
-                #print(f'File: {name_file}')
+                #print(f'Analisando File: {name_file}')
                 if name_file.find('-import') == -1:
                     continue
                 
                 id_file = file.get('id')
                 path_file = get_file_path(gdrive, id_file)
 
-
                 file_to_import = {}
                 file_to_import['name'] = name_file
                 file_to_import['id'] = id_file
-                file_to_import['path'] = path_file
-                print(f'File to import: {file_to_import}')
+                file_to_import['path'] = path_file.upper()
+                print(f'File ADD to import: {file_to_import}')
                 files_to_import.append(file_to_import)
+
 
             print(f'==== Finishid Search --> Files to import: {files_to_import}')
             return True
@@ -170,7 +170,7 @@ def check_if_file_exists(path_filter, name_filter):
     global files_to_import
 
     for file in files_to_import:
-        if file['path'].find(path_filter) != -1 and file['name'] == name_filter:
+        if file['path'].find(path_filter.upper()) != -1 and file['name'] == name_filter:
             return True, file['id']
 
     return False, None
@@ -190,12 +190,18 @@ def update_bd():
     for file_to_import in files_to_import:
 
         print(f'.........Importing file...: {file_to_import}')
+
+        # Check if credit file to avoid start with 
+        if file_to_import.get('path').upper().find('CARTAO-CSV') != -1:
+            continue
         
         if file_to_import.get('path').upper().find('SICREDI') != -1:
             update_bd_from_sicredi(file_to_import)
             
         if file_to_import.get('path').upper().find('PAGBANK') != -1:
             update_bd_from_pagbank(file_to_import)
+
+        return
             
 
 ##########################################
