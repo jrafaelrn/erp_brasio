@@ -110,6 +110,7 @@ def import_accumulated_sicredi(data_transaction):
     
     contador_acumulado += 1
     acumulado.append(data_transaction)
+    logger.debug(f'Acumulando lançamento {contador_acumulado} - Dados: {data_transaction}')
     
   else:
     
