@@ -54,16 +54,16 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@v4'
 
       - id: 'auth'
-        uses: 'google-github-actions/auth@v0'
+        uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
 
       - id: 'deploy-sales'
         name: 'Deploy Sales'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/check_sales/'
           entry_point: 'check'
@@ -81,7 +81,7 @@ jobs:
       
       - id: 'deploy-telegram'
         name: 'Deploy Telegram'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/telegram/'
           entry_point: 'check'
@@ -93,7 +93,7 @@ jobs:
 
       - id: 'deploy-bank-auto-classification'
         name: 'Deploy Bank Auto Classification'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/bank_auto_classification/'
           entry_point: 'check'
@@ -105,7 +105,7 @@ jobs:
 
       - id: 'deploy-bank-next-pendency'
         name: 'Deploy Bank Next Pendency'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/bank_next_pendency/'
           entry_point: 'check'
@@ -117,7 +117,7 @@ jobs:
 
       - id: 'deploy-bd-transaction'
         name: 'Deploy BD Transaction'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/bd_transaction/'
           entry_point: 'check'
@@ -129,7 +129,7 @@ jobs:
 
       - id: 'deploy-erp-pendency'
         name: 'Deploy ERP Pendency'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/erp_pendency/'
           entry_point: 'check'
@@ -141,7 +141,7 @@ jobs:
 
       - id: 'deploy-erp-classes'
         name: 'Deploy ERP Classes'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/erp_classes/'
           entry_point: 'check'
@@ -153,7 +153,7 @@ jobs:
 
       - id: 'deploy-bd-update-from-banks'
         name: 'Deploy BD Update From Banks'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/bd_update_banks/'
           entry_point: 'check'
@@ -171,7 +171,7 @@ jobs:
 
       - id: 'deploy-week-payments'
         name: 'Deploy Week Payments'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/erp_week_payments/'
           entry_point: 'check'
@@ -188,7 +188,7 @@ jobs:
       
       - id: 'deploy-bank-download-api'
         name: 'Deploy Bank Download API'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
         with:
           source_dir: 'src/functions/bank_download/'
           entry_point: 'check'
