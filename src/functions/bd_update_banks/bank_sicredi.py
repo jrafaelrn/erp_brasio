@@ -122,8 +122,8 @@ def import_accumulated_sicredi(data_transaction):
     
     logger.debug('Enviando %s lançamentos para o BD - Dados acumulados: %s', contador_acumulado, acumulado)
     bd.insert(acumulado)
-    acumulado = []
-    contador_acumulado = 0
+    acumulado = [data_transaction]
+    contador_acumulado = 1
     time.sleep(1)
 
 
