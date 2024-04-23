@@ -3,6 +3,11 @@ from datetime import datetime
 import pandas as pd
 
 
+acumulado = []
+contador_acumulado = 0
+
+
+
 ##########################################
 #               SICREDI                  #
 ##########################################
@@ -59,7 +64,7 @@ def import_extrato_sicredi(extrato_file, account_name):
 
       DATA_JSON = json.dumps(DATA)
 
-      bd.insert(DATA_JSON)
+      import_accumulated_sicredi(DATA_JSON)
 
       in_progress = True
       
@@ -76,12 +81,19 @@ def import_extrato_sicredi(extrato_file, account_name):
       if type(line[1][0]) == str:
         if line[1][0].find('Saldo da Conta') != -1:
           return None, None, None
+        
+    finally:
+      
+      global acumulado
+      if len(acumulado) > 0:
+        bd.insert(acumulado)
+        acumulado = []
+        contador_acumulado = 0
+      
 
 
 # ACUMULA A CADA x LANÇAMENTOS, PARA ENVIAR DE UMA VEZ PARA O BD
 
-acumulado = []
-contador_acumulado = 0
 
 def import_accumulated_sicredi(data_transaction):
   
