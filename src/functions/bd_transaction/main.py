@@ -151,12 +151,16 @@ def insert(data):
         # Se ARRAY_DATA for do tipo 'list',
         if type(data) == list:
             ARRAY_DATA = data
+            print(f'ARRAY_DATA: {ARRAY_DATA} -- Type: {type(ARRAY_DATA)}')
+        
         else:        
-            return f'Error when parse JSON: {e}'
+            return f'FATAL ERROR when parse JSON: {e}'
 
     feedbacks = []
 
     for DATA in ARRAY_DATA:
+        
+        DATA = json.loads(DATA)
         
         date_trx = DATA['date_trx']
         account = DATA['account']
@@ -235,3 +239,14 @@ def check(request):
     
     print(f'Response: {response}')
     return response
+
+
+
+if __name__ == '__main__':    
+    data = ['{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_DEB", "value": -733, "balance": 4447.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 31003417833 MARINALVA MARIA DE SOU", "document": "31003417833", "entity_bank": "MARINALVA MARIA DE SOU", "type_trx": "PIX_DEB", "value": -143, "balance": 4304.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_CRED", "value": 105, "balance": 4409.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 39307592845 MARIA ALICE DINI COL", "document": "39307592845", "entity_bank": "MARIA ALICE DINI COL", "type_trx": "PIX_CRED", "value": 67.5, "balance": 4477.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 37911951829 EMERSON DINIZ RAGAZONI", "document": "37911951829", "entity_bank": "EMERSON DINIZ RAGAZONI", "type_trx": "PIX_DEB", "value": -25, "balance": 4452.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 32622464843 FABRICIA SANTOS NOVA", "document": "32622464843", "entity_bank": "FABRICIA SANTOS NOVA", "type_trx": "PIX_CRED", "value": 8, "balance": 4460.44}'] 
+    request_json = json.dumps(data)
+    
+    # call insert
+    print(f'Request JSON: {request_json}')
+    response = insert(request_json)
+    
