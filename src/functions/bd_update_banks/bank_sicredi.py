@@ -1,7 +1,13 @@
-import os, extract, bd, time, json, re
-from datetime import datetime
-import pandas as pd
+import bd
+import extract
+import json
 import logging
+import os
+import pandas as pd
+import re
+import time
+
+from datetime import datetime
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

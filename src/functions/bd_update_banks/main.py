@@ -1,6 +1,7 @@
 import json, gspread, io, os, re, bank_sicredi, base64, bank_pagbank
 from httplib2 import Credentials
 from datetime import datetime
+import googlecloudprofiler
 import pandas as pd
 
 from googleapiclient.discovery import build
@@ -11,6 +12,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 SCOPES = ['https://www.googleapis.com/auth/drive']
 files_to_import = []
 account_name = None
+
+googlecloudprofiler.start(service='bd-update-banks', service_version='1.0.1', verbose=3)
 
 #################################
 #       GOOGLE DRIVE API        #
