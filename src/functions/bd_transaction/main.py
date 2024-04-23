@@ -144,15 +144,15 @@ def insert(data):
     #Transfor to json
     try:
         ARRAY_DATA = json.loads(data)
+    
     except Exception as e:
         print(f'Error when parse JSON: {e}')
         
         # Se ARRAY_DATA for do tipo 'list',
-        # Pegar o 1o elemento 
         if type(data) == list:
-            ARRAY_DATA = data[0]
-        else:        
             ARRAY_DATA = data
+        else:        
+            return f'Error when parse JSON: {e}'
 
     feedbacks = []
 
