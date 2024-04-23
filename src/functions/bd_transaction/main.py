@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import random
 import string
+import time
 
 googlecloudprofiler.start(service='bd-transaction', service_version='1.0.1', verbose=3)
 
@@ -92,6 +93,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
     line_to_insert += 1
     msg = f'Lancamento inserido!! ID: {id_bank} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
     print(msg) 
+    time.sleep(0.1)
     return msg
 
 
