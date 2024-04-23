@@ -109,7 +109,7 @@ def import_accumulated_sicredi(data_transaction):
   
   global acumulado
   global contador_acumulado
-  MAX_ACUMULADO = 5
+  MAX_ACUMULADO = 10
   
   
   if contador_acumulado < MAX_ACUMULADO:
