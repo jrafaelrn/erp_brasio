@@ -7,7 +7,6 @@ import random
 import string
 import time
 
-googlecloudprofiler.start(service='bd-transaction', service_version='1.0.1', verbose=3)
 
 def get_api_key():
 
@@ -47,20 +46,25 @@ def open_bd_bank():
 
 
 line_to_insert = None
+bd = None
+bd_pd = None
 
 def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank):
 
     global line_to_insert
+    global bd
+    global bd_pd
+    
     print(f'Starting insert transaction - Date: {date_trx} - Account: {account} - Original Description: {original_description} - Document: {document} - Entity Bank: {entity_bank} - Type Trx: {type_trx} - Value: {value} - Balance: {balance}')
     entity_bank = entity_bank.strip()
     
-    bd = open_bd_bank()
-    bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
 
 
     if line_to_insert is None:
 
         line_to_insert = 0
+        bd = open_bd_bank()
+        bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
         
         # loop to find the first empty line
         for row in bd_pd.iterrows():
@@ -228,6 +232,8 @@ def id_generator(size, chars=string.ascii_uppercase + string.digits):
 
 def check(request):
 
+    googlecloudprofiler.start(service='bd-transaction', service_version='1.0.1', verbose=3)
+    
     request_json = request.get_json(silent=True)
     parameters = request.args
     print(f'Request JSON: {request_json}')
