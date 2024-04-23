@@ -64,7 +64,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
     print(f'ID to add to Bank: {id_bank} - LINE: {line}')
 
     # Append new row
-    row = [[id_bank, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]]
+    row = [[id_bank], [date_trx], [account], [original_description], [document], [entity_bank], [type_trx], [value], [balance]]
 
     #Save BD
     line += 2
