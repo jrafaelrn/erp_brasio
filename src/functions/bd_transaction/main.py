@@ -1,8 +1,12 @@
-import json, gspread, os
-import string
-import random
+import googlecloudprofiler
+import gspread
+import json
+import os
 import pandas as pd
+import random
+import string
 
+googlecloudprofiler.start(service='bd-transaction', service_version='1.0.1', verbose=3)
 
 def get_api_key():
 
