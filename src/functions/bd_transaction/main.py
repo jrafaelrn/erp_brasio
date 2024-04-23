@@ -41,28 +41,34 @@ def open_bd_bank():
     return bd_sheet
 
 
+line_to_insert = None
 
 def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank):
 
+    global line_to_insert
     print(f'Starting insert transaction - Date: {date_trx} - Account: {account} - Original Description: {original_description} - Document: {document} - Entity Bank: {entity_bank} - Type Trx: {type_trx} - Value: {value} - Balance: {balance}')
     entity_bank = entity_bank.strip()
     
     bd = open_bd_bank()
     bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
 
-    line = 0
 
-    # loop to check if the transaction already exists
-    for row in bd_pd.iterrows():
+    if line_to_insert is None:
+
+        line_to_insert = 0
         
-        id_row = row[1]['ID_BANCO']
-
-        if id_row != "":
-            line += 1
+        # loop to find the first empty line
+        for row in bd_pd.iterrows():
             
-    
-    line += 2
-    print(f'ID to add to Bank: {id_bank} - LINE: {line}')
+            id_row = row[1]['ID_BANCO']
+
+            if id_row != "":
+                line_to_insert += 1
+                
+        line_to_insert += 2
+        
+        
+    print(f'ID to add to Bank: {id_bank} - LINE: {line_to_insert}')
 
     # Append new row
     row = [id_bank, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
@@ -76,9 +82,10 @@ def insert_transaction(date_trx, account, original_description, document, entity
             continue
         
         print(f'Coluna: {coluna} - Conteudo: {conteudo}')
-        bd.update(f'{coluna}{line}', conteudo)
+        bd.update(f'{coluna}{line_to_insert}', conteudo)
 
 
+    line_to_insert += 1
     msg = f'Lancamento inserido!! ID: {id_bank} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
     print(msg) 
     return msg
