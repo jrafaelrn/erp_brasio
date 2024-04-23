@@ -70,7 +70,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
     #Save BD
     for col in range(ord('a'), ord('i') + 1): 
         coluna = chr(col)
-        conteudo = [row[col - ord('a')]]
+        conteudo = [[row[col - ord('a')]]]
         
         if conteudo == '':
             continue
