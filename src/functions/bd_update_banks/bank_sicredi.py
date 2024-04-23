@@ -15,6 +15,7 @@ contador_acumulado = 0
 # Day: string with file name
 def import_extrato_sicredi(extrato_file, account_name):
 
+  global acumulado
   print(f'... Importing extrato {account_name} from File {extrato_file} ...')
   
   in_progress = False
@@ -74,26 +75,26 @@ def import_extrato_sicredi(extrato_file, account_name):
       data = None
       print(f'Linha inválida: [0]:{line[1][0]} [1]:{line[1][1]} [2]:{line[1][2]} [3]:{line[1][3]} [4]:{line[1][4]}')
       print(f'Erro: {e}')
-
+      
+      
       if in_progress:
+        
+        # Se ocorrer um erro, é sinal de que todas as linhas "padrões"
+        # já foram importadas. Então, se houver acumulado, envia para o BD
+        if len(acumulado) > 0:
+          bd.insert(acumulado)
+          acumulado = []
+          contador_acumulado = 0     
+        
         return import_card, balance_card, date_payment_card
 
       if type(line[1][0]) == str:
         if line[1][0].find('Saldo da Conta') != -1:
           return None, None, None
-        
-    finally:
-      
-      global acumulado
-      if len(acumulado) > 0:
-        bd.insert(acumulado)
-        acumulado = []
-        contador_acumulado = 0
-      
+    
 
 
 # ACUMULA A CADA x LANÇAMENTOS, PARA ENVIAR DE UMA VEZ PARA O BD
-
 
 def import_accumulated_sicredi(data_transaction):
   
