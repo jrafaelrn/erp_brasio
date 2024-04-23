@@ -232,7 +232,9 @@ def id_generator(size, chars=string.ascii_uppercase + string.digits):
 
 def check(request):
 
-    
+    global line_to_insert
+    line_to_insert = None
+
     request_json = request.get_json(silent=True)
     parameters = request.args
     print(f'Request JSON: {request_json}')
