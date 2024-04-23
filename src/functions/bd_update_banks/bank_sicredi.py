@@ -76,7 +76,35 @@ def import_extrato_sicredi(extrato_file, account_name):
       if type(line[1][0]) == str:
         if line[1][0].find('Saldo da Conta') != -1:
           return None, None, None
+
+
+# ACUMULA A CADA x LANÇAMENTOS, PARA ENVIAR DE UMA VEZ PARA O BD
+
+acumulado = []
+contador_acumulado = 0
+
+def import_accumulated_sicredi(data_transaction):
   
+  global acumulado
+  global contador_acumulado
+  max_acumulado = 5
+  
+  
+  if contador_acumulado <= max_acumulado:
+    
+    contador_acumulado += 1
+    acumulado.append(data_transaction)
+    
+  else:
+    
+    bd.insert(acumulado)
+    acumulado = []
+    contador_acumulado = 0
+
+
+
+
+
 
 
 def import_card_sicredi(extrato_file, balance, date_payment_card, conta):

@@ -41,31 +41,33 @@ def open_bd_bank():
     return bd_sheet
 
 
+
+bd = None
+bd_pd = None
+
+
 def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank):
 
     print(f'Starting insert transaction - Date: {date_trx} - Account: {account} - Original Description: {original_description} - Document: {document} - Entity Bank: {entity_bank} - Type Trx: {type_trx} - Value: {value} - Balance: {balance}')
+    global bd
+    global bd_pd
 
     entity_bank = entity_bank.strip()
-    bd = open_bd_bank()
-    bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
+    
+    if bd is None:
+        bd = open_bd_bank()
+        bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
+
+    line = 0
 
     # loop to check if the transaction already exists
     for row in bd_pd.iterrows():
-
-        #print(f'Row: {row}')
+        
         id_row = row[1]['ID_BANCO']
-        date_row = row[1]['DATA']
-        account_bank = row[1]['CONTA']
-        description = row[1]['DESCRICAO_ORIGINAL']
-        valor = row[1]['VALOR']
-        saldo = row[1]['SALDO']
 
-        #print(f'Comparing - Date: {date_trx} x {date_row} - Account: {account} x {account_bank} - Description: {original_description} x {description} - Value: {float(value)} x {float(valor)} - Balance: {float(balance)} x {float(saldo)}')
-
-        if id_row == id_bank:
-            msg = f'Lancamento já existe no banco de dados - ID: {id_bank} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
-            print(msg)
-            return msg
+        if id_row != "":
+            line += 1
+            
     
     print(f'ID to add to Bank: {id_bank}')
 
@@ -73,7 +75,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
     row = [id_bank, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
 
     #Save BD
-    line = len(bd_pd.index) + 2
+    line += 2
     for col in range(ord('a'), ord('i') + 1): 
         coluna = chr(col)
         conteudo = row[col - ord('a')]
@@ -87,6 +89,8 @@ def insert_transaction(date_trx, account, original_description, document, entity
     msg = f'Lancamento inserido!! ID: {id_bank} - Data: {date_trx} - Conta: {account} - Descrição: {original_description} - Documento: {document} - Entidade: {entity_bank} - Tipo: {type_trx} - Valor: {value} - Saldo: {balance}'
     print(msg) 
     return msg
+
+
 
 
 
@@ -139,34 +143,39 @@ def insert(data):
 
     #Transfor to json
     try:
-        DATA = json.loads(data)
+        ARRAY_DATA = json.loads(data)
     except Exception as e:
         print(f'Error when parse JSON: {e}')
-        DATA = data
+        ARRAY_DATA = data
 
-    date_trx = DATA['date_trx']
-    account = DATA['account']
-    original_description = DATA['original_description']
-    document = DATA['document']
-    entity_bank = DATA['entity_bank']
-    type_trx = DATA['type_trx']
-    value = DATA['value']
-    balance = DATA['balance']
-    
-    try:
-        id_bank = DATA['id_bank']
-    except:
-        id_bank = id_generator(6)
+    feedbacks = []
 
-    feedback = ''
+    for DATA in ARRAY_DATA:
+        
+        date_trx = DATA['date_trx']
+        account = DATA['account']
+        original_description = DATA['original_description']
+        document = DATA['document']
+        entity_bank = DATA['entity_bank']
+        type_trx = DATA['type_trx']
+        value = DATA['value']
+        balance = DATA['balance']
+        
+        try:
+            id_bank = DATA['id_bank']
+        except:
+            id_bank = id_generator(6)
 
-    try:
-        feedback = insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank)
-    except Exception as e:
-        feedback = f'Error when inserting transaction: {e}' 
-        print(feedback)
+        try:
+            feedback = insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank)
+            feedbacks.append(feedback)
+            
+        except Exception as e:
+            feedback = f'Error when inserting transaction: {e}' 
+            print(feedback)
+            feedbacks.append(feedback)
 
-    return feedback
+    return feedbacks
 
 
 
@@ -210,6 +219,7 @@ def check(request):
     
     if parameters['type'] == 'insert':
         response = insert(request_json)
+        response = json.dumps(response)
     
     elif parameters['type'] == 'update':
         response = update(request_json)
