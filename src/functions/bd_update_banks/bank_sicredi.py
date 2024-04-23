@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 import logging
 
-
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 acumulado = []
@@ -19,7 +19,7 @@ def import_extrato_sicredi(extrato_file, account_name):
 
   global acumulado
   global contador_acumulado
-  logger.info(f'... Importing extrato {account_name} from File {extrato_file} ...')
+  logger.info('... Importing extrato %s from File %s ...', account_name, extrato_file)
   
   in_progress = False
   import_card = False
@@ -41,11 +41,11 @@ def import_extrato_sicredi(extrato_file, account_name):
       saldo = line[1][4]
 
       
-      logger.debug(f'\nImporting date {line[1][0]}')
-      logger.debug(f'\tConta: {conta}')
-      logger.debug(f'\tDescricao: {descricao}')
-      logger.debug(f'\tTipo: {tipo}')
-      logger.debug(f'\tValor: {valor}')
+      logger.debug('\nImporting date %s', line[1][0])
+      logger.debug('\tConta: %s', conta)
+      logger.debug('\tDescricao: %s', descricao)
+      logger.debug('\tTipo: %s', tipo)
+      logger.debug('\tValor: %s', valor)
       
 
       # Se encontrar uma fatura de cartao, procura o arquivo separado
@@ -76,8 +76,8 @@ def import_extrato_sicredi(extrato_file, account_name):
     except Exception as e:
 
       data = None
-      logger.warning(f'Linha inválida: [0]:{line[1][0]} [1]:{line[1][1]} [2]:{line[1][2]} [3]:{line[1][3]} [4]:{line[1][4]}')
-      logger.warning(f'Erro: {e}')
+      logger.warning('Linha inválida: [0]:%s [1]:%s [2]:%s [3]:%s [4]:%s', line[1][0], line[1][1], line[1][2], line[1][3], line[1][4])
+      logger.warning('Erro: %s', e)
       
       
       if in_progress:
@@ -110,11 +110,11 @@ def import_accumulated_sicredi(data_transaction):
     
     contador_acumulado += 1
     acumulado.append(data_transaction)
-    logger.debug(f'Acumulando lançamento {contador_acumulado} - Dados: {data_transaction}')
+    logger.debug('Acumulando lançamento %s - Dados: %s', contador_acumulado, data_transaction)
     
   else:
     
-    logger.debug(f'Enviando {contador_acumulado} lançamentos para o BD - Dados acumulados: {acumulado}')
+    logger.debug('Enviando %s lançamentos para o BD - Dados acumulados: %s', contador_acumulado, acumulado)
     bd.insert(acumulado)
     acumulado = []
     contador_acumulado = 0
