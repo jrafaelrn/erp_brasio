@@ -66,6 +66,7 @@ def import_extrato_sicredi(extrato_file, account_name):
       DATA_JSON = json.dumps(DATA)
 
       import_accumulated_sicredi(DATA_JSON)
+      time.sleep(1)
 
       in_progress = True
       

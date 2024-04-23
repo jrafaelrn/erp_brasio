@@ -61,13 +61,13 @@ def insert_transaction(date_trx, account, original_description, document, entity
             line += 1
             
     
+    line += 2
     print(f'ID to add to Bank: {id_bank} - LINE: {line}')
 
     # Append new row
     row = [[id_bank], [date_trx], [account], [original_description], [document], [entity_bank], [type_trx], [value], [balance]]
 
     #Save BD
-    line += 2
     for col in range(ord('a'), ord('i') + 1): 
         coluna = chr(col)
         conteudo = row[col - ord('a')]
@@ -75,6 +75,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
         if conteudo == '':
             continue
         
+        print(f'Coluna: {coluna} - Conteudo: {conteudo}')
         bd.update(f'{coluna}{line}', conteudo)
 
 
