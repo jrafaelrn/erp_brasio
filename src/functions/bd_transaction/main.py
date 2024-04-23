@@ -42,21 +42,13 @@ def open_bd_bank():
 
 
 
-bd = None
-bd_pd = None
-
-
 def insert_transaction(date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank):
 
     print(f'Starting insert transaction - Date: {date_trx} - Account: {account} - Original Description: {original_description} - Document: {document} - Entity Bank: {entity_bank} - Type Trx: {type_trx} - Value: {value} - Balance: {balance}')
-    global bd
-    global bd_pd
-
     entity_bank = entity_bank.strip()
     
-    if bd is None:
-        bd = open_bd_bank()
-        bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
+    bd = open_bd_bank()
+    bd_pd = pd.DataFrame(bd.get_all_records(value_render_option='UNFORMATTED_VALUE'))
 
     line = 0
 
@@ -69,10 +61,10 @@ def insert_transaction(date_trx, account, original_description, document, entity
             line += 1
             
     
-    print(f'ID to add to Bank: {id_bank}')
+    print(f'ID to add to Bank: {id_bank} - LINE: {line}')
 
     # Append new row
-    row = [id_bank, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
+    row = [[id_bank, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]]
 
     #Save BD
     line += 2
