@@ -183,7 +183,8 @@ def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
 
         DATA_JSON = json.dumps(DATA)
 
-        bd.insert([DATA_JSON])
+        #bd.insert([DATA_JSON])
+        import_accumulated_sicredi(DATA_JSON)
         
       except Exception as e:
         msg = f'Linha inválida: {linha}\n\t error: {e}'
