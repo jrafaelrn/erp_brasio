@@ -55,7 +55,7 @@ def import_extrato_sicredi(extrato_file, account_name):
       
 
       # Se encontrar uma fatura de cartao, procura o arquivo separado
-      if descricao.find('DEB.CTA.FATURA') != -1:
+      if (descricao.find('DEB.CTA.FATURA') != -1) or (descricao.find('LIQUIDACAO BOLETO SICREDI 82527557000140 SICREDI') != -1):
           import_card = True
           balance_card = saldo
           date_payment_card = date_str
