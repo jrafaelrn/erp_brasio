@@ -275,6 +275,8 @@ def update_bd_from_sicredi_account(file_to_import):
 
 
 def update_bd_from_sicredi_card(file_id_card, balance_card, date_payment_card, card_name_file_filter):
+    
+    print(f'Starting update BD from Sicredi Card...\nFile Card ID: {file_id_card}\nBalance Card: {balance_card}\nDate Payment Card: {date_payment_card}\nCard Name File Filter: {card_name_file_filter}')
 
     global account_name
     
