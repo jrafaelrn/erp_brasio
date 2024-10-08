@@ -105,26 +105,27 @@ def import_extrato_sicredi(extrato_file, account_name):
 
 # ACUMULA A CADA x LANÇAMENTOS, PARA ENVIAR DE UMA VEZ PARA O BD
 
-def import_accumulated_sicredi(data_transaction):
+def import_accumulated_sicredi(data_transaction, all=False):
   
   global acumulado
   global contador_acumulado
   MAX_ACUMULADO = 10
   
   
-  if contador_acumulado < MAX_ACUMULADO:
-    
-    contador_acumulado += 1
-    acumulado.append(data_transaction)
-    logger.debug('Acumulando lançamento %s - Dados: %s', contador_acumulado, data_transaction)
-    
-  else:
-    
+  if all or contador_acumulado == MAX_ACUMULADO:      
     logger.debug('Enviando %s lançamentos para o BD - Dados acumulados: %s', contador_acumulado, acumulado)
     bd.insert(acumulado)
     acumulado = [data_transaction]
     contador_acumulado = 1
     time.sleep(1)
+    return
+    
+  #Acumula
+  contador_acumulado += 1
+  acumulado.append(data_transaction)
+  logger.debug('Acumulando lançamento %s - Dados: %s', contador_acumulado, data_transaction)
+    
+
 
 
 
@@ -134,62 +135,64 @@ def import_accumulated_sicredi(data_transaction):
 
 def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
 
-    print(f'...... Importing cartao Sicredi......\n')
+  print(f'...... Importing cartao Sicredi......\n')
 
-    # If name is date
-    #if type(extrato_file) == datetime:
-      #name_file = extrato_file.strftime('%Y-%m')
+  # If name is date
+  #if type(extrato_file) == datetime:
+    #name_file = extrato_file.strftime('%Y-%m')
 
-    for line in extrato_file.iterrows():
+  for line in extrato_file.iterrows():
+    
+    # Try convert first column to date
+    try:
       
-      # Try convert first column to date
+      linha = line[1][0]
+      
       try:
-        
-        linha = line[1][0]
-        
-        try:
-          data = datetime.strptime(linha, '%d/%m/%Y')  # Apenas para validacao da linha
-        except:
-          data = datetime.strptime(str(linha), '%d/%m/%Y')  # Apenas para validacao da linha
-        
-        descricao = f'{line[1][1]} - {line[1][2]} - ({linha})'
-        tipo = 'CARTAO CRED'
-        valor = line[1][3]
+        data = datetime.strptime(linha, '%d/%m/%Y')  # Apenas para validacao da linha
+      except:
+        data = datetime.strptime(str(linha), '%d/%m/%Y')  # Apenas para validacao da linha
+      
+      descricao = f'{line[1][1]} - {line[1][2]} - ({linha})'
+      tipo = 'CARTAO CRED'
+      valor = line[1][3]
 
-        # Replace based on regex
-        fornecedor = re.sub('\d+/\d+', '', line[1][1])
+      # Replace based on regex
+      fornecedor = re.sub('\d+/\d+', '', line[1][1])
 
-        # Check if valor is string
-        if type(valor) == str:
-          valor = valor.replace('.', '')
-          valor = valor.replace(',', '.')
-          valor = valor.replace('R$', '')
-          valor = - float(valor)
-        else:
-          valor = - float(valor)
+      # Check if valor is string
+      if type(valor) == str:
+        valor = valor.replace('.', '')
+        valor = valor.replace(',', '.')
+        valor = valor.replace('R$', '')
+        valor = - float(valor)
+      else:
+        valor = - float(valor)
 
-        if valor > 0:
-          continue
+      if valor > 0:
+        continue
 
-        DATA = {}
-        DATA['date_trx'] = date_payment_card
-        DATA['account'] = conta
-        DATA['original_description'] = descricao
-        DATA['document'] = ''
-        DATA['entity_bank'] = fornecedor
-        DATA['type_trx'] = tipo
-        DATA['value'] = valor
-        DATA['balance'] = balance
+      DATA = {}
+      DATA['date_trx'] = date_payment_card
+      DATA['account'] = conta
+      DATA['original_description'] = descricao
+      DATA['document'] = ''
+      DATA['entity_bank'] = fornecedor
+      DATA['type_trx'] = tipo
+      DATA['value'] = valor
+      DATA['balance'] = balance
 
-        DATA_JSON = json.dumps(DATA)
+      DATA_JSON = json.dumps(DATA)
 
-        #bd.insert([DATA_JSON])
-        import_accumulated_sicredi(DATA_JSON)
-        
-      except Exception as e:
-        msg = f'Linha inválida: {linha}\n\t error: {e}'
-        print(msg)
-        data = None
+      #bd.insert([DATA_JSON])
+      import_accumulated_sicredi(DATA_JSON)
+      
+    except Exception as e:
+      msg = f'Linha inválida: {linha}\n\t error: {e}'
+      print(msg)
+      data = None
+      
+  import_accumulated_sicredi(DATA_JSON, True)
 
 
 
