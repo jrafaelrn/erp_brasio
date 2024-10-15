@@ -7,3 +7,4 @@ google-auth-httplib2
 google-cloud-profiler
 oauth2client
 xlrd
+ofxtools

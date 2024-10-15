@@ -5,7 +5,7 @@ src/client.py
 src/bot/listener.py
 src/functions/telegram/test.py
 src/bot/server/paths.py
-
+venv/
 db_data/*
 
 
