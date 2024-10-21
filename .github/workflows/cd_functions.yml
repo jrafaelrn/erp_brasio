@@ -201,3 +201,19 @@ jobs:
             REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
             GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
           timeout: '540s'
+
+      - id: 'deploy-ifood_alive'
+        name: 'Deploy Ifood Alive'
+        uses: 'google-github-actions/deploy-cloud-functions@v2'
+        with:
+          source_dir: 'src/functions/ifood_alive/'
+          entry_point: 'check'
+          name: 'function-ifood-alive'
+          runtime: 'python39'
+          event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IFOOD_ALIVE_TOPIC_ID }}
+          secret_environment_variables: |-
+            REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
+            GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
+          timeout: '540s'
+      
