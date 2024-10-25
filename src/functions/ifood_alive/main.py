@@ -1,6 +1,10 @@
 import base64
-import requests
 import sender
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 def check_if_alive():
@@ -15,6 +19,8 @@ def check_if_alive():
         }
     ]
 
+    # Configura o WebDriver do Chrome
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
     for loja in urls:
         
@@ -23,20 +29,19 @@ def check_if_alive():
         msg = None
         
         try:
-            # Faz a requisição GET para a URL
-            response = requests.get(url)
+            driver.get(url)
+            print(f"Acessando {nome_loja}: {url}")
 
-            # Verifica se a requisição foi bem-sucedida (código 200)
-            if response.status_code == 200:
-                # Verifica se o texto "Loja Fechada" está presente no conteúdo da página
-                if "Loja Fechada" in response.text:
-                    msg = f"'Loja Fechada': {loja['loja']}."
-                else:
-                    msg = f"'Loja Aberta': {loja['loja']}."
-            else:
-                msg = f"Erro ao acessar a página da loja {loja['loja']}. Código de status: {response.status_code}"
-
-        except requests.exceptions.RequestException as e:
+            # Tenta encontrar o elemento que indica que a loja está fechada
+            try:
+                driver.find_element(By.XPATH, "//h2[contains(text(), 'Loja fechada')]")
+                msg = f"'Loja Fechada': {nome_loja}."
+            except:
+                continue
+            finally:
+                driver.quit()
+            
+        except Exception as e:
             msg = f"Ocorreu um erro na requisição para a loja {loja['loja']}: {e}"
 
         # Envia a mensagem para o Telegram
