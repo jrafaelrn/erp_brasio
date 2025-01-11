@@ -144,9 +144,9 @@ def get_file_path(gdrive, file_id):
 
 
 
-def rename_file(file_id, old_name_file):
+def rename_file(file_id, old_name_file, new_file_name):
 
-    new_name_file = old_name_file.replace('-import', '-ok')
+    new_name_file = old_name_file.replace('-import', f'-{new_file_name}')
     #print(f'New name file: {new_name_file}')
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
@@ -261,11 +261,12 @@ def update_bd_from_sicredi_account(file_to_import):
 
         if file_name_card is False:
             print(f'Card file not found! -- Card Path File Filter: {card_path_file_filter} -- Card Name File Filter: {card_name_file_filter}')
+            rename_file(file_id, file_name, 'error')
             return None, None, None, None
 
 
     # Rename file
-    if rename_file(file_id, file_name):
+    if rename_file(file_id, file_name, 'ok'):
         print('File renamed!')
     else:
         print('ERROR - File not renamed!')   
@@ -290,7 +291,7 @@ def update_bd_from_sicredi_card(file_id_card, balance_card, date_payment_card, c
     bank_sicredi.import_card_sicredi(df, balance_card, date_payment_card, account_name)
 
     # Rename file
-    if rename_file(file_id_card, card_name_file_filter):
+    if rename_file(file_id_card, card_name_file_filter, 'ok'):
         print('File renamed!')
     else:
         print('ERROR - File not renamed!')  
@@ -327,7 +328,7 @@ def update_bd_from_pagbank(file_to_import):
     bank_pagbank.import_extrato_pagbank(df, conta)
 
     # Rename file
-    if rename_file(file_id, file_name):
+    if rename_file(file_id, file_name, 'ok'):
         print('File renamed!')
     else:
         print('ERROR - File not renamed!') 
