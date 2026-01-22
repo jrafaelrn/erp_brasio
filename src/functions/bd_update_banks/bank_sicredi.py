@@ -158,7 +158,7 @@ def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
       valor = line[1][3]
 
       # Replace based on regex
-      fornecedor = re.sub('\d+/\d+', '', line[1][1])
+      fornecedor = re.sub(r'\d+/\d+', '', line[1][1])
 
       # Check if valor is string
       if type(valor) == str:
