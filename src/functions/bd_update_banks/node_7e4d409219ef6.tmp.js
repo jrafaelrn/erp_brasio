@@ -63,5 +63,5 @@ def api_import(day):
 
 
 
-#day = '2022-08-20'
-#api_import(day)
+day = '2022-08-20'
+api_import(day)

@@ -13,7 +13,8 @@ SCOPES = ['https://www.googleapis.com/auth/drive']
 files_to_import = []
 account_name = None
 
-googlecloudprofiler.start(service='bd-update-banks', service_version='1.0.1', verbose=3)
+#googlecloudprofiler.start(service='bd-update-banks', service_version='1.0.1', verbose=3)
+
 
 #################################
 #       GOOGLE DRIVE API        #
@@ -22,6 +23,7 @@ googlecloudprofiler.start(service='bd-update-banks', service_version='1.0.1', ve
 def get_api_key():
 
     api_key = None
+    print('Getting API KEY...')
     
     try:
         
@@ -365,6 +367,8 @@ def check_folder_path(folder_to_check: str):
 
 def check(event, context):
 
+    print('Starting BD Update Banks...')
+    
     if type(event) != str:
         payload = base64.b64decode(event['data']).decode('utf-8')
     else:
@@ -385,5 +389,6 @@ def check(event, context):
 
 
 if __name__ == '__main__':
+    print('Starting BD Update Banks...')
     update_bd()
     print('Update BD!')
