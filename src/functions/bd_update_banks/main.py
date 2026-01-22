@@ -390,6 +390,6 @@ def check(event, context):
 
 
 if __name__ == '__main__':
-    print('Starting BD Update Banks...')
+    #print('Starting BD Update Banks...')
     update_bd()
     print('Update BD!')
