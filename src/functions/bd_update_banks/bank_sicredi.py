@@ -32,22 +32,22 @@ def import_extrato_sicredi(extrato_file, account_name):
   balance_card = None
   date_payment_card = None
 
-  for line in extrato_file.iterrows():
+  for line in extrato_file.itertuples(index=False):
     
     # Try convert first column to date
     try:
 
-      date_str = line[1][0]
+      date_str = line[0]
       date_date = datetime.strptime(date_str, '%d/%m/%Y')  # Apenas para validacao da linha << Nao remover
       conta = account_name
-      descricao = (line[1][1]).upper()
+      descricao = (line[1]).upper()
       doc, nome = extract.extract_cpf_cnpj_cliente_fornecedor_from_description(descricao)
-      tipo = extract.extract_type(descricao, line[1][2])
-      valor =  line[1][3]
-      saldo = line[1][4]
+      tipo = extract.extract_type(descricao, line[2])
+      valor =  line[3]
+      saldo = line[4]
 
       
-      logger.debug('\nImporting date %s', line[1][0])
+      logger.debug('\nImporting date %s', date_str)
       logger.debug('\tConta: %s', conta)
       logger.debug('\tDescricao: %s', descricao)
       logger.debug('\tTipo: %s', tipo)
@@ -82,9 +82,9 @@ def import_extrato_sicredi(extrato_file, account_name):
     except Exception as e:
 
       data = None
-      logger.warning('Linha inválida: [0]:%s [1]:%s [2]:%s [3]:%s [4]:%s', line[1][0], line[1][1], line[1][2], line[1][3], line[1][4])
+      logger.warning('Linha inválida: %s', line)
       logger.warning('Erro: %s', e)
-      
+            
       
       if in_progress:
         
@@ -97,9 +97,12 @@ def import_extrato_sicredi(extrato_file, account_name):
         
         return import_card, balance_card, date_payment_card
 
-      if type(line[1][0]) == str:
-        if line[1][0].find('Saldo da Conta') != -1:
-          return None, None, None
+      try:
+        if type(line[1][0]) == str:
+          if line[1][0].find('Saldo da Conta') != -1:
+            return None, None, None
+      except:
+        pass
     
 
 
@@ -109,7 +112,7 @@ def import_accumulated_sicredi(data_transaction, all=False):
   
   global acumulado
   global contador_acumulado
-  MAX_ACUMULADO = 10
+  MAX_ACUMULADO = 20
   
   
   if all or contador_acumulado == MAX_ACUMULADO:      

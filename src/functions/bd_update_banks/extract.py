@@ -54,7 +54,7 @@ def extract_type(description, type):
 
   description = description.upper()
   type = type.upper()
-  MY_CNPJ = os.environ.get('MY_CNPJ')
+  MY_CNPJ = os.environ.get('MY_CNPJ', '')
   
   if description.find('COMPRAS NACIONAIS') != -1:
     return 'CARTAO DEB'
@@ -62,7 +62,7 @@ def extract_type(description, type):
     return 'GETNET'
   elif description.find('CONVENIO') != -1 or description.find('CONVENIOS') != -1:
     return 'DEB AUTOMATICO'
-  elif description.find(MY_CNPJ) != -1:
+  elif MY_CNPJ != '' and description.find(MY_CNPJ) != -1:
     return 'INTERNO'
   elif description.find('SUB ') != -1:
     return 'IFOOD'

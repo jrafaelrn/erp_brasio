@@ -4,10 +4,12 @@ from datetime import datetime
 import googlecloudprofiler
 import pandas as pd
 
+
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
 from oauth2client.service_account import ServiceAccountCredentials
+
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 files_to_import = []
@@ -66,37 +68,37 @@ def get_files_to_import():
         return False
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
-
-    with build('drive', 'v3', credentials=creds) as gdrive:
+    gdrive = build('drive', 'v3', credentials=creds, cache_discovery=False)
+    
+    try:
+        response = gdrive.files().list(fields='nextPageToken, ' 'files(id, name)').execute()
         
-        try:
-
-            response = gdrive.files().list(fields='nextPageToken, ' 'files(id, name)').execute()
+        for file in response.get('files', []):
             
-            for file in response.get('files', []):
-                
-                name_file = file.get('name')
-                #print(f'Analisando File: {name_file}')
-                if name_file.find('-import') == -1:
-                    continue
-                
-                id_file = file.get('id')
-                path_file = get_file_path(gdrive, id_file)
-
-                file_to_import = {}
-                file_to_import['name'] = name_file
-                file_to_import['id'] = id_file
-                file_to_import['path'] = path_file.upper()
-                print(f'File ADD to import: {file_to_import}')
-                files_to_import.append(file_to_import)
-
-
-            print(f'==== Finishid Search --> Files to import: {files_to_import}')
-            return True
+            name_file = file.get('name')
+            #print(f'Analisando File: {name_file}')
+            if name_file.find('-import') == -1:
+                continue
             
-        except Exception as error:
-            print(F'An error occurred: {error}')
-            return False
+            id_file = file.get('id')
+            path_file = get_file_path(gdrive, id_file)
+
+            file_to_import = {}
+            file_to_import['name'] = name_file
+            file_to_import['id'] = id_file
+            file_to_import['path'] = path_file.upper()
+            print(f'File ADD to import: {file_to_import}')
+            files_to_import.append(file_to_import)
+
+
+        print(f'==== Finishid Search --> Files to import: {files_to_import}')
+        gdrive.close()
+        return True
+        
+    except Exception as error:
+        print(F'An error occurred: {error}')
+        gdrive.close()
+        return False
 
 
 
@@ -104,25 +106,24 @@ def get_files_to_import():
 def get_file(file_id):
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
-
-    with build('drive', 'v3', credentials=creds) as gdrive:
-        
-        try:
-
-            request = gdrive.files().get_media(fileId=file_id)
-            file = io.BytesIO()
-            downloader = MediaIoBaseDownload(file, request)
-            done = False
-            while done is False:
-                status, done = downloader.next_chunk()
-                print(F'Download {int(status.progress() * 100)}%')
-
-        except HttpError as error:
-            print(F'An error occurred: {error}')
-            print('Probably any file is found.')
-            return None
-
+    gdrive = build('drive', 'v3', credentials=creds, cache_discovery=False)
+    
+    try:
+        request = gdrive.files().get_media(fileId=file_id)
+        file = io.BytesIO()
+        downloader = MediaIoBaseDownload(file, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+            print(F'Download {int(status.progress() * 100)}%')
+        gdrive.close()
         return file.getvalue()
+
+    except HttpError as error:
+        print(F'An error occurred: {error}')
+        print('Probably any file is found.')
+        gdrive.close()
+        return None
 
 
 
@@ -152,21 +153,21 @@ def rename_file(file_id, old_name_file, new_file_name):
     #print(f'New name file: {new_name_file}')
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
+    gdrive = build('drive', 'v3', credentials=creds, cache_discovery=False)
+    
+    try:
+        file_metadata = {
+            'name': new_name_file
+        }
 
-    with build('drive', 'v3', credentials=creds) as gdrive:
-        
-        try:
+        gdrive.files().update(fileId=file_id, body=file_metadata).execute()
+        gdrive.close()
+        return True
 
-            file_metadata = {
-                'name': new_name_file
-            }
-
-            gdrive.files().update(fileId=file_id, body=file_metadata).execute()
-            return True
-
-        except HttpError as error:
-            print(F'An error occurred: {error}')
-            return False
+    except HttpError as error:
+        print(F'An error occurred: {error}')
+        gdrive.close()
+        return False
 
 
 

@@ -2,9 +2,9 @@ gspread
 requests
 openpyxl
 pandas
-google-api-python-client
-google-auth-httplib2
+google-api-python-client>=2.100.0
+google-auth-httplib2>=0.2.0
 google-cloud-profiler
-oauth2client
+oauth2client>=4.12.0
 xlrd
 ofxtools
