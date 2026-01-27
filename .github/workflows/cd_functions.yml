@@ -76,8 +76,8 @@ jobs:
           name: 'function-check-sales-day'
           runtime: 'python310'
           event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
-          event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.SALES_TOPIC_ID }}
-          secrets: |
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.SALES_TOPIC_ID }}
+          secrets: |-
             GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
             REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
             GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
