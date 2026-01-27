@@ -157,6 +157,7 @@ def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
         data = datetime.strptime(str(linha), '%d/%m/%Y')  # Apenas para validacao da linha
       
       descricao = f'{line[1][1]} - {line[1][2]} - ({linha})'
+      descricao = descricao.upper()
       tipo = 'CARTAO CRED'
       valor = line[1][3]
 
@@ -172,7 +173,8 @@ def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
       else:
         valor = - float(valor)
 
-      if valor > 0:
+      # If values is positive and payment, ignore
+      if valor > 0 and descricao.find('PAGAMENTO') != -1:
         continue
 
       DATA = {}
