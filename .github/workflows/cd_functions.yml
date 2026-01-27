@@ -76,7 +76,7 @@ jobs:
           name: 'function-check-sales-day'
           runtime: 'python310'
           event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
-          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.SALES_TOPIC_ID }}
+          event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.SALES_TOPIC_ID }}
           secrets: |-
             GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
             REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
@@ -163,7 +163,7 @@ jobs:
           source_dir: 'src/functions/bd_update_banks/'
           entry_point: 'check'
           event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
-          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IMPORT_BD_TOPIC_ID }}
+          event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IMPORT_BD_TOPIC_ID }}
           secret_environment_variables: |-
             GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
             REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
@@ -183,7 +183,7 @@ jobs:
           name: 'function-week_payments'
           runtime: 'python310'
           event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
-          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.WEEK_PAYMENTS_TOPIC_ID }}
+          event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.WEEK_PAYMENTS_TOPIC_ID }}
           secret_environment_variables: |-
             GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
             REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
@@ -200,7 +200,7 @@ jobs:
           name: 'function-bank-download-api'
           runtime: 'python310'
           event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
-          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/download-all-banks-sub
+          event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/download-all-banks-sub
           secret_environment_variables: |-
             GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
             REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
@@ -216,7 +216,7 @@ jobs:
           name: 'function-ifood-alive'
           runtime: 'python310'
           event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
-          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IFOOD_ALIVE_TOPIC_ID }}
+          event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IFOOD_ALIVE_TOPIC_ID }}
           secret_environment_variables: |-
             REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
             GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
