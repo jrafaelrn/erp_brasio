@@ -78,10 +78,10 @@ jobs:
           event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
           event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.SALES_TOPIC_ID }}
           secrets: |-
-            GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
-            REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
-            GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
-            MY_CNPJ=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/MY_CNPJ/versions/
+            GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/latest
+            REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/latest
+            GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/latest
+            MY_CNPJ=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/MY_CNPJ/versions/latest
       
       
       - id: 'deploy-telegram'
@@ -90,7 +90,7 @@ jobs:
         with:
           source_dir: 'src/functions/telegram/'
           entry_point: 'check'
-          secret_environment_variables: 'TELEGRAM_API_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/TELEGRAM_API_KEY/versions/'
+          secret_environment_variables: 'TELEGRAM_API_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/TELEGRAM_API_KEY/versions/latest'
           name: 'function-telegram'
           runtime: 'python310'
           timeout: '240s'
@@ -102,7 +102,7 @@ jobs:
         with:
           source_dir: 'src/functions/bank_auto_classification/'
           entry_point: 'check'
-          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          secret_environment_variables: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/latest'
           name: 'function-bank-auto-classification'
           runtime: 'python310'
           timeout: '540s'
