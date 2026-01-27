@@ -174,7 +174,7 @@ def import_card_sicredi(extrato_file, balance, date_payment_card, conta):
         valor = - float(valor)
 
       # If values is positive and payment, ignore
-      if valor > 0 and descricao.find('PAGAMENTO') != -1:
+      if valor > 0 and (descricao.find('PAGAMENTO') != -1 or descricao.find('QUITACAO') != -1 or descricao.find('PAG FAT DEB') != -1):
         continue
 
       DATA = {}
