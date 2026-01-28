@@ -76,7 +76,7 @@ jobs:
           entry_point: 'check'
           event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
           event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IMPORT_BD_TOPIC_ID }}
-          secret_environment_variables: |-
+          secrets: |-
             GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
             REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
             GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/

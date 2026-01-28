@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import logging
 
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
@@ -20,7 +21,7 @@ account_name = None
 def get_api_key():
 
     api_key = None
-    print('Getting API KEY...')
+    logging.info('Getting API KEY...')
     
     try:
         
@@ -34,16 +35,16 @@ def get_api_key():
             file_content_string = file.read()
     
             api_key = json.loads(file_content_string)
-            print(f'API KEY Found from File!')
+            logging.info('API KEY Found from File!')
             
         except Exception as e:
-            print(f'Error: {e}')            
+            logging.error(f'Error: {e}')            
             service_account = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
             api_key = json.loads(service_account)
-            print(f'API KEY Found from Environment!')
+            logging.info('API KEY Found from Environment!')
 
     except Exception as e:
-        print(f'Error: {e}')
+        logging.error(f'Error: {e}')
         api_key = None    
     
     return api_key
@@ -56,10 +57,10 @@ API_KEY = get_api_key()
 def get_files_to_import():
 
     global files_to_import
-    print('Searching for files to import...')
+    logging.info('Searching for files to import...')
 
     if API_KEY is None:
-        print('API KEY not found!')
+        logging.error('API KEY not found! Impossible to continue.')
         return False
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
@@ -71,7 +72,7 @@ def get_files_to_import():
         for file in response.get('files', []):
             
             name_file = file.get('name')
-            #print(f'Analisando File: {name_file}')
+            logging.info(f'Analyzing File: {name_file}')
             if name_file.find('-import') == -1:
                 continue
             
@@ -82,16 +83,16 @@ def get_files_to_import():
             file_to_import['name'] = name_file
             file_to_import['id'] = id_file
             file_to_import['path'] = path_file.upper()
-            print(f'File ADD to import: {file_to_import}')
+            logging.info(f'File ADD to import: {file_to_import}')
             files_to_import.append(file_to_import)
 
 
-        print(f'==== Finishid Search --> Files to import: {files_to_import}')
+        logging.info(f'==== Finished Search --> Files to import: {files_to_import}')
         gdrive.close()
         return True
         
     except Exception as error:
-        print(F'An error occurred: {error}')
+        logging.error(f'An error occurred: {error}')
         gdrive.close()
         return False
 
@@ -110,13 +111,13 @@ def get_file(file_id):
         done = False
         while done is False:
             status, done = downloader.next_chunk()
-            print(F'Download {int(status.progress() * 100)}%')
+            logging.info(f'Download {int(status.progress() * 100)}%')
         gdrive.close()
         return file.getvalue()
 
     except HttpError as error:
-        print(F'An error occurred: {error}')
-        print('Probably any file is found.')
+        logging.error(f'An error occurred: {error}')
+        logging.error('Probably any file is found.')
         gdrive.close()
         return None
 
@@ -136,8 +137,7 @@ def get_file_path(gdrive, file_id):
                 break
             path_result = folder.get('name') + '/' + path_result
 
-    
-    print(f'Path: {path_result}')
+    logging.info(f'Path: {path_result}')
     return path_result
 
 
@@ -145,7 +145,7 @@ def get_file_path(gdrive, file_id):
 def rename_file(file_id, old_name_file, new_file_name):
 
     new_name_file = old_name_file.replace('-import', f'-{new_file_name}')
-    #print(f'New name file: {new_name_file}')
+    logging.info(f'New name file: {new_name_file}')
     
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
     gdrive = build('drive', 'v3', credentials=creds, cache_discovery=False)
@@ -160,7 +160,7 @@ def rename_file(file_id, old_name_file, new_file_name):
         return True
 
     except HttpError as error:
-        print(F'An error occurred: {error}')
+        logging.error(f'An error occurred: {error}')
         gdrive.close()
         return False
 
