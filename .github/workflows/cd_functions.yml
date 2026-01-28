@@ -77,10 +77,9 @@ jobs:
           event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
           event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IMPORT_BD_TOPIC_ID }}
           secrets: |-
-            GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
-            REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
-            GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
-            MY_CNPJ=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/MY_CNPJ/versions/
+            GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/latest
+            REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/latest
+            GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/latest
+            MY_CNPJ=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/MY_CNPJ/versions/latest
           name: 'function-bd-update-from-banks'
           runtime: 'python310'
-          timeout: '540s'
