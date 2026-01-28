@@ -17,7 +17,7 @@ from google_drive import *
 
 logging.basicConfig(
     stream=sys.stdout, 
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='[%(asctime)s] %(levelname)s - %(message)s',
     force=True
 )

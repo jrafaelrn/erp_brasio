@@ -77,7 +77,7 @@ def get_files_to_import():
         for file in response.get('files', []):
             
             name_file = file.get('name')
-            logger.info(f'Analyzing File: {name_file}')
+            #logger.info(f'Analyzing File: {name_file}')
             if name_file.find('-import') == -1:
                 continue
             
