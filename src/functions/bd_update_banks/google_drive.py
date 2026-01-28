@@ -12,6 +12,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 SCOPES = ['https://www.googleapis.com/auth/drive']
 files_to_import = []
 account_name = None
+API_KEY = None
 
 
 #################################
@@ -50,13 +51,15 @@ def get_api_key():
     return api_key
 
 
-API_KEY = get_api_key()
 
 
 
 def get_files_to_import():
 
     global files_to_import
+    global API_KEY
+    
+    API_KEY = get_api_key()
     logging.info('Searching for files to import...')
 
     if API_KEY is None:
@@ -101,6 +104,7 @@ def get_files_to_import():
 
 def get_file(file_id):
     
+    global API_KEY
     creds = ServiceAccountCredentials.from_json_keyfile_dict(API_KEY, SCOPES)
     gdrive = build('drive', 'v3', credentials=creds, cache_discovery=False)
     
@@ -144,6 +148,7 @@ def get_file_path(gdrive, file_id):
 
 def rename_file(file_id, old_name_file, new_file_name):
 
+    global API_KEY
     new_name_file = old_name_file.replace('-import', f'-{new_file_name}')
     logging.info(f'New name file: {new_name_file}')
     
