@@ -70,6 +70,6 @@ jobs:
         with:
           source_dir: 'src/functions/bd_transaction/'
           entry_point: 'check'
-          secrets: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/'
+          secrets: 'GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/latest'
           name: 'function-bd-transaction'
           runtime: 'python312'
