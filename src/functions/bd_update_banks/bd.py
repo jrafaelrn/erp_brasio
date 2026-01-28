@@ -34,7 +34,7 @@ def insert(DATA, ARGS=None):
         return response
     
     else:
-        print(f'!!! Function {FUNCTION_NAME} not executed! - Data: {data} - Status Code: {resp.status_code} - Text: {resp.text}')
-        return None
+        raise Exception(f'Function {FUNCTION_NAME} not executed! - Status Code: {resp.status_code} - Text: {resp.text}')
+    
 
 
