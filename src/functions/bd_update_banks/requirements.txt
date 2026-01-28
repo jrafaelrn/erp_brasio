@@ -8,3 +8,4 @@ google-cloud-profiler
 oauth2client
 xlrd
 ofxtools
+functions-framework==3.*

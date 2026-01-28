@@ -3,6 +3,8 @@ from httplib2 import Credentials
 from datetime import datetime
 import googlecloudprofiler
 import pandas as pd
+import functions_framework
+
 
 
 from googleapiclient.discovery import build
@@ -366,6 +368,7 @@ def check_folder_path(folder_to_check: str):
 #   Call from Cloud Functions   #
 #################################
 
+@functions_framework.cloud_event
 def check(cloud_event):
 
     print('Starting BD Update Banks...')
