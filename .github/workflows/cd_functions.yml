@@ -82,4 +82,4 @@ jobs:
             GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/latest
             MY_CNPJ=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/MY_CNPJ/versions/latest
           name: 'function-bd-update-from-banks'
-          runtime: 'python310'
+          runtime: 'python312'
