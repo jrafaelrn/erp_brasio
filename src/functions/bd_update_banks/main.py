@@ -2,6 +2,7 @@ import bank_pagbank
 import bank_sicredi
 import base64
 import io
+import logging
 import re
 import pandas as pd
 import functions_framework
@@ -22,11 +23,11 @@ def update_bd():
 
     get_files_to_import()
     global files_to_import
-    print(f'.... Files to import...: {files_to_import}')
+    logging.info(f'.... Files to import...: {files_to_import}')
 
     for file_to_import in files_to_import:
 
-        print(f'.........Importing file...: {file_to_import}')
+        logging.info(f'.........Importing file...: {file_to_import}')
 
         # Check if credit file to avoid start with 
         if file_to_import.get('path').upper().find('CARTAO-CSV') != -1:
@@ -47,7 +48,7 @@ def update_bd():
 
 def update_bd_from_sicredi(file_to_import):
     
-    print(f'Updating BD from Sicredi: {file_to_import}')
+    logging.info(f'Updating BD from Sicredi: {file_to_import}')
 
     balance_card, date_payment_card, file_id_card, card_name_file_filter = update_bd_from_sicredi_account(file_to_import)
 
@@ -68,7 +69,7 @@ def update_bd_from_sicredi_account(file_to_import):
     account_name = str(file_path.split('/')[1]).upper()
 
     if not check_folder_path(file_path):
-        print(f'Folder not CHECK_FOLDER: {file_path}')
+        logging.error(f'Folder not CHECK_FOLDER: {file_path}')
         return None, None, None, None
     
     import_card = False
@@ -76,7 +77,7 @@ def update_bd_from_sicredi_account(file_to_import):
     file_excel = get_file(file_id)
 
     if file_excel is None:
-        print('No file found!')
+        logging.error('No file found!')
         return None, None, None, None
             
     df = pd.read_excel(io.BytesIO(file_excel))
