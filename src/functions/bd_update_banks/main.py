@@ -366,14 +366,14 @@ def check_folder_path(folder_to_check: str):
 #   Call from Cloud Functions   #
 #################################
 
-def check(event, context):
+def check(cloud_event):
 
     print('Starting BD Update Banks...')
     
-    if type(event) != str:
-        payload = base64.b64decode(event['data']).decode('utf-8')
+    if type(cloud_event) != str:
+        payload = base64.b64decode(cloud_event['data']).decode('utf-8')
     else:
-        payload = event
+        payload = cloud_event
 
     response = None
 
