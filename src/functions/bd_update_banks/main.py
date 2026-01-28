@@ -1,11 +1,12 @@
 import bank_pagbank
 import bank_sicredi
 import base64
+import functions_framework
 import io
 import logging
 import re
 import pandas as pd
-import functions_framework
+import sys
 
 
 from httplib2 import Credentials
@@ -13,6 +14,13 @@ from datetime import datetime
 from cloudevents.http import CloudEvent
 from google_drive import *
 
+
+logging.basicConfig(
+    stream=sys.stdout, 
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s - %(message)s',
+    force=True
+)
 
 
 #################################
