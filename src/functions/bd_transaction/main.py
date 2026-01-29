@@ -248,107 +248,37 @@ def id_generator(size, chars=string.ascii_uppercase + string.digits):
 #   Call from Cloud Functions   #
 #################################
 
-@functions_framework.cloud_event
-def check(cloud_event):
-    
+@functions_framework.http    
+def check(request):
+
     global line_to_insert
     line_to_insert = None
 
-    logging.info(f"Event ID: {cloud_event['id']}")
-    logging.info(f"Event Type: {cloud_event['type']}")
-
-    # 1. Obter os dados brutos do evento (O Envelope do Pub/Sub)
-    # O framework já converte o payload do Pub/Sub em um dicionário aqui
-    pubsub_message = cloud_event.data
-
-    logging.info(f'Pub/Sub Envelope: {pubsub_message}')
-
-    # Definição padrão
-    operation_type = 'insert'
-    target_json = None
-
-    try:
-        # 2. Verificar se é uma mensagem válida do Pub/Sub
-        if 'message' in pubsub_message:
-            # O Pub/Sub real aninha os dados dentro de 'message'
-            message_body = pubsub_message['message']
-        else:
-            # Em alguns testes locais ou emulações, os dados podem vir direto
-            message_body = pubsub_message
-
-        # 3. Extrair e Decodificar os dados (Payload real)
-        if 'data' in message_body:
-            data_base64 = message_body['data']
-            
-            # Decodifica de Base64 para String
-            decoded_data = base64.b64decode(data_base64).decode('utf-8')
-            logging.info(f'Decoded Data (String): {decoded_data}')
-
-            # Converte a String decodificada para JSON (Lista ou Dict)
-            target_json = json.loads(decoded_data)
-        else:
-            logging.error('Payload Pub/Sub sem o campo "data".')
-            return
-
-        # 4. Extrair Atributos (se houver, para definir insert/update)
-        attributes = message_body.get('attributes', {})
-        operation_type = attributes.get('type', 'insert')
-        logging.info(f'Operation Type from Attributes: {operation_type}')
-
-    except Exception as e:
-        logging.error(f'FATAL: Falha ao processar mensagem do Pub/Sub: {e}')
-        # Em Pub/Sub, não adianta retornar string de erro, pois ninguém recebe.
-        # O ideal é logar o erro. Se retornar erro, o Pub/Sub pode tentar reenviar (retry).
-        return
-
-    # 5. Executar a lógica de negócio
-    try:
-        if operation_type == 'insert':
-            # Sua função insert já espera a lista (target_json)
-            response = insert(target_json)
-            logging.info(f'Insert Response: {response}')
-        
-        elif operation_type == 'update':
-            response = update(target_json)
-            logging.info(f'Update Response: {response}')
-
-    except Exception as e:
-        logging.error(f'Error executing business logic: {e}')
-
-    return 'OK'
-
-
-# Função principal para rodar localmente em testes
-if __name__ == '__main__':
-    logging.info('Starting BD Transaction Function locally...')
-
-    # Exemplo de dados para teste local
-    test_data = [
-        json.dumps({
-            "date_trx": "2024-06-01",
-            "account": "123456",
-            "original_description": "Test Transaction",
-            "document": "DOC123",
-            "entity_bank": "Test Entity",
-            "type_trx": "credit",
-            "value": 100.0,
-            "balance": 1000.0,
-            "id_bank": "BANK001"
-        })
-    ]
-
-    # Cria o objeto CloudEvent simulado
-    attributes = {
-        'specversion': '1.0',
-        'type': 'insert',
-        'source': 'local-test',
-        'id': 'test-1'
-    }
-    data = {"message": {
-        "data": base64.b64encode(json.dumps(test_data).encode('utf-8')).decode('utf-8'),
-        "attributes": attributes
-    }}
-    event = CloudEvent(attributes, data)
-    check(event)
+    request_json = request.get_json(silent=True)
+    parameters = request.args
+    print(f'Request JSON: {request_json}')
+    print(f'Parameters: {parameters}')
     
-    logging.info('Finished local test of BD Transaction Function.')
+    if parameters['type'] == 'insert':
+        response = insert(request_json)
+        response = json.dumps(response)
+    
+    elif parameters['type'] == 'update':
+        response = update(request_json)
+
+    else:
+        response = '{}'
+    
+    print(f'Response: {response}')
+    return response
+
+
+
+if __name__ == '__main__':    
+    data = ['{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_DEB", "value": -733, "balance": 4447.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 31003417833 MARINALVA MARIA DE SOU", "document": "31003417833", "entity_bank": "MARINALVA MARIA DE SOU", "type_trx": "PIX_DEB", "value": -143, "balance": 4304.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_CRED", "value": 105, "balance": 4409.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 39307592845 MARIA ALICE DINI COL", "document": "39307592845", "entity_bank": "MARIA ALICE DINI COL", "type_trx": "PIX_CRED", "value": 67.5, "balance": 4477.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 37911951829 EMERSON DINIZ RAGAZONI", "document": "37911951829", "entity_bank": "EMERSON DINIZ RAGAZONI", "type_trx": "PIX_DEB", "value": -25, "balance": 4452.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 32622464843 FABRICIA SANTOS NOVA", "document": "32622464843", "entity_bank": "FABRICIA SANTOS NOVA", "type_trx": "PIX_CRED", "value": 8, "balance": 4460.44}'] 
+    request_json = json.dumps(data)
+    
+    # call insert
+    print(f'Request JSON: {request_json}')
+    response = insert(request_json)
+    
