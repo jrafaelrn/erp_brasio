@@ -253,32 +253,58 @@ def check(cloud_event: CloudEvent):
     global line_to_insert
     line_to_insert = None
 
-    # Decodificar mensagem do Pub/Sub
     import base64
     
-    request_json = cloud_event.data
+    request_data = cloud_event.data
+    logging.info(f'Request Data: {request_data}')
+    logging.info(f'Request Data Type: {type(request_data)}')
     
-    # Se vem do Pub/Sub, extrair a mensagem
-    if isinstance(request_json, dict) and "message" in request_json:
-        message_data = request_json["message"]["data"]
-        request_json = base64.b64decode(message_data).decode('utf-8')
-        attributes = request_json.get("message", {}).get("attributes", {})
-        operation_type = attributes.get("type", "insert")
+    operation_type = 'insert'
+    request_json = request_data
+    
+    # Se vem do Pub/Sub
+    if isinstance(request_data, dict) and "message" in request_data:
+        try:
+            # Decodificar mensagem Base64
+            message_data = request_data["message"]["data"]
+            request_json = base64.b64decode(message_data).decode('utf-8')
+            
+            # Extrair tipo dos atributos
+            attributes = request_data.get("message", {}).get("attributes", {})
+            operation_type = attributes.get("type", "insert")
+            
+            logging.info(f'Pub/Sub Message - Type: {operation_type}')
+        except Exception as e:
+            logging.error(f'Error parsing Pub/Sub message: {e}')
+            return f'Error: {e}'
     else:
-        # Para testes locais
-        operation_type = cloud_event.extensions.get('type', 'insert')
+        # Formato local/teste
+        try:
+            parameters = cloud_event.extensions
+            operation_type = parameters.get('type', 'insert')
+            logging.info(f'Local Test - Type: {operation_type}')
+        except:
+            pass
     
     logging.info(f'Request JSON: {request_json}')
     
-    if operation_type == 'insert':
-        response = insert(request_json)
-        response = json.dumps(response)
-    
-    elif operation_type == 'update':
-        response = update(json.loads(request_json))
+    try:
+        if operation_type == 'insert':
+            response = insert(request_json)
+            response = json.dumps(response)
+        
+        elif operation_type == 'update':
+            # Para update, parse JSON se for string
+            if isinstance(request_json, str):
+                request_json = json.loads(request_json)
+            response = update(request_json)
 
-    else:
-        response = '{}'
+        else:
+            response = '{}'
+        
+        logging.info(f'Response: {response}')
+        return response
     
-    logging.info(f'Response: {response}')
-    return response
+    except Exception as e:
+        logging.error(f'Error processing request: {e}')
+        return f'Error: {e}'
