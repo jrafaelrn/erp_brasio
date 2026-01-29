@@ -1,3 +1,4 @@
+import base64
 import functions_framework
 import googlecloudprofiler
 import gspread
@@ -248,63 +249,69 @@ def id_generator(size, chars=string.ascii_uppercase + string.digits):
 #################################
 
 @functions_framework.cloud_event
-def check(cloud_event: CloudEvent):
-
+def check(cloud_event):
     global line_to_insert
     line_to_insert = None
 
-    import base64
-    
-    request_data = cloud_event.data
-    logging.info(f'Request Data: {request_data}')
-    logging.info(f'Request Data Type: {type(request_data)}')
-    
+    logging.info(f"Event ID: {cloud_event['id']}")
+    logging.info(f"Event Type: {cloud_event['type']}")
+
+    # 1. Obter os dados brutos do evento (O Envelope do Pub/Sub)
+    # O framework já converte o payload do Pub/Sub em um dicionário aqui
+    pubsub_message = cloud_event.data
+
+    logging.info(f'Pub/Sub Envelope: {pubsub_message}')
+
+    # Definição padrão
     operation_type = 'insert'
-    request_json = request_data
-    
-    # Se vem do Pub/Sub
-    if isinstance(request_data, dict) and "message" in request_data:
-        try:
-            # Decodificar mensagem Base64
-            message_data = request_data["message"]["data"]
-            request_json = base64.b64decode(message_data).decode('utf-8')
+    target_json = None
+
+    try:
+        # 2. Verificar se é uma mensagem válida do Pub/Sub
+        if 'message' in pubsub_message:
+            # O Pub/Sub real aninha os dados dentro de 'message'
+            message_body = pubsub_message['message']
+        else:
+            # Em alguns testes locais ou emulações, os dados podem vir direto
+            message_body = pubsub_message
+
+        # 3. Extrair e Decodificar os dados (Payload real)
+        if 'data' in message_body:
+            data_base64 = message_body['data']
             
-            # Extrair tipo dos atributos
-            attributes = request_data.get("message", {}).get("attributes", {})
-            operation_type = attributes.get("type", "insert")
-            
-            logging.info(f'Pub/Sub Message - Type: {operation_type}')
-        except Exception as e:
-            logging.error(f'Error parsing Pub/Sub message: {e}')
-            return f'Error: {e}'
-    else:
-        # Formato local/teste
-        try:
-            parameters = cloud_event.extensions
-            operation_type = parameters.get('type', 'insert')
-            logging.info(f'Local Test - Type: {operation_type}')
-        except:
-            pass
-    
-    logging.info(f'Request JSON: {request_json}')
-    
+            # Decodifica de Base64 para String
+            decoded_data = base64.b64decode(data_base64).decode('utf-8')
+            logging.info(f'Decoded Data (String): {decoded_data}')
+
+            # Converte a String decodificada para JSON (Lista ou Dict)
+            target_json = json.loads(decoded_data)
+        else:
+            logging.error('Payload Pub/Sub sem o campo "data".')
+            return
+
+        # 4. Extrair Atributos (se houver, para definir insert/update)
+        attributes = message_body.get('attributes', {})
+        operation_type = attributes.get('type', 'insert')
+        logging.info(f'Operation Type from Attributes: {operation_type}')
+
+    except Exception as e:
+        logging.error(f'FATAL: Falha ao processar mensagem do Pub/Sub: {e}')
+        # Em Pub/Sub, não adianta retornar string de erro, pois ninguém recebe.
+        # O ideal é logar o erro. Se retornar erro, o Pub/Sub pode tentar reenviar (retry).
+        return
+
+    # 5. Executar a lógica de negócio
     try:
         if operation_type == 'insert':
-            response = insert(request_json)
-            response = json.dumps(response)
+            # Sua função insert já espera a lista (target_json)
+            response = insert(target_json)
+            logging.info(f'Insert Response: {response}')
         
         elif operation_type == 'update':
-            # Para update, parse JSON se for string
-            if isinstance(request_json, str):
-                request_json = json.loads(request_json)
-            response = update(request_json)
+            response = update(target_json)
+            logging.info(f'Update Response: {response}')
 
-        else:
-            response = '{}'
-        
-        logging.info(f'Response: {response}')
-        return response
-    
     except Exception as e:
-        logging.error(f'Error processing request: {e}')
-        return f'Error: {e}'
+        logging.error(f'Error executing business logic: {e}')
+
+    return 'OK'
