@@ -17,9 +17,11 @@ jobs:
 
   test:
     uses: ./.github/workflows/cd_functions_base.yml
+    secrets: inherit
 
   deploy_base:
     uses: ./.github/workflows/cd_functions_base.yml
+    secrets: inherit
     
 
   deploy:
@@ -28,7 +30,11 @@ jobs:
     needs: deploy_base
     
     steps:
-    
+        - id: 'auth'
+          uses: 'google-github-actions/auth@v3'
+          with:
+              credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
+
         - id: 'deploy-bd-update-from-banks'
           name: 'Deploy BD Update From Banks'
           uses: 'google-github-actions/deploy-cloud-functions@v3'

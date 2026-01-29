@@ -1,5 +1,8 @@
 on:
-    workflow_call:
+  workflow_call:
+    secrets:
+      GOOGLE_SERVICE_ACCOUNT_KEY:
+        required: true
 
 
 jobs:
