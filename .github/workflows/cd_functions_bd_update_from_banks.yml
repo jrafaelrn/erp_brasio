@@ -1,6 +1,7 @@
 name: 'CD - GCP - Cloud Functions (BD Update from Banks)'
 
 on:
+  workflow_dispatch:
   push:
     branches: master
     paths:
