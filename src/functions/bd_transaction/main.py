@@ -1,3 +1,4 @@
+import base64
 import functions_framework
 import googlecloudprofiler
 import gspread
