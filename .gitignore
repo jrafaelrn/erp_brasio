@@ -16,3 +16,4 @@ gha-creds-*.json
 src/functions/bd_update_banks/key.json
 
 src\functions\requirements.txt
+**/key.json
