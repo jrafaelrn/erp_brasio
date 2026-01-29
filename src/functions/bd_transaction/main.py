@@ -250,6 +250,7 @@ def id_generator(size, chars=string.ascii_uppercase + string.digits):
 
 @functions_framework.cloud_event
 def check(cloud_event):
+    
     global line_to_insert
     line_to_insert = None
 
@@ -315,3 +316,39 @@ def check(cloud_event):
         logging.error(f'Error executing business logic: {e}')
 
     return 'OK'
+
+
+# Função principal para rodar localmente em testes
+if __name__ == '__main__':
+    logging.info('Starting BD Transaction Function locally...')
+
+    # Exemplo de dados para teste local
+    test_data = [
+        json.dumps({
+            "date_trx": "2024-06-01",
+            "account": "123456",
+            "original_description": "Test Transaction",
+            "document": "DOC123",
+            "entity_bank": "Test Entity",
+            "type_trx": "credit",
+            "value": 100.0,
+            "balance": 1000.0,
+            "id_bank": "BANK001"
+        })
+    ]
+
+    # Cria o objeto CloudEvent simulado
+    attributes = {
+        'specversion': '1.0',
+        'type': 'insert',
+        'source': 'local-test',
+        'id': 'test-1'
+    }
+    data = {"message": {
+        "data": base64.b64encode(json.dumps(test_data).encode('utf-8')).decode('utf-8'),
+        "attributes": attributes
+    }}
+    event = CloudEvent(attributes, data)
+    check(event)
+    
+    logging.info('Finished local test of BD Transaction Function.')
