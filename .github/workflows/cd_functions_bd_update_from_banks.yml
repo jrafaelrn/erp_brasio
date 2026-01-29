@@ -20,16 +20,20 @@ jobs:
     uses: ./.github/workflows/cd_functions_base.yml
     secrets: inherit
 
-  deploy_base:
-    uses: ./.github/workflows/cd_functions_base.yml
-    secrets: inherit
-    
-
   deploy:
     name: 'Deploy BD Update From Banks'
     runs-on: ubuntu-latest
-    needs: deploy_base
+    needs: test
+
+    permissions:
+        contents: 'read'
+        id-token: 'write'
     
+    environment: prod
+    env:
+        GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}    
+
+
     steps:
         - id: 'auth'
           uses: 'google-github-actions/auth@v3'
