@@ -2,3 +2,5 @@ gspread
 pandas
 requests
 google-cloud-profiler
+functions-framework==3.*
+cloudevents==1.*

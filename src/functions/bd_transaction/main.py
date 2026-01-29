@@ -1,11 +1,24 @@
+import functions_framework
 import googlecloudprofiler
 import gspread
 import json
 import os
+import logging
 import pandas as pd
 import random
 import string
 import time
+import sys
+
+from cloudevents.http import CloudEvent
+
+
+logging.basicConfig(
+    stream=sys.stdout, 
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s - %(message)s',
+    force=True
+)
 
 
 def get_api_key():
@@ -22,14 +35,15 @@ def get_api_key():
             file_content_string = file.read()
     
             api_key = json.loads(file_content_string)
+            logging.info('API KEY Found from File!')
             
         except Exception as e:
-            print(f'Error: {e}')            
+            logging.error(f'Error: {e}')            
             service_account = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
             api_key = json.loads(service_account)
 
     except Exception as e:
-        print(f'Error: {e}')
+        logging.error(f'Error: {e}')
         api_key = None    
     
     return api_key
@@ -42,6 +56,10 @@ def open_bd_bank():
     sa = gspread.service_account_from_dict(API_KEY)
     bd = sa.open("bd_bot")
     bd_sheet = bd.worksheet('bank')
+    
+    if bd_sheet is None:
+        raise Exception('Worksheet bank not found in bd_bot spreadsheet!')
+    
     return bd_sheet
 
 
@@ -55,7 +73,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
     global bd
     global bd_pd
     
-    print(f'Starting insert transaction - Date: {date_trx} - Account: {account} - Original Description: {original_description} - Document: {document} - Entity Bank: {entity_bank} - Type Trx: {type_trx} - Value: {value} - Balance: {balance}')
+    logging.info(f'Starting insert transaction - Date: {date_trx} - Account: {account} - Original Description: {original_description} - Document: {document} - Entity Bank: {entity_bank} - Type Trx: {type_trx} - Value: {value} - Balance: {balance}')
     entity_bank = entity_bank.strip()
     
 
@@ -77,7 +95,7 @@ def insert_transaction(date_trx, account, original_description, document, entity
         line_to_insert += 2
         
         
-    print(f'ID to add to Bank: {id_bank} - LINE: {line_to_insert}')
+    logging.info(f'ID to add to Bank: {id_bank} - LINE: {line_to_insert}')
 
     # Append new row
     row = [id_bank, date_trx, account, original_description, document, entity_bank, type_trx, value, balance]
@@ -161,7 +179,7 @@ def insert(data):
         # Se ARRAY_DATA for do tipo 'list',
         if type(data) == list:
             ARRAY_DATA = data
-            print(f'ARRAY_DATA: {ARRAY_DATA} -- Type: {type(ARRAY_DATA)}')
+            logging.info(f'ARRAY_DATA: {ARRAY_DATA} -- Type: {type(ARRAY_DATA)}')
         
         else:        
             return f'FATAL ERROR when parse JSON: {e}'
@@ -192,7 +210,7 @@ def insert(data):
             
         except Exception as e:
             feedback = f'Error when inserting transaction: {e}' 
-            print(feedback)
+            logging.error(feedback)
             feedbacks.append(feedback)
 
     return feedbacks
@@ -213,7 +231,7 @@ def update(data):
         feedback = update_transaction(id, category_erp, entity_erp, status_erp, description_erp)
     except Exception as e:
         feedback = f'Error when updating transaction: {e}'
-        print(feedback)
+        logging.error(feedback)
 
     return feedback
 
@@ -230,15 +248,16 @@ def id_generator(size, chars=string.ascii_uppercase + string.digits):
 #   Call from Cloud Functions   #
 #################################
 
-def check(request):
+@functions_framework.cloud_event
+def check(cloud_event: CloudEvent):
 
     global line_to_insert
     line_to_insert = None
 
-    request_json = request.get_json(silent=True)
-    parameters = request.args
-    print(f'Request JSON: {request_json}')
-    print(f'Parameters: {parameters}')
+    request_json = cloud_event.data
+    parameters = cloud_event.extensions
+    logging.info(f'Request JSON: {request_json}')
+    logging.info(f'Parameters: {parameters}')
     
     if parameters['type'] == 'insert':
         response = insert(request_json)
@@ -250,17 +269,16 @@ def check(request):
     else:
         response = '{}'
     
-    print(f'Response: {response}')
+    logging.info(f'Response: {response}')
     return response
 
 
-#googlecloudprofiler.start(service='bd-transaction', service_version='1.0.1', verbose=3)
 
 if __name__ == '__main__':    
     data = ['{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_DEB", "value": -733, "balance": 4447.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 31003417833 MARINALVA MARIA DE SOU", "document": "31003417833", "entity_bank": "MARINALVA MARIA DE SOU", "type_trx": "PIX_DEB", "value": -143, "balance": 4304.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_CRED", "value": 105, "balance": 4409.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 39307592845 MARIA ALICE DINI COL", "document": "39307592845", "entity_bank": "MARIA ALICE DINI COL", "type_trx": "PIX_CRED", "value": 67.5, "balance": 4477.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 37911951829 EMERSON DINIZ RAGAZONI", "document": "37911951829", "entity_bank": "EMERSON DINIZ RAGAZONI", "type_trx": "PIX_DEB", "value": -25, "balance": 4452.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 32622464843 FABRICIA SANTOS NOVA", "document": "32622464843", "entity_bank": "FABRICIA SANTOS NOVA", "type_trx": "PIX_CRED", "value": 8, "balance": 4460.44}'] 
     request_json = json.dumps(data)
     
     # call insert
-    print(f'Request JSON: {request_json}')
+    logging.info(f'Request JSON: {request_json}')
     response = insert(request_json)
     

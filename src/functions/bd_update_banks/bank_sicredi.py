@@ -9,8 +9,7 @@ import time
 
 from datetime import datetime
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 acumulado = []
 contador_acumulado = 0

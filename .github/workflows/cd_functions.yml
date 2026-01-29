@@ -2,70 +2,25 @@ name: 'CD - GCP - Cloud Functions'
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    types: [closed]
-    branches: [master]
+    branches: [master_all_functions]
 
 
 jobs:
 
   test:
+    uses: ./.github/workflows/cd_functions_base.yml
 
-    name: 'Test'
-    runs-on: ubuntu-latest
-    strategy: 
-      matrix:
-        python-version: ["3.10"]
-
-    steps:
-      
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install flake8 pytest
-          pwd
-          ls -lah
-          pip install -r src/functions/bd_update_banks/requirements.txt
-
-      - name: Run tests
-        run: |
-          pytest
-
+  deploy_base:
+    uses: ./.github/workflows/cd_functions_base.yml
 
 
   deploy:
 
-    name: 'Deploy to GCP Cloud Functions'
+    name: 'Deploy All Functions'
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-    
-    environment: prod
-    env:
-      GOOGLE_SERVICE_ACCOUNT_KEY : ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
-    
-    needs: test
+    needs: deploy_base
 
     steps:
-
-      - name: Checkout
-        uses: 'actions/checkout@v4'
-
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v3'
-        with:
-          credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}'
 
       - id: 'deploy-sales'
         name: 'Deploy Sales'
@@ -156,22 +111,7 @@ jobs:
           timeout: '540s'
 
 
-      - id: 'deploy-bd-update-from-banks'
-        name: 'Deploy BD Update From Banks'
-        uses: 'google-github-actions/deploy-cloud-functions@v3'
-        with:
-          source_dir: 'src/functions/bd_update_banks/'
-          entry_point: 'check'
-          event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
-          event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IMPORT_BD_TOPIC_ID }}
-          secret_environment_variables: |-
-            GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/
-            REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/
-            GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/
-            MY_CNPJ=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/MY_CNPJ/versions/
-          name: 'function-bd-update-from-banks'
-          runtime: 'python310'
-          timeout: '540s'
+
 
 
       - id: 'deploy-week-payments'

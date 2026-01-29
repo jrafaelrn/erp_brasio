@@ -1,0 +1,46 @@
+name: 'CD - GCP - Cloud Functions (BD Update from Banks)'
+
+on:
+  push:
+    branches: master
+    paths:
+      - 'src/functions/bd_update_banks/**'
+  pull_request:
+    types: closed
+    branches: master
+    paths:
+      - 'src/functions/bd_update_banks/**'
+
+
+
+jobs:
+
+  test:
+    uses: ./.github/workflows/cd_functions_base.yml
+
+  deploy_base:
+    uses: ./.github/workflows/cd_functions_base.yml
+    
+
+  deploy:
+    name: 'Deploy BD Update From Banks'
+    runs-on: ubuntu-latest
+    needs: deploy_base
+    
+    steps:
+    
+        - id: 'deploy-bd-update-from-banks'
+          name: 'Deploy BD Update From Banks'
+          uses: 'google-github-actions/deploy-cloud-functions@v3'
+          with:
+              source_dir: 'src/functions/bd_update_banks/'
+              entry_point: 'check'
+              event_trigger_type: 'google.cloud.pubsub.topic.v1.messagePublished'
+              event_trigger_pubsub_topic: projects/${{ secrets.GCP_PROJECT_ID }}/topics/${{ secrets.IMPORT_BD_TOPIC_ID }}
+              secrets: |-
+                GOOGLE_SERVICE_ACCOUNT_KEY=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GOOGLE_SERVICE_ACCOUNT_KEY/versions/latest
+                REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/latest
+                GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/latest
+                MY_CNPJ=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/MY_CNPJ/versions/latest
+              name: 'function-bd-update-from-banks'
+              runtime: 'python312'
