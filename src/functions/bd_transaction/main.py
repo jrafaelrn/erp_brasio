@@ -253,38 +253,32 @@ def check(cloud_event: CloudEvent):
     global line_to_insert
     line_to_insert = None
 
+    # Decodificar mensagem do Pub/Sub
+    import base64
+    
     request_json = cloud_event.data
-    parameters = cloud_event._attributes
+    
+    # Se vem do Pub/Sub, extrair a mensagem
+    if isinstance(request_json, dict) and "message" in request_json:
+        message_data = request_json["message"]["data"]
+        request_json = base64.b64decode(message_data).decode('utf-8')
+        attributes = request_json.get("message", {}).get("attributes", {})
+        operation_type = attributes.get("type", "insert")
+    else:
+        # Para testes locais
+        operation_type = cloud_event.extensions.get('type', 'insert')
+    
     logging.info(f'Request JSON: {request_json}')
-    logging.info(f'Parameters: {parameters}')
-
-    if parameters['type'] == 'insert':
+    
+    if operation_type == 'insert':
         response = insert(request_json)
         response = json.dumps(response)
-
-    elif parameters['type'] == 'update':
-        response = update(request_json)
+    
+    elif operation_type == 'update':
+        response = update(json.loads(request_json))
 
     else:
         response = '{}'
-
+    
     logging.info(f'Response: {response}')
     return response
-
-
-if __name__ == '__main__':
-    
-    data = ['{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_DEB", "value": -733, "balance": 4447.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 31003417833 MARINALVA MARIA DE SOU", "document": "31003417833", "entity_bank": "MARINALVA MARIA DE SOU", "type_trx": "PIX_DEB", "value": -143, "balance": 4304.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_CRED", "value": 105, "balance": 4409.94}',
-            '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 39307592845 MARIA ALICE DINI COL", "document": "39307592845", "entity_bank": "MARIA ALICE DINI COL", "type_trx": "PIX_CRED", "value": 67.5, "balance": 4477.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 37911951829 EMERSON DINIZ RAGAZONI", "document": "37911951829", "entity_bank": "EMERSON DINIZ RAGAZONI", "type_trx": "PIX_DEB", "value": -25, "balance": 4452.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 32622464843 FABRICIA SANTOS NOVA", "document": "32622464843", "entity_bank": "FABRICIA SANTOS NOVA", "type_trx": "PIX_CRED", "value": 8, "balance": 4460.44}']
-    attributes = {
-        "specversion": "1.0",
-        "type": "insert",  # ou "update"
-        "source": "test",
-        "id": "test-123"
-    }
-
-    cloud_event = CloudEvent(attributes, data=json.dumps(data))
-
-    # Chamar a função
-    response = check(cloud_event)
-    print(response)
