@@ -9,9 +9,11 @@ jobs:
 
   test:
     uses: ./.github/workflows/cd_functions_base.yml
+    secrets: inherit
 
   deploy_base:
     uses: ./.github/workflows/cd_functions_base.yml
+    secrets: inherit
 
 
   deploy:
