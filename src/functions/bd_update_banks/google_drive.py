@@ -143,7 +143,7 @@ def get_file_path(gdrive, file_id):
                 break
             path_result = folder.get('name') + '/' + path_result
 
-    logger.info(f'Path: {path_result}')
+    #logger.info(f'Path: {path_result}')
     return path_result
 
 
