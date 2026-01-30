@@ -74,7 +74,7 @@ def update_bd_from_sicredi_account(file_to_import):
     file_name = file_to_import['name']
     file_id = file_to_import['id']
     file_path = file_to_import['path']
-    account_name = str(file_path.split('/')[1]).upper()
+    account_name = str(file_path.split('/')[0]).upper()
 
     if not check_folder_path(file_path):
         logging.error(f'Folder not CHECK_FOLDER: {file_path}')
