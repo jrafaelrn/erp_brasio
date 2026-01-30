@@ -25,6 +25,10 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 
+class LineNotFoundError(Exception):
+    pass
+
+
 def get_api_key():
     
     api_key = None
@@ -104,6 +108,8 @@ def insert_transaction(date_trx, account, original_description, document, entity
         line_to_insert += 2
 
     logging.info(f'ID to add to Bank: {id_bank} - LINE: {line_to_insert}')
+    if line_to_insert == 0:
+        raise LineNotFoundError('Error to find line to insert!')
 
     # Append new row
     row = [id_bank, date_trx, account, original_description,
@@ -201,16 +207,16 @@ def insert(data):
         type_trx = DATA['type_trx']
         value = DATA['value']
         balance = DATA['balance']
-
-        try:
-            id_bank = DATA['id_bank']
-        except:
-            id_bank = id_generator(6)
+        id_bank = DATA.get('id_bank', id_generator(6))
 
         try:
             feedback = insert_transaction(
                 date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank)
             feedbacks.append(feedback)
+            
+        except LineNotFoundError as e:
+            logging.error(feedback)
+            raise e
 
         except Exception as e:
             feedback = f'Error when inserting transaction: {e}'
@@ -275,7 +281,7 @@ def check(request):
 
 
 if __name__ == '__main__':    
-    data = ['{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_DEB", "value": -733, "balance": 4447.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 31003417833 MARINALVA MARIA DE SOU", "document": "31003417833", "entity_bank": "MARINALVA MARIA DE SOU", "type_trx": "PIX_DEB", "value": -143, "balance": 4304.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 50496923854 BEATRIZ SOUZA SANTOS", "document": "50496923854", "entity_bank": "BEATRIZ SOUZA SANTOS", "type_trx": "PIX_CRED", "value": 105, "balance": 4409.94}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 39307592845 MARIA ALICE DINI COL", "document": "39307592845", "entity_bank": "MARIA ALICE DINI COL", "type_trx": "PIX_CRED", "value": 67.5, "balance": 4477.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 37911951829 EMERSON DINIZ RAGAZONI", "document": "37911951829", "entity_bank": "EMERSON DINIZ RAGAZONI", "type_trx": "PIX_DEB", "value": -25, "balance": 4452.44}', '{"date_trx": "25/01/2024", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 32622464843 FABRICIA SANTOS NOVA", "document": "32622464843", "entity_bank": "FABRICIA SANTOS NOVA", "type_trx": "PIX_CRED", "value": 8, "balance": 4460.44}'] 
+    data = ['{"date_trx": "26/01/2026", "account": "SICREDI-BRUNA", "original_description": "SICREDI ANTECIPACAO VISA | SICREDI | 0001-00", "document": "", "entity_bank": "", "type_trx": "OUTROS", "value": 601.51, "balance": 17522.34}', '{"date_trx": "26/01/2026", "account": "SICREDI-BRUNA", "original_description": "RECEBIMENTO PIX 05323537000106 ADEGA BRUNHOLI LT", "document": "5323537000106", "entity_bank": "ADEGA BRUNHOLI LT", "type_trx": "PIX_CRED", "value": 115.8, "balance": 17638.14}', '{"date_trx": "26/01/2026", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 28067799873 M\\u00d4NICA MARIANA PERANDI", "document": "28067799873", "entity_bank": "M\\u00d4NICA MARIANA PERANDI", "type_trx": "PIX_DEB", "value": -5140, "balance": 12498.14}', '{"date_trx": "26/01/2026", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 00394460005887 RECEITA FEDERAL", "document": "394460005887", "entity_bank": "RECEITA FEDERAL", "type_trx": "PIX_DEB", "value": -340.57, "balance": 12157.57}', '{"date_trx": "26/01/2026", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 00394460005887 RECEITA FEDERAL", "document": "394460005887", "entity_bank": "RECEITA FEDERAL", "type_trx": "PIX_DEB", "value": -376.96, "balance": 11780.61}', '{"date_trx": "26/01/2026", "account": "SICREDI-BRUNA", "original_description": "PAGAMENTO PIX 43188608845 ARIANE FERREIRA MENDES", "document": "43188608845", "entity_bank": "ARIANE FERREIRA MENDES", "type_trx": "PIX_DEB", "value": -284, "balance": 11496.61}']
     request_json = json.dumps(data)
     
     # call insert
