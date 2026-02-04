@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from datetime import date
 
-import extract
+try:
+    import extract
+except Exception:
+    from . import extract
 
 @dataclass
 class Transaction:
