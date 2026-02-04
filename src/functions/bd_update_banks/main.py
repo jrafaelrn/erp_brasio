@@ -1,9 +1,12 @@
 from datetime import datetime
+
 import functions_framework
-from requests import get
 import google_drive
+import json
 import logging
+import os
 import sys
+import requests
 
 from cloudevents.http import CloudEvent
 
@@ -43,15 +46,18 @@ def update_bd():
     for bank in account_files:
 
         logging.info(f'.........Importing file...: {bank.file_name}')
+        debug_to_me(f'.........Importing file...: {bank.file_name}')
         imported, card_details = bank.import_bank(google_drive_instance)
         
         if imported:
             logging.info(f'File {bank.file_name} from account {bank.bank_name} imported!')    
             logging.info(f'Total of transactions imported: {bank.counter}')
             logging.info(f'Has card to import: {card_details is not None}')
+            debug_to_me(f'File {bank.file_name} from account {bank.bank_name} imported! Total transactions: {bank.counter}. Has card to import: {card_details is not None}')
 
             if card_details:
                 logging.info(f'Importing card from bank file: {bank.file_name}...')
+                debug_to_me(f'Importing card from bank file: {bank.file_name}...')
                 card_bank = get_card_bank(card_details['date_payment'])
                 if card_bank is None:
                     logging.error(f'Card bank not found for payment date: {card_details["date_payment"]}!')
@@ -59,14 +65,19 @@ def update_bd():
                 card_bank.import_bank(google_drive_instance, card_details)
                 logging.info(f'File {card_bank.file_name} from card {card_bank.bank_name} imported!')
                 logging.info(f'Total of transactions imported: {card_bank.counter}')
+                debug_to_me(f'File {card_bank.file_name} from card {card_bank.bank_name} imported! Total transactions: {card_bank.counter}')
                 return
                     
             else:
                 logging.info(f'File account imported successfully: {bank.file_name}')
+                debug_to_me(f'File account imported successfully: {bank.file_name}')
                 return
         else:
             logging.warning(f'File not imported: {bank.file_name}... Trying next file...')
-            
+            debug_to_me(f'File not imported: {bank.file_name}... Trying next file...')
+        
+        
+    debug_to_me('No file imported!')
     raise Exception('No file imported!')
 
 
@@ -90,6 +101,16 @@ def get_card_bank(payment_date):
     return None
 
 
+def debug_to_me(mensagem):
+
+    URL_WEBHOOK_DEBUG = os.environ.get('URL_WEBHOOK_DEBUG')
+    DATA = json.dumps({"mensagem": mensagem})
+
+    if URL_WEBHOOK_DEBUG:
+        try:
+            requests.post(URL_WEBHOOK_DEBUG, data=DATA)
+        except Exception as e:
+            logging.error(f'Error sending debug message: {e}')
 
 
 #################################
