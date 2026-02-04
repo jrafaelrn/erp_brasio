@@ -37,13 +37,15 @@ class BankSicredi(Bank):
             
             continue
         
-        self.create_transaction(
+        transaction = self.create_transaction(
           date_trx=date_date,
           original_description=descricao,
           pre_type=pre_type,
           value=valor,
           balance=saldo,
         )
+
+        self.add_transaction(transaction)
 
       except Exception as e:
 
@@ -125,6 +127,8 @@ class BankSicredi(Bank):
 
         transaction.entity_name = fornecedor
         transaction.type = tipo
+
+        self.add_transaction(transaction)
 
         
       except Exception as e:

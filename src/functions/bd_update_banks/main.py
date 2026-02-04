@@ -46,8 +46,10 @@ def update_bd():
         imported, card_details = bank.import_bank(google_drive_instance)
         
         if imported:
-            logging.info(f'File {bank.file_name} from account {bank.bank_name} imported! Has card to import: {card_details is not None}')    
-            
+            logging.info(f'File {bank.file_name} from account {bank.bank_name} imported!')    
+            logging.info(f'Total of transactions imported: {bank.counter}')
+            logging.info(f'Has card to import: {card_details is not None}')
+
             if card_details:
                 logging.info(f'Importing card from bank file: {bank.file_name}...')
                 card_bank = get_card_bank(card_details['date_payment'])
@@ -55,6 +57,9 @@ def update_bd():
                     logging.error(f'Card bank not found for payment date: {card_details["date_payment"]}!')
                     raise Exception('Card bank not found!')
                 card_bank.import_bank(google_drive_instance, card_details)
+                logging.info(f'File {card_bank.file_name} from card {card_bank.bank_name} imported!')
+                logging.info(f'Total of transactions imported: {card_bank.counter}')
+                return
                     
             else:
                 logging.info(f'File account imported successfully: {bank.file_name}')

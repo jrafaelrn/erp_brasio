@@ -38,6 +38,7 @@ class Bank(ABC):
     import_account_progress: bool = False
     import_card_progress: bool = False
     MAXIMUM_TRANSACTIONS_ACCUMULATED: int = 20
+    counter: int = 0
 
 
     def __post_init__(self):
@@ -112,8 +113,6 @@ class Bank(ABC):
             value=value,
             balance_after=balance
         )
-        self.import_account_progress = True
-        self.add_transaction(transaction)
         return transaction
 
 
@@ -121,6 +120,8 @@ class Bank(ABC):
     def add_transaction(self, transaction: Transaction):
         
         self.transactions.append(transaction)
+        self.counter += 1
+        self.import_account_progress = True
         logger.info(f'Added transaction to queue... [{len(self.transactions)}/{self.MAXIMUM_TRANSACTIONS_ACCUMULATED}]')
         
         #Check if maximum accumulated reached
