@@ -76,7 +76,7 @@ def update_bd():
             logging.warning(f'File not imported: {bank.file_name}... Trying next file...')
             debug_to_me(f'File not imported: {bank.file_name}... Trying next file...')
         
-        
+
     debug_to_me('No file imported!')
     raise Exception('No file imported!')
 
@@ -105,10 +105,11 @@ def debug_to_me(mensagem):
 
     URL_WEBHOOK_DEBUG = os.environ.get('URL_WEBHOOK_DEBUG')
     DATA = json.dumps({"mensagem": mensagem})
+    HEADERS = {'Content-Type': 'application/json'}  
 
     if URL_WEBHOOK_DEBUG:
         try:
-            requests.post(URL_WEBHOOK_DEBUG, data=DATA)
+            requests.post(URL_WEBHOOK_DEBUG, data=DATA, headers=HEADERS)
         except Exception as e:
             logging.error(f'Error sending debug message: {e}')
 
