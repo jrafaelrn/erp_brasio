@@ -3,6 +3,11 @@ import json
 import logging
 import os
 import re
+import sys
+
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
 
 from dataclasses import dataclass, field
 from typing import List
@@ -11,8 +16,12 @@ from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
 from oauth2client.service_account import ServiceAccountCredentials
 
-from bank import Bank
-from bank_sicredi import BankSicredi
+try:
+    from .bank import Bank
+    from .bank_sicredi import BankSicredi
+except ImportError:
+    from bank import Bank
+    from bank_sicredi import BankSicredi
 
 logger = logging.getLogger()
 
