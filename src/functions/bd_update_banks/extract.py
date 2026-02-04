@@ -24,7 +24,7 @@ def get_cpf_cnpj(text):
 def extract_cpf_cnpj_cliente_fornecedor_from_description(description):
   
   description = description.upper()
-  print(f'Description: {description}')
+  #print(f'Description: {description}')
 
   # Clear the description
   if description.find('RECEBIMENTO PIX ') != -1:

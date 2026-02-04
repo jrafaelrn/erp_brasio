@@ -199,19 +199,19 @@ def insert(data):
 
         DATA = json.loads(DATA)
 
-        date_trx = DATA['date_trx']
+        transaction_date = DATA['transaction_date']
         account = DATA['account']
         original_description = DATA['original_description']
-        document = DATA['document']
-        entity_bank = DATA['entity_bank']
-        type_trx = DATA['type_trx']
+        entity_document = DATA['entity_document']
+        entity_name = DATA['entity_name']
+        transaction_type = DATA['transaction_type']
         value = DATA['value']
         balance = DATA['balance']
         id_bank = DATA.get('id_bank', id_generator(6))
 
         try:
             feedback = insert_transaction(
-                date_trx, account, original_description, document, entity_bank, type_trx, value, balance, id_bank)
+                transaction_date, account, original_description, entity_document, entity_name, transaction_type, value, balance)
             feedbacks.append(feedback)
             
         except LineNotFoundError as e:
