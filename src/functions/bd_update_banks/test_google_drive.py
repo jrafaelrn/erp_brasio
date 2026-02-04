@@ -4,7 +4,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from bd_update_banks.google_drive import get_bank_name_from_path
+from google_drive import get_bank_name_from_path
 
 class TestGetBankNameFromPath(unittest.TestCase):
     

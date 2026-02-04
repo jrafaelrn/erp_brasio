@@ -150,7 +150,7 @@ class Bank(ABC):
             # Acumula em DATA
             DATA.append(json.dumps(TRX))
         
-        #bd.insert(DATA)
+        bd.insert(DATA)
         self.transactions.clear()
         self.import_account_progress = False
     
