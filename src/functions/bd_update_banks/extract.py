@@ -1,4 +1,7 @@
+import logging
 import os
+
+logger = logging.getLogger()
 
 
 def get_cpf_cnpj(text):
@@ -10,7 +13,8 @@ def get_cpf_cnpj(text):
     nome = text[15:]
     return cnpj, nome
   
-  except:
+  except Exception as e:
+    logger.debug(f'Error to get CNPJ: {e}...Trying CPF...')
 
     cpf = text[:11]
     nome = text[12:]

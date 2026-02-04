@@ -1,6 +1,4 @@
-import base64
 import functions_framework
-import googlecloudprofiler
 import gspread
 import json
 import os
@@ -10,9 +8,6 @@ import random
 import string
 import time
 import sys
-
-
-from cloudevents.http import CloudEvent
 
 
 logging.basicConfig(
@@ -185,7 +180,7 @@ def insert(data):
         print(f'Error when parse JSON: {e}')
 
         # Se ARRAY_DATA for do tipo 'list',
-        if type(data) == list:
+        if type(data) is list:
             ARRAY_DATA = data
             logging.info(
                 f'ARRAY_DATA: {ARRAY_DATA} -- Type: {type(ARRAY_DATA)}')
@@ -211,7 +206,7 @@ def insert(data):
 
         try:
             feedback = insert_transaction(
-                transaction_date, account, original_description, entity_document, entity_name, transaction_type, value, balance)
+                transaction_date, account, original_description, entity_document, entity_name, transaction_type, value, balance, id_bank)
             feedbacks.append(feedback)
             
         except LineNotFoundError as e:

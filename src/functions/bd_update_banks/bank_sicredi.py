@@ -1,23 +1,17 @@
-import io
-import json
-import logging
-import os
-import pandas as pd
-import re
-import time
-
+from tkinter import E
+from bank import Bank
 from datetime import datetime
 from dataclasses import dataclass
-logger = logging.getLogger()
 
-from bank import Bank
+import json
+import logging
+import re
 
 logger = logging.getLogger()
 
 
 @dataclass
 class BankSicredi(Bank):
-  
   
   def import_account(self):
 
@@ -35,12 +29,11 @@ class BankSicredi(Bank):
         valor =  line[3]
         saldo = line[4]
         
-
         # Se encontrar uma fatura de cartao, procura o arquivo separado
         if (descricao.find('DEB.CTA.FATURA') != -1) or (descricao.find('LIQUIDACAO BOLETO SICREDI 82527557000140 SICREDI') != -1):
             self.card_transactions_to_import = True
             self.balance_card = saldo
-            self.date_payment_card = date_str
+            self.date_payment_card = date_date
             
             continue
         
@@ -66,31 +59,14 @@ class BankSicredi(Bank):
           return 
 
         try:
-          if type(line[1][0]) == str:
+          if type(line[1][0]) is str:
             if line[1][0].find('Saldo da Conta') != -1:
               return
-        except:
-          pass  
+        except Exception as e2:
+          logger.error('Erro ao analisar linha inválida: %s || Error: %s', line, e2)
       
 
   
-  def check_card_file(self):
-      
-      # Check if card file exists
-      if self.card_transactions_to_import:
-          
-          logging.info('Checking if card file exists...')
-
-          card_path_file_filter = f'{self.account_name}/CARTAO-CSV/'
-          card_name_file_filter = datetime.strptime(self.date_payment_card, '%d/%m/%Y').strftime('%Y-%m') + '-import.xls'
-          file_name_card, file_id_card = check_if_file_exists(card_path_file_filter, card_name_file_filter)
-
-          if file_name_card is False:
-              logging.error(f'Card file not found! -- Card Path File Filter: {card_path_file_filter} -- Card Name File Filter: {card_name_file_filter}')
-              self.rename_file('error')
-              return None, None, None, None
-
-
   def update_file_name_after_import(self, new_sufix='ok'):
       # Rename file
       if self.google_drive.rename_file(self.file_id, self.file_name, new_sufix):
@@ -99,59 +75,35 @@ class BankSicredi(Bank):
           logging.error('ERROR - File not renamed!')   
           raise Exception('ERROR - File not renamed!')
 
-      
-
-  def update_bd_from_sicredi_card(self, file_id_card, balance_card, date_payment_card, card_name_file_filter):
-      
-      logging.info(f'Starting update BD from Sicredi Card...\nFile Card ID: {file_id_card}\nBalance Card: {balance_card}\nDate Payment Card: {date_payment_card}\nCard Name File Filter: {card_name_file_filter}')
-
-      global account_name
-      
-      file_excel = get_file(file_id_card)
-
-      if file_excel is None:
-          logging.error('No file found!')
-          return
-      
-      df = pd.read_excel(io.BytesIO(file_excel))            
-      self.import_card_sicredi(df, balance_card, date_payment_card, account_name)
-
-      # Rename file
-      if rename_file(file_id_card, card_name_file_filter, 'ok'):
-          logging.info('File renamed!')
-      else:
-          logging.error('ERROR - File not renamed!')  
-          raise Exception('ERROR - File not renamed!')
 
 
+  def import_card(self):
 
+    logger.info(f'...... Importing SICREDI card file: {self.file_name} ......')
+    linha = 'START'
 
-  def import_card(self, extrato_file, balance, date_payment_card, conta):
-
-    logger.info(f'...... Importing cartao Sicredi......\n')
-
-    for line in extrato_file.iterrows():
+    for line in self.file_data.itertuples(index=False):
       
       # Try convert first column to date
       try:
         
-        linha = line[1][0]
+        linha = line[0]
         
         try:
           data = datetime.strptime(linha, '%d/%m/%Y')  # Apenas para validacao da linha
-        except:
+        except Exception as e:
           data = datetime.strptime(str(linha), '%d/%m/%Y')  # Apenas para validacao da linha
         
-        descricao = f'{line[1][1]} - {line[1][2]} - ({linha})'
+        descricao = f'{line[1]} - {line[2]} - ({linha})'
         descricao = descricao.upper()
         tipo = 'CARTAO CRED'
-        valor = line[1][3]
+        valor = line[3]
 
         # Replace based on regex
-        fornecedor = re.sub(r'\d+/\d+', '', line[1][1])
+        fornecedor = re.sub(r'\d+/\d+', '', line[1])
 
         # Check if valor is string
-        if type(valor) == str:
+        if type(valor) is str:
           valor = valor.replace('.', '')
           valor = valor.replace(',', '.')
           valor = valor.replace('R$', '')
@@ -163,27 +115,21 @@ class BankSicredi(Bank):
         if valor > 0 and (descricao.find('PAGAMENTO') != -1 or descricao.find('QUITACAO') != -1 or descricao.find('PAG FAT DEB') != -1):
           continue
 
-        DATA = {}
-        DATA['date_trx'] = date_payment_card
-        DATA['account'] = conta
-        DATA['original_description'] = descricao
-        DATA['document'] = ''
-        DATA['entity_bank'] = fornecedor
-        DATA['type_trx'] = tipo
-        DATA['value'] = valor
-        DATA['balance'] = balance
+        transaction = self.create_transaction(
+          date_trx=self.date_payment_card,
+          original_description=descricao,
+          pre_type=tipo,
+          value=valor,
+          balance=self.balance_card,
+        )
 
-        DATA_JSON = json.dumps(DATA)
+        transaction.entity_name = fornecedor
+        transaction.type = tipo
 
-        #bd.insert([DATA_JSON])
-        self.import_accumulated_sicredi(DATA_JSON)
         
       except Exception as e:
-        msg = f'Linha inválida: {linha}\n\t error: {e}'
-        print(msg)
-        data = None
+        logger.debug(f'Linha inválida: {linha}\n\t error: {e}')
         
-    self.import_accumulated_sicredi(DATA_JSON, True)
 
 
 

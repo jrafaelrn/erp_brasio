@@ -1,3 +1,10 @@
+from datetime import date
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import List
+
+from transaction import Transaction
+
 import bd
 import io
 import json
@@ -5,12 +12,6 @@ import logging
 import pandas as pd
 import re
 
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import List
-
-from transaction import Transaction
 
 logger = logging.getLogger()
 
@@ -31,7 +32,7 @@ class Bank(ABC):
     card_file_name: str = None
     card_transactions_to_import: bool = False
     balance_card: float = 0.0
-    date_payment_card: str = None
+    date_payment_card: date = None
 
     # Import progress flags
     import_account_progress: bool = False
@@ -40,6 +41,12 @@ class Bank(ABC):
 
 
     def __post_init__(self):
+        
+        # Check if file is card file
+        # If file path contains 'CARTAO', it's a card file. 
+        # Then, set is_card_file to True and 
+        # extract the date from file name to set card_file_name (format: YYYY-MM-DD)
+        
         if self.file_path.upper().find('CARTAO') != -1:
             self.is_card_file = True
             match = re.search(r'(\d{4})-(\d{2})-(\d{2})', self.file_name)
@@ -48,11 +55,11 @@ class Bank(ABC):
                 
 
     @abstractmethod
-    def import_account(self, google_drive):
+    def import_account(self):
         pass
     
     @abstractmethod
-    def import_card(self, google_drive):
+    def import_card(self):
         pass
     
     
@@ -70,14 +77,19 @@ class Bank(ABC):
     
     
     
-    def import_bank(self, google_drive):
+    def import_bank(self, google_drive, card_details=None):
         
         self.google_drive = google_drive
         self.file_data = self.download_file()
-            
-        if not self.is_card_file:
+
+        if self.is_card_file:
+            self.date_payment_card = card_details['date_payment']
+            self.balance_card = card_details['balance']
+            self.import_card()
+            logging.info('File card imported!')        
+        else:
             self.import_account()
-            logging.info(f'File account imported!')        
+            logging.info('File account imported!')        
             
         # Check if has card to import
         if self.card_transactions_to_import:
@@ -102,6 +114,7 @@ class Bank(ABC):
         )
         self.import_account_progress = True
         self.add_transaction(transaction)
+        return transaction
 
 
     
@@ -135,7 +148,7 @@ class Bank(ABC):
             
             # Acumula em DATA
             DATA.append(json.dumps(TRX))
-            
+        
         #bd.insert(DATA)
         self.transactions.clear()
         self.import_account_progress = False
@@ -152,7 +165,7 @@ class Bank(ABC):
             
             
         file_path_filter = r"(.)*PagBank(.)*/Conta/"
-        conta_filter = r"Extratos Bancarios/(.*)/Conta"
+        #conta_filter = r"Extratos Bancarios/(.*)/Conta"
 
         filter = re.match(file_path_filter, folder_to_check)
         if filter:
