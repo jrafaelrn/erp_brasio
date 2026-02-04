@@ -52,5 +52,7 @@ jobs:
                 REGION=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/REGION/versions/latest
                 GCP_PROJECT_ID=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/GCP_PROJECT_ID/versions/latest
                 MY_CNPJ=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/MY_CNPJ/versions/latest
+                URL_WEBHOOK_DEBUG=projects/${{ secrets.GCP_PROJECT_ID }}/secrets/URL_WEBHOOK_DEBUG/versions/latest
+
               name: 'function-bd-update-from-banks'
               runtime: 'python312'
