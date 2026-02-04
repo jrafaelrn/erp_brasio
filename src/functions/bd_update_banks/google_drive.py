@@ -16,14 +16,16 @@ from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
 from oauth2client.service_account import ServiceAccountCredentials
 
+
+logger = logging.getLogger()
+
 try:
     from .bank import Bank
     from .bank_sicredi import BankSicredi
-except ImportError:
+except Exception:
+    logger.warning('Erro when imported with relative path... Trying absolute path.')
     from bank import Bank
     from bank_sicredi import BankSicredi
-
-logger = logging.getLogger()
 
 
 #################################
