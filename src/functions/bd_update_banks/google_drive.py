@@ -136,7 +136,8 @@ class GoogleDrive():
         
             
 
-    def get_bank_name_from_path(self, path_file):
+    @staticmethod
+    def get_bank_name_from_path(path_file):
         
         bank_name = None
         
