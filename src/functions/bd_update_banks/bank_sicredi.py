@@ -1,11 +1,15 @@
 from tkinter import E
-from bank import Bank
 from datetime import datetime
 from dataclasses import dataclass
 
 import json
 import logging
 import re
+
+try:
+    from .bank import Bank
+except ImportError:
+    from bank import Bank
 
 logger = logging.getLogger()
 

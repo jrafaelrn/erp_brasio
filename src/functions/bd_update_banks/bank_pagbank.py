@@ -1,10 +1,15 @@
 from datetime import datetime
 from dataclasses import dataclass
 
-from bank import Bank
+try:
+    from .bank import Bank
+    from . import bd
+    from . import extract
+except Exception:
+    from bank import Bank
+    import bd
+    import extract
 
-import bd
-import extract
 import json
 import logging
 import re
