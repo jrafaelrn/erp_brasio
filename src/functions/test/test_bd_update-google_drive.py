@@ -4,7 +4,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from google_drive import get_bank_name_from_path
+from bd_update_banks.google_drive import get_bank_name_from_path
 
 class TestGetBankNameFromPath(unittest.TestCase):
     
@@ -22,5 +22,4 @@ class TestGetBankNameFromPath(unittest.TestCase):
         path_file = '/SICREDI-ABC-123/Conta-CSV/2020/account-import.csv'
         bank_name = get_bank_name_from_path(path_file)
         self.assertEqual(bank_name, 'SICREDI-ABC-123')
-        
-    
+
