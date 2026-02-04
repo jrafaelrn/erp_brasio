@@ -5,10 +5,11 @@ from typing import List
 
 try:
     from transaction import Transaction
+    import bd
 except Exception:
     from .transaction import Transaction
+    from . import bd
 
-import bd
 import io
 import json
 import logging
