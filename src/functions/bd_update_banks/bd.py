@@ -1,4 +1,9 @@
-import requests, json, os
+import requests
+import json
+import os
+import logging
+
+logger = logging.getLogger()
 
 #################################
 #       GOOGLE FUNCTION         #
@@ -26,10 +31,12 @@ def insert(DATA, ARGS=None):
         try:
             try:
                 response = json.loads(resp.content)
-            except:
+            except Exception as e:
                 response = resp.content
-        except:
+                logger.warning(f'Error when parse JSON response: {e}')
+        except Exception as e:
             response = resp.text    
+            logger.error(f'Error when getting response text: {e}')
 
         return response
     

@@ -2,10 +2,6 @@ name: 'CD - GCP - Cloud Functions (BD Transaction)'
 
 on:
   workflow_dispatch:
-  push:
-    branches: master
-    paths:
-      - 'src/functions/bd_transaction/**'
   pull_request:
     types: closed
     branches: master

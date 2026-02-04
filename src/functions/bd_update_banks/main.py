@@ -1,26 +1,31 @@
-import bank_pagbank
-import bank_sicredi
-import base64
+from datetime import datetime
 import functions_framework
-import io
+from requests import get
+import google_drive
 import logging
-import re
-import pandas as pd
 import sys
 
-
-from httplib2 import Credentials
-from datetime import datetime
 from cloudevents.http import CloudEvent
-from google_drive import *
 
 
 logging.basicConfig(
     stream=sys.stdout, 
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='[%(asctime)s] %(levelname)s - %(message)s',
     force=True
 )
+
+banks = None
+google_drive_instance = None
+
+
+def get_banks_to_import():
+    global banks
+    global google_drive_instance
+    if banks is None:
+        google_drive_instance = google_drive.GoogleDrive()
+        banks = google_drive_instance.get_banks_to_import()
+
 
 
 #################################
@@ -29,175 +34,61 @@ logging.basicConfig(
 
 def update_bd():
 
-    get_files_to_import()
-    global files_to_import
-    logging.info(f'.... Files to import...: {files_to_import}')
+    global banks
+    global google_drive_instance
+    card_details = None
+    imported = None
+    account_files = [bank for bank in banks if not bank.is_card_file]   
 
-    for file_to_import in files_to_import:
+    for bank in account_files:
 
-        logging.info(f'.........Importing file...: {file_to_import}')
-
-        # Check if credit file to avoid start with 
-        if file_to_import.get('path').upper().find('CARTAO-CSV') != -1:
-            continue
+        logging.info(f'.........Importing file...: {bank.file_name}')
+        imported, card_details = bank.import_bank(google_drive_instance)
         
-        if file_to_import.get('path').upper().find('SICREDI') != -1:
-            update_bd_from_sicredi(file_to_import)
+        if imported:
+            logging.info(f'File {bank.file_name} from account {bank.bank_name} imported!')    
+            logging.info(f'Total of transactions imported: {bank.counter}')
+            logging.info(f'Has card to import: {card_details is not None}')
+
+            if card_details:
+                logging.info(f'Importing card from bank file: {bank.file_name}...')
+                card_bank = get_card_bank(card_details['date_payment'])
+                if card_bank is None:
+                    logging.error(f'Card bank not found for payment date: {card_details["date_payment"]}!')
+                    raise Exception('Card bank not found!')
+                card_bank.import_bank(google_drive_instance, card_details)
+                logging.info(f'File {card_bank.file_name} from card {card_bank.bank_name} imported!')
+                logging.info(f'Total of transactions imported: {card_bank.counter}')
+                return
+                    
+            else:
+                logging.info(f'File account imported successfully: {bank.file_name}')
+                return
+        else:
+            logging.warning(f'File not imported: {bank.file_name}... Trying next file...')
             
-        if file_to_import.get('path').upper().find('PAGBANK') != -1:
-            update_bd_from_pagbank(file_to_import)
+    raise Exception('No file imported!')
 
-        return
-            
 
-##########################################
-#               SICREDI                  #
-##########################################
 
-def update_bd_from_sicredi(file_to_import):
+def get_card_bank(payment_date):
+
+    global banks
     
-    logging.info(f'Updating BD from Sicredi: {file_to_import}')
+    # Convert string to date (pt-BR format  dd/MM/yyyy)
+    if type(payment_date) is str:
+        payment_date = datetime.strptime(payment_date, '%d/%m/%Y')
 
-    balance_card, date_payment_card, file_id_card, card_name_file_filter = update_bd_from_sicredi_account(file_to_import)
+    # Filter banks where `is_card_file` is True
+    card_banks = [bank for bank in banks if bank.is_card_file]
 
-    # Import CARD SICREDI
-    if balance_card is not None:
-        update_bd_from_sicredi_card(file_id_card, balance_card, date_payment_card, card_name_file_filter)
+    for bank in card_banks:
+        card_file_date = datetime.strptime(bank.card_file_name, '%Y-%m-%d')
+        if card_file_date.date() == payment_date.date():
+            return bank
 
+    return None
 
-
-def update_bd_from_sicredi_account(file_to_import):
-    
-    global account_name
-
-    # Import BANK SICREDI
-    file_name = file_to_import['name']
-    file_id = file_to_import['id']
-    file_path = file_to_import['path']
-    account_name = str(file_path.split('/')[0]).upper()
-
-    if not check_folder_path(file_path):
-        logging.error(f'Folder not CHECK_FOLDER: {file_path}')
-        return None, None, None, None
-    
-    import_card = False
-
-    file_excel = get_file(file_id)
-
-    if file_excel is None:
-        logging.error('No file found!')
-        return None, None, None, None
-            
-    df = pd.read_excel(io.BytesIO(file_excel))
-    import_card, balance_card, date_payment_card = bank_sicredi.import_extrato_sicredi(df, account_name)
-    card_name_file_filter = None
-    file_id_card = None
-
-    # Check if card file exists
-    if import_card:
-        
-        logging.info('Checking if card file exists...')
-
-        card_path_file_filter = f'{account_name}/CARTAO-CSV/'
-        card_name_file_filter = datetime.strptime(date_payment_card, '%d/%m/%Y').strftime('%Y-%m') + '-import.xls'
-        file_name_card, file_id_card = check_if_file_exists(card_path_file_filter, card_name_file_filter)
-
-        if file_name_card is False:
-            logging.error(f'Card file not found! -- Card Path File Filter: {card_path_file_filter} -- Card Name File Filter: {card_name_file_filter}')
-            rename_file(file_id, file_name, 'error')
-            return None, None, None, None
-
-
-    # Rename file
-    if rename_file(file_id, file_name, 'ok'):
-        logging.info('File renamed!')
-    else:
-        logging.error('ERROR - File not renamed!')   
-    return balance_card, date_payment_card, file_id_card, card_name_file_filter
-        
-
-
-def update_bd_from_sicredi_card(file_id_card, balance_card, date_payment_card, card_name_file_filter):
-    
-    logging.info(f'Starting update BD from Sicredi Card...\nFile Card ID: {file_id_card}\nBalance Card: {balance_card}\nDate Payment Card: {date_payment_card}\nCard Name File Filter: {card_name_file_filter}')
-
-    global account_name
-    
-    file_excel = get_file(file_id_card)
-
-    if file_excel is None:
-        logging.error('No file found!')
-        return
-    
-    df = pd.read_excel(io.BytesIO(file_excel))            
-    bank_sicredi.import_card_sicredi(df, balance_card, date_payment_card, account_name)
-
-    # Rename file
-    if rename_file(file_id_card, card_name_file_filter, 'ok'):
-        logging.info('File renamed!')
-    else:
-        logging.error('ERROR - File not renamed!')  
-
-
-
-
-##########################################
-#               PAGBANK                  #
-##########################################
-
-def update_bd_from_pagbank(file_to_import):
-    
-    logging.info(f'...Updating BD from PagBank...: {file_to_import}')
-
-    # Import BANK PAGBANK
-    file_name = file_to_import['name']
-    file_id = file_to_import['id']
-    file_path = file_to_import['path']
-    
-    if not check_folder_path(file_path):
-        logging.error(f'Folder not pass CHECK_FOLDER: {file_path}')
-        return
-    
-    file_excel = get_file(file_id)
-
-    if file_excel is None:
-        logging.error('No file found!')
-        return
-
-    conta = file_path.split('/')[1].upper()
-    
-    df = pd.read_csv(io.BytesIO(file_excel), sep=';')
-    bank_pagbank.import_extrato_pagbank(df, conta)
-
-    # Rename file
-    if rename_file(file_id, file_name, 'ok'):
-        logging.info('File renamed!')
-    else:
-        logging.error('ERROR - File not renamed!') 
-        
-        
-        
-##########################################
-#               FUNCTIONS                #
-##########################################
-
-def check_folder_path(folder_to_check: str):
-    
-    file_path_filter = ['Sicredi/Conta/','Sicredi-Bruna/Conta-CSV/', 'Sicredi-Bruna-0002/Conta-CSV/'] 
-    
-    for path_filter in file_path_filter:
-        if folder_to_check.upper().find(path_filter.upper()) != -1:
-            return True
-        
-        
-    file_path_filter = r"(.)*PagBank(.)*/Conta/"
-    conta_filter = r"Extratos Bancarios/(.*)/Conta"
-
-    filter = re.match(file_path_filter, folder_to_check)
-    if filter:
-        return True
-        
-    return False
 
 
 
@@ -215,9 +106,11 @@ def check(cloud_event: CloudEvent):
     logging.info(f'Payload: {payload}')
     
     try:
+        get_banks_to_import()
         update_bd()
         response = {"return": "ok"}
-    except:
+    except Exception as e:
+        logging.error(f'XXX XXX Error updating BD: {e}')    
         response = {"return": "error"}
 
     logging.info(f'Response: {response}')
@@ -226,5 +119,6 @@ def check(cloud_event: CloudEvent):
 
 if __name__ == '__main__':
     #logging.info('Starting BD Update Banks...')
+    get_banks_to_import()
     update_bd()
     logging.info('Update BD!')
