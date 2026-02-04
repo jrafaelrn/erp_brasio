@@ -3,7 +3,10 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import List
 
-from transaction import Transaction
+try:
+    from transaction import Transaction
+except ImportError:
+    from .transaction import Transaction
 
 import bd
 import io
