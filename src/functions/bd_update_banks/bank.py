@@ -5,7 +5,7 @@ from typing import List
 
 try:
     from transaction import Transaction
-except ImportError:
+except Exception:
     from .transaction import Transaction
 
 import bd
