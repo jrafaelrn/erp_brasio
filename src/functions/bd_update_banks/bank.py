@@ -96,6 +96,7 @@ class Bank(ABC):
             self.import_account()
             logging.info('File account imported!')        
         
+        self.flush_transactions()
         self.google_drive.rename_file(self.file_id, self.file_name, 'ok')
 
         # Check if has card to import
