@@ -55,7 +55,7 @@ def update_bd():
             logging.info(f'Has card to import: {card_details}')
             debug_to_me(f'✅ File {bank.file_name} from account {bank.bank_name} imported!')
             debug_to_me(f'Total transactions: {bank.counter}.')
-            debug_to_me(f'Has card to import: {card_details is not None}')
+            debug_to_me(f'Has card to import: {card_details}')
 
             if card_details:
                 logging.info(f'Importing card from bank file: {bank.file_name}...')
